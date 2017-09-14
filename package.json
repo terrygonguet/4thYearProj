@@ -1,0 +1,26 @@
+{
+  "name": "smooth_sailing",
+  "version": "1.0.0",
+  "description": "Javascript multiplayer game",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terrygonguet/4thYearProj.git"
+  },
+  "author": "Terry Gonguet",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/terrygonguet/4thYearProj/issues"
+  },
+  "homepage": "https://github.com/terrygonguet/4thYearProj#readme",
+  "dependencies": {
+    "express": "^4.15.4",
+    "present": "^1.0.0",
+    "socket.io": "^2.0.3",
+    "sylvester": "0.0.21"
+  }
+}
