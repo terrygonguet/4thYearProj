@@ -14,6 +14,7 @@ class InputManager extends createjs.EventDispatcher {
       left    : false,
       right   : false
     };
+    this.direction  = $V([0,0]); // normalized direction using the up, down, left and right properties of this.keys
     this.mouseDelta = $V([0,0]); // mouse delta when pointer is locked to the window
     this._listener = e => this.getEvent(e); // to store the listener for removal
 
@@ -46,6 +47,25 @@ class InputManager extends createjs.EventDispatcher {
     window.addEventListener("blur", this._listener, false);
     $("#game").on("contextmenu", null, null, false); // to prevent right click menu
     // document.addEventListener("pointerlockchange",  () => {});
+    createjs.Ticker.on("tick", this.update, this);
+  }
+
+  /*
+   * @param e { eventdata }
+   */
+  update (e) {
+    if (!this.noDirection) {
+      // to reduce unnecessaury calculations if the keys arent used
+      if (this.noDirection === undefined) {
+        if  (this.keys.up === undefined ||this.keys.down === undefined || this.keys.left === undefined || this.keys.right === undefined)
+        this.noDirection = true;
+        else this.noDirection = false;
+      }
+      this.direction = $([
+        Number(this.right - this.left),
+        Number(this.up - this.dosn)
+      ]);
+    }
   }
 
   /*

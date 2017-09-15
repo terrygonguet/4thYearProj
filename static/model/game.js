@@ -17,14 +17,17 @@ class Game extends createjs.Stage {
     this.txtFps       = new QuickText({ x: 10, y: 10 });
     this.txtrendertime= new QuickText({ x: 10, y: 30 });
     this.entities     = {};
+    this.player       = null;
 
     this.setHandlers();
 
-    this.addChild(this.map);
     this.addChild(this.txtFps);
     this.addChild(this.txtrendertime);
   }
 
+  /*
+   * To separate the handlers from the constructor
+   */
   setHandlers () {
     createjs.Ticker.timingMode = createjs.Ticker.TIMEOUT ;
     createjs.Ticker.framerate = 30;
@@ -33,7 +36,8 @@ class Game extends createjs.Stage {
     // only create and add player when we know the socket id
     this.socket = io(location.origin);
     this.socket.on("connect", () => {
-
+      this.player = new Player(this.socket.id);
+      this.addChild(this.player);
     });
 
   }
@@ -53,10 +57,12 @@ class Game extends createjs.Stage {
 
   addChild (child) {
     super.addChild(child);
+    if (child.isEntity) this.entities[child.id] = child;
   }
 
   removeChild (child) {
     super.removeChild(child);
+    if (child.isEntity) delete this.entities[child.id];
   }
 
 }
