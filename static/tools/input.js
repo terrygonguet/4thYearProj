@@ -61,9 +61,9 @@ class InputManager extends createjs.EventDispatcher {
         this.noDirection = true;
         else this.noDirection = false;
       }
-      this.direction = $([
-        Number(this.right - this.left),
-        Number(this.up - this.dosn)
+      this.direction = $V([
+        Number(this.keys.right - this.keys.left),
+        Number(this.keys.down - this.keys.up)
       ]);
     }
   }
