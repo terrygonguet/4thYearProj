@@ -40,6 +40,7 @@ const debug = true;
     {id: "Tools", src:"tools/tools.js"},
     {id: "Input Manager", src:"tools/input.js"},
     {id: "Game", src:"model/game.js"},
+    {id: "Background", src:"model/background.js"},
     {id: "Entity", src:"model/entity.js"},
     {id: "Player", src:"model/player.js"},
 

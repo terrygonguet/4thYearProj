@@ -4,7 +4,7 @@
 
 class Game extends createjs.Stage {
 
-  /*
+  /**
    * @param canvasName { String } ID of the <canvas> element to wrap
    */
   constructor (canvasName) {
@@ -18,14 +18,16 @@ class Game extends createjs.Stage {
     this.txtrendertime= new QuickText({ x: 10, y: 30 });
     this.entities     = {};
     this.player       = null;
+    this.background   = new Background();
 
     this.setHandlers();
 
+    this.addChild(this.background);
     this.addChild(this.txtFps);
     this.addChild(this.txtrendertime);
   }
 
-  /*
+  /**
    * To separate the handlers from the constructor
    */
   setHandlers () {
@@ -42,8 +44,8 @@ class Game extends createjs.Stage {
 
   }
 
-  /*
-   * @param e { eventdata }
+  /**
+   * @param {eventdata} e
    */
   update (e) {
     let time = performance.now();

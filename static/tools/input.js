@@ -50,8 +50,8 @@ class InputManager extends createjs.EventDispatcher {
     createjs.Ticker.on("tick", this.update, this);
   }
 
-  /*
-   * @param e { eventdata }
+  /**
+   * @param {eventdata} e
    */
   update (e) {
     if (!this.noDirection) {
@@ -79,8 +79,8 @@ class InputManager extends createjs.EventDispatcher {
       window.removeEventListener("mousemove", this._listener, true);
   }
 
-  /*
-   * @param e { eventdata } Native event data
+  /**
+   * @param {eventdata} e Native event data
    */
   getEvent (e) {
     const custEvent = new createjs.Event(""); // custom event to be fired if necessary

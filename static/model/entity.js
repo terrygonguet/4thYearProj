@@ -1,5 +1,8 @@
 class Entity extends createjs.Shape {
 
+  /**
+   * @param {String_Number} id : the unique id of the Entity
+   */
   constructor(id) {
     super();
     this.id       = id;
@@ -11,6 +14,9 @@ class Entity extends createjs.Shape {
     this.on("tick", this.update, this);
   }
 
+  /**
+   * @param {eventdata} e
+   */
   update (e) {
 
   }
