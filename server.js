@@ -28,8 +28,13 @@ io.on('connection', function (socket) {
   socket.join("players");
   players[socket.id] = socket;
   console.log("A fucker joined : " + socket.id + " (" + Object.keys(players).length + " players in)");
+  socket.to("players").emit("playerjoin", { id: socket.id });
+  for (let player in players) {
+    player.id !== socket.id && socket.emit("playerjoin", { id: player.id });
+  }
 
   socket.on("disconnect", () => {
+    socket.to("players").emit("playerleave", { id: socket.id });
     delete players[socket.id];
     console.log("A fucker left : " + socket.id + " (" + Object.keys(players).length + " players left)");
   });

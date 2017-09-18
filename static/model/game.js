@@ -41,6 +41,16 @@ class Game extends createjs.Stage {
       this.player = new Player(this.socket.id);
       this.addChild(this.player);
     });
+    this.socket.on("playerjoin", data => {
+      const e = new Entity(data.id);
+      this.addChild(e);
+      console.log("joined " + data.id);
+    });
+    this.socket.on("playerleave", data => {
+      this.entities[data.id] && this.removeChild(this.entities[data.id]);
+      console.log("left " + data.id);
+    });
+
 
   }
 
