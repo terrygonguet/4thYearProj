@@ -19,6 +19,8 @@ class Game extends createjs.Stage {
     this.entities     = {};
     this.player       = null;
     this.background   = new Background();
+    this.netticktime  = 0;
+    this.netrate      = 20;
 
     this.setHandlers();
 
@@ -35,22 +37,24 @@ class Game extends createjs.Stage {
     createjs.Ticker.framerate = 30;
     createjs.Ticker.on("tick", this.update, this);
 
+    this.on("nettick", this.netupdate, this);
+
     // only create and add player when we know the socket id
     this.socket = io(location.origin);
     this.socket.on("connect", () => {
       this.player = new Player(this.socket.id);
       this.addChild(this.player);
     });
-    this.socket.on("playerjoin", data => {
-      const e = new Entity(data.id);
-      this.addChild(e);
-      console.log("joined " + data.id);
+    this.socket.on("update", data => {
+      for (var p in data.players) {
+        !this.entities[p] && this.addChild(new Entity(p));
+        this.entities[p].moveTo($V(data.players[p].position), data.delta);
+      }
     });
     this.socket.on("playerleave", data => {
       this.entities[data.id] && this.removeChild(this.entities[data.id]);
       console.log("left " + data.id);
     });
-
 
   }
 
@@ -58,13 +62,33 @@ class Game extends createjs.Stage {
    * @param {eventdata} e
    */
   update (e) {
-    let time = performance.now();
-    e.sdelta = e.delta / 1000;
+    let time = performance.now(); // perf monitoring
+    e.sdelta = e.delta / 1000; // shorthand
     this.txtFps.text = (debug ? createjs.Ticker.getMeasuredFPS().toFixed(0) + " FPS" : "");
+    // net tick event
+    if ((this.netticktime += e.delta) > (1000 / this.netrate)) {
+      var netevent = new createjs.Event("nettick").set({ delta: this.netticktime });
+      this.dispatchEvent(netevent);
+      this.netticktime = 0;
+    }
+    // more perf monitoring
     this.rendertime = 0;
     super.update(e);
     game.rendertime += (performance.now() - time);
     this.txtrendertime.text = (debug ? "render time " + this.rendertime.toPrecision(3) + " ms" : "");
+  }
+
+  /**
+   * Keeps the server up to date with our game
+   * @param {neteventdata} e
+   */
+  netupdate (e) {
+    if (!this.player) return;
+    this.socket.emit("update", {
+      player: {
+        position:this.player.position.elements
+      }
+    });
   }
 
   addChild (child) {
