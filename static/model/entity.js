@@ -34,9 +34,11 @@ class Entity extends createjs.Shape {
   }
 
   moveTo (pos, speed) {
-    if (pos.distanceFrom(this.position) > 0) {
-      this.speed = speed;
-      this.realpos = this.position.dup();
+    const dist = pos.distanceFrom(this.position);
+    if (dist > 0) {
+      const realdist = pos.distanceFrom(this.realpos);
+      this.speed = speed * (realdist / dist);
+      // this.realpos = this.position.dup();
       this.position = pos.dup();
     }
   }

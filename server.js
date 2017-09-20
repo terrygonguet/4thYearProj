@@ -8,7 +8,7 @@ const sylvester = require('sylvester');
 setTimeout(function tick(old) {
   var delta = (now() - old);
   update(delta);
-  setTimeout(tick, 100, now());
+  setTimeout(tick, 30, now());
 }, 30, now());
 
 function update (delta) {
