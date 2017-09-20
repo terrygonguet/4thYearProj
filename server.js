@@ -8,18 +8,20 @@ const sylvester = require('sylvester');
 setTimeout(function tick(old) {
   var delta = (now() - old);
   update(delta);
-  setTimeout(tick, 30, now());
+  setTimeout(tick, 100, now());
 }, 30, now());
 
 function update (delta) {
   for (var player in players) {
     var data = {
-      delta,
       players: {}
     };
     for (var p in players) {
       if (p !== player) {
-        data.players[p] = { position: players[p].position.elements };
+        data.players[p] = {
+          position: players[p].position.elements,
+          speed: players[p].speed
+        };
       }
     }
     Object.keys(players).length > 1 && players[player].emit("update", data);
@@ -49,6 +51,7 @@ io.on('connection', function (socket) {
 
   socket.on("update", data => {
     socket.position = $V(data.player.position);
+    socket.speed = data.player.speed;
   });
 
 });

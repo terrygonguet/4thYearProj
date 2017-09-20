@@ -20,7 +20,8 @@ class Game extends createjs.Stage {
     this.player       = null;
     this.background   = new Background();
     this.netticktime  = 0;
-    this.netrate      = 20;
+    this.netrate      = 30;
+    this.lastnetupdate= 0;
 
     this.setHandlers();
 
@@ -44,12 +45,16 @@ class Game extends createjs.Stage {
     this.socket.on("connect", () => {
       this.player = new Player(this.socket.id);
       this.addChild(this.player);
+      this.lastnetupdate = performance.now();
     });
     this.socket.on("update", data => {
+      var now = performance.now();
+      var delta = now - this.lastnetupdate;
       for (var p in data.players) {
         !this.entities[p] && this.addChild(new Entity(p));
-        this.entities[p].moveTo($V(data.players[p].position), data.delta);
+        this.entities[p].moveTo($V(data.players[p].position), data.players[p].speed);
       }
+      this.lastnetupdate = now;
     });
     this.socket.on("playerleave", data => {
       this.entities[data.id] && this.removeChild(this.entities[data.id]);
@@ -86,14 +91,18 @@ class Game extends createjs.Stage {
     if (!this.player) return;
     this.socket.emit("update", {
       player: {
-        position:this.player.position.elements
+        position: this.player.position.elements,
+        speed: this.player.speed
       }
     });
   }
 
   addChild (child) {
+    if (child.isEntity) {
+      if (this.entities[child.id]) return;
+      this.entities[child.id] = child;
+    }
     super.addChild(child);
-    if (child.isEntity) this.entities[child.id] = child;
   }
 
   removeChild (child) {

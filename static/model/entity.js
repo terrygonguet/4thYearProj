@@ -30,13 +30,15 @@ class Entity extends createjs.Shape {
     this.set({
       x: pos.e(1), y: pos.e(2)
     });
+    // console.log(this.speed);
   }
 
-  moveTo (pos, delta) {
-    const dist = this.position.distanceFrom(pos);
-    this.speed = dist / (delta / 1000);
-    this.realpos = this.position.dup();
-    this.position = pos.dup();
+  moveTo (pos, speed) {
+    if (pos.distanceFrom(this.position) > 0) {
+      this.speed = speed;
+      this.realpos = this.position.dup();
+      this.position = pos.dup();
+    }
   }
 
 }
