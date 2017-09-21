@@ -30,9 +30,14 @@ class Entity extends createjs.Shape {
     this.set({
       x: pos.e(1), y: pos.e(2)
     });
-    // console.log(this.speed);
   }
 
+  /**
+   * Move from current position to new position at specified speed
+   * @param {Vector} pos : new position to move to
+   * @param {Number} speed : base speed to move at
+   * Note : to keep up with network, if the entity is starting to lag behind the speed will be increased
+   */
   moveTo (pos, speed) {
     const dist = pos.distanceFrom(this.position);
     if (dist > 0) {
