@@ -13,18 +13,20 @@ setTimeout(function tick(old) {
 
 function update (delta) {
   for (var player in players) {
+    var smthToSend = false;
     var data = {
       players: {}
     };
     for (var p in players) {
-      if (p !== player) {
+      if (p !== player && players[p].hasMoved) {
         data.players[p] = {
           position: players[p].position.elements,
           speed: players[p].speed
         };
+        smthToSend = true;
       }
     }
-    Object.keys(players).length > 1 && players[player].emit("update", data);
+    Object.keys(players).length > 1 && smthToSend && players[player].emit("update", data);
   }
 }
 
@@ -50,8 +52,14 @@ io.on('connection', function (socket) {
   });
 
   socket.on("update", data => {
-    socket.position = $V(data.player.position);
-    socket.speed = data.player.speed;
+    var npos = $V(data.player.position);
+    if (npos.distanceFrom(socket.position) > 0) {
+      socket.position = npos;
+      socket.speed = data.player.speed;
+      socket.hasMoved = true;
+    } else {
+      socket.hasMoved = false;
+    }
   });
 
 });
