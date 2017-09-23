@@ -10,7 +10,7 @@ setTimeout(function tick(old) {
   update(delta);
   setTimeout(tick, 30, now());
 }, 30, now());
-
+// anything
 function update (delta) {
   for (var player in players) {
     var smthToSend = false;
