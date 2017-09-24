@@ -21,7 +21,6 @@ class Game extends createjs.Stage {
     this.background   = new Background();
     this.netticktime  = 0;
     this.netrate      = 30;
-    this.lastnetupdate= 0;
 
     this.setHandlers();
 
@@ -48,13 +47,11 @@ class Game extends createjs.Stage {
       this.lastnetupdate = performance.now();
     });
     this.socket.on("update", data => {
-      var now = performance.now();
-      var delta = now - this.lastnetupdate;
+      // update payload
       for (var p in data.players) {
         !this.entities[p] && this.addChild(new Entity(p));
         this.entities[p].moveTo($V(data.players[p].position), data.players[p].speed);
       }
-      this.lastnetupdate = now;
     });
     this.socket.on("playerleave", data => {
       this.entities[data.id] && this.removeChild(this.entities[data.id]);
@@ -89,12 +86,16 @@ class Game extends createjs.Stage {
    */
   netupdate (e) {
     if (!this.player) return;
-    this.socket.emit("update", {
-      player: {
+    var data = { };
+    var smthToSend = false;
+    if (this.player.hasMoved) {
+      data.player = {
         position: this.player.position.elements,
         speed: this.player.speed
-      }
-    });
+      };
+      smthToSend = true;
+    }
+    smthToSend && this.socket.emit("update", data);
   }
 
   addChild (child) {
