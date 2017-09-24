@@ -60,7 +60,6 @@ class Game extends createjs.Stage {
     });
 
     this.socket.on("update", data => {
-      this.txtping.text = "ping " + (Date.now() - data.time);
       // update payload
       for (var p in data.players) {
         !this.entities[p] && this.addChild(new Entity(p));
@@ -121,7 +120,8 @@ class Game extends createjs.Stage {
       };
       smthToSend = true;
     }
-    smthToSend && this.socket.emit("update", data);
+    const now = Date.now();
+    smthToSend && this.socket.emit("update", data, () => this.txtping.text = "ping " + (Date.now() - now));
   }
 
   addChild (child) {

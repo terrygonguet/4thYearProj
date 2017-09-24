@@ -56,7 +56,7 @@ io.on('connection', function (socket) {
     socket.to("players").emit("firebullet", data);
   });
 
-  socket.on("update", data => {
+  socket.on("update", (data, ack) => {
     var npos = $V(data.player.position);
     if (npos.distanceFrom(socket.position) > 0) {
       socket.position = npos;
@@ -65,6 +65,7 @@ io.on('connection', function (socket) {
     } else {
       socket.hasMoved = false;
     }
+    ack();
   });
 
 });
