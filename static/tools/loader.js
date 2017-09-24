@@ -43,6 +43,7 @@ const debug = true;
     {id: "Background", src:"model/background.js"},
     {id: "Entity", src:"model/entity.js"},
     {id: "Player", src:"model/player.js"},
+    {id: "Bullet", src:"model/bullet.js"},
 
     {id: "QuickText", src:"model/quickText.js"}
 

@@ -14,6 +14,7 @@ class InputManager extends createjs.EventDispatcher {
       left    : false,
       right   : false
     };
+    this.mousePos   = $V([0,0]); // position of the last mouse click or last mousemove event
     this.direction  = $V([0,0]); // normalized direction using the up, down, left and right properties of this.keys
     this.mouseDelta = $V([0,0]); // mouse delta when pointer is locked to the window
     this._listener = e => this.getEvent(e); // to store the listener for removal
@@ -91,6 +92,7 @@ class InputManager extends createjs.EventDispatcher {
           this.keys.mouse1 = this.keys.mouse2 = false;
           break;
         }
+        this.mousePos = $V([ e.clientX, e.clientY ]);
         switch (e.button) {
           case 0:
             this.keys.mouse1 = true;
@@ -143,6 +145,7 @@ class InputManager extends createjs.EventDispatcher {
         break;
       case "mousemove" :
         if (!this.enabledListeners[e.type]) break;
+        this.mousePos = $V([ e.clientX, e.clientY ]);
         if (document.pointerLockElement) {
           // custom mouse move if the pointer is locked
           custEvent.type = "lockedmousemove";

@@ -48,4 +48,12 @@ class Entity extends createjs.Shape {
     }
   }
 
+  /**
+   * Kills and cleans up the entity
+   * @param {Bool} playerKill : true if the entity was killed by a player
+   */
+  die (playerKill = false) {
+    game.removeChild(this);
+  }
+
 }

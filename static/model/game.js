@@ -34,18 +34,26 @@ class Game extends createjs.Stage {
    */
   setHandlers () {
     createjs.Ticker.timingMode = createjs.Ticker.TIMEOUT ;
-    createjs.Ticker.framerate = 30;
+    createjs.Ticker.framerate = 60;
     createjs.Ticker.on("tick", this.update, this);
+
+    input.enableMouseMouve();
 
     this.on("nettick", this.netupdate, this);
 
-    // only create and add player when we know the socket id
+    this.on("firebullet", e => {
+      this.socket.emit("firebullet", e.data);
+    });
+
     this.socket = io(location.origin);
+
+    // only create and add player when we know the socket id
     this.socket.on("connect", () => {
       this.player = new Player(this.socket.id);
       this.addChild(this.player);
       this.lastnetupdate = performance.now();
     });
+
     this.socket.on("update", data => {
       // update payload
       for (var p in data.players) {
@@ -53,8 +61,15 @@ class Game extends createjs.Stage {
         this.entities[p].moveTo($V(data.players[p].position), data.players[p].speed);
       }
     });
+
+    this.socket.on("firebullet", data => {
+      this.addChild(new Bullet(
+        $V(data.position), $V(data.direction), data.speed, data.id
+      ));
+    });
+
     this.socket.on("playerleave", data => {
-      this.entities[data.id] && this.removeChild(this.entities[data.id]);
+      this.entities[data.id] && this.entities[data.id].die();
       console.log("left " + data.id);
     });
 

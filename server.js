@@ -51,6 +51,10 @@ io.on('connection', function (socket) {
     console.log("A fucker left : " + socket.id + " (" + Object.keys(players).length + " players left)");
   });
 
+  socket.on("firebullet", data => {
+    socket.to("players").emit("firebullet", data);
+  });
+
   socket.on("update", data => {
     var npos = $V(data.player.position);
     if (npos.distanceFrom(socket.position) > 0) {
