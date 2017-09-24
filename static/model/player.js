@@ -11,6 +11,8 @@ class Player extends Entity {
     this.fireRate = 3;
     this.time     = 0;
 
+    this.hitbox.r = this.radius;
+
     this.graphics.c().f("#E55").s("#EEE").dc(0,0,this.radius);
   }
 
@@ -18,7 +20,7 @@ class Player extends Entity {
    * @param {eventdata} e
    */
   update (e) {
-    var oldpos = this.position.dup();
+    const oldpos = this.position.dup();
     var pos = this.position.add(input.direction.x(this.speed * e.sdelta));
     pos.setElements([
       pos.e(1).clamp(-window.innerWidth/2, window.innerWidth/2),
@@ -29,6 +31,8 @@ class Player extends Entity {
     pos = pos.add($V([window.innerWidth/2, window.innerHeight/2]));
     this.x = pos.e(1);
     this.y = pos.e(2);
+
+    this.hitbox.pos = this.position.toSAT();
 
     this.time += e.delta;
     if (input.keys.mouse1 && this.time >= 1000 / this.fireRate) {
@@ -41,10 +45,10 @@ class Player extends Entity {
    * Fires a Bullet
    */
   fire () {
-    var direction = input.mousePos.subtract(this.position.add($V([window.innerWidth/2, window.innerHeight/2])));
-    var bullet = new Bullet(this.position.dup(), direction, 1200);
+    const direction = input.mousePos.subtract(this.position.add($V([window.innerWidth/2, window.innerHeight/2]))).toUnitVector();
+    const bullet = new Bullet(this.position.add(direction.x(this.radius + 2)), direction, 1200);
     game.addChild(bullet);
-    
+
     var e = new createjs.Event("firebullet");
     e.data = {
       id: bullet.id,

@@ -11,6 +11,7 @@ class Entity extends createjs.Shape {
     this.radius   = 10;
     this.speed    = 0;
     this.isEntity = true;
+    this.hitbox   = new SAT.Circle(new SAT.V(), this.radius);
 
     this.graphics.c().f("#555").s("#EEE").dc(0,0,this.radius);
     this.on("tick", this.update, this);
@@ -30,6 +31,7 @@ class Entity extends createjs.Shape {
     this.set({
       x: pos.e(1), y: pos.e(2)
     });
+    this.hitbox.pos = this.realpos.toSAT();
   }
 
   /**

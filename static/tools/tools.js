@@ -70,3 +70,10 @@ function hexToRgbA(hex, alpha){
         return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
     }
 }
+
+/**
+ * Transform a sylvester vector into a SAT Vector
+ */
+Vector.prototype.toSAT = function () {
+  return new SAT.V(this.e(1), this.e(2));
+};
