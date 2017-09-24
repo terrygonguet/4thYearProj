@@ -19,7 +19,7 @@ class Background extends createjs.Container {
     for (var i = -halfW; i <= halfW; i++) {
       for (var j = -halfH; j <= halfH; j++) {
         var sprite = new createjs.Shape();
-        sprite.graphics.s("#EEE").f("#111").r(0,0,50,50);
+        sprite.graphics.s("#babf2f").f("#111").r(0,0,50,50);
         sprite.set({
           x: i*50, y: j*50
         });

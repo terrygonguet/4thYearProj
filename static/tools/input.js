@@ -36,7 +36,9 @@ class InputManager extends createjs.EventDispatcher {
       up      : ["z"],
       down    : ["s"],
       left    : ["q"],
-      right   : ["d"]
+      right   : ["d"],
+      pause   : ["p"],
+      qwerty  : ["k"]
     };
 
     // native events listeners
@@ -48,7 +50,7 @@ class InputManager extends createjs.EventDispatcher {
     window.addEventListener("blur", this._listener, false);
     $("#game").on("contextmenu", null, null, false); // to prevent right click menu
     // document.addEventListener("pointerlockchange",  () => {});
-    createjs.Ticker.on("tick", this.update, this);
+    createjs.Ticker.on("tick", e => !e.paused && this.update(e), this);
   }
 
   /**

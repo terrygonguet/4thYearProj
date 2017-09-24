@@ -15,7 +15,8 @@ function update (delta) {
   for (var player in players) {
     var smthToSend = false;
     var data = {
-      players: {}
+      players: {},
+      time: Date.now()
     };
     for (var p in players) {
       if (p !== player && players[p].hasMoved) {

@@ -16,17 +16,22 @@ class Game extends createjs.Stage {
     this.socket       = null;
     this.txtFps       = new QuickText({ x: 10, y: 10 });
     this.txtrendertime= new QuickText({ x: 10, y: 30 });
+    this.txtping      = new QuickText({ x: 10, y: 50 });
+    this.txtqwerty    = new QuickText({ x: 10, y: 70, text: "press K to switch to QWERTY, P to pause" });
     this.entities     = {};
     this.player       = null;
     this.background   = new Background();
     this.netticktime  = 0;
     this.netrate      = 30;
+    this.renderVals   = [];
 
     this.setHandlers();
 
     this.addChild(this.background);
     this.addChild(this.txtFps);
     this.addChild(this.txtrendertime);
+    this.addChild(this.txtping);
+    this.addChild(this.txtqwerty);
   }
 
   /**
@@ -55,6 +60,7 @@ class Game extends createjs.Stage {
     });
 
     this.socket.on("update", data => {
+      this.txtping.text = "ping " + (Date.now() - data.time);
       // update payload
       for (var p in data.players) {
         !this.entities[p] && this.addChild(new Entity(p));
@@ -72,6 +78,9 @@ class Game extends createjs.Stage {
       this.entities[data.id] && this.entities[data.id].die();
       console.log("left " + data.id);
     });
+
+    input.on("pause", () => createjs.Ticker.paused = !createjs.Ticker.paused);
+    input.on("qwerty", () => input.bindings = { up:"w", down:"s", left:"a", right:"d" });
 
   }
 
@@ -92,7 +101,9 @@ class Game extends createjs.Stage {
     this.rendertime = 0;
     super.update(e);
     game.rendertime += (performance.now() - time);
-    this.txtrendertime.text = (debug ? "render time " + this.rendertime.toPrecision(3) + " ms" : "");
+    this.renderVals.push(game.rendertime);
+    if (this.renderVals.length > 100) this.renderVals.shift();
+    this.txtrendertime.text = (debug ? "render time " + (this.renderVals.reduce((a,b)=>a+b, 0)/100).toPrecision(3) + " ms" : "");
   }
 
   /**
