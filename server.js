@@ -13,21 +13,21 @@ setTimeout(function tick(old) {
 
 function update (delta) {
   for (var player in players) {
-    var smthToSend = false;
     var data = {
       players: {},
-      time: Date.now()
+      time: Date.now(),
+      playerscore: players[player].score
     };
     for (var p in players) {
-      if (p !== player && players[p].hasMoved) {
+      if (p !== player) {
         data.players[p] = {
           position: players[p].position.elements,
-          speed: players[p].speed
+          speed: players[p].speed,
+          score: players[p].score
         };
-        smthToSend = true;
       }
     }
-    Object.keys(players).length > 1 && smthToSend && players[player].emit("update", data);
+    Object.keys(players).length > 1 && players[player].emit("update", data);
   }
 }
 
@@ -45,6 +45,7 @@ io.on('connection', function (socket) {
   players[socket.id] = socket;
   console.log("A fucker joined : " + socket.id + " (" + Object.keys(players).length + " players in)");
   socket.position = $V([0,0]);
+  socket.score    = 0;
 
   socket.on("disconnect", () => {
     socket.to("players").emit("playerleave", { id: socket.id });
@@ -56,15 +57,13 @@ io.on('connection', function (socket) {
     socket.to("players").emit("firebullet", data);
   });
 
+  socket.on("playerhit", data => {
+    players[data.shooter] && players[data.shooter].score++;
+  });
+
   socket.on("update", (data, ack) => {
-    var npos = $V(data.player.position);
-    if (npos.distanceFrom(socket.position) > 0) {
-      socket.position = npos;
-      socket.speed = data.player.speed;
-      socket.hasMoved = true;
-    } else {
-      socket.hasMoved = false;
-    }
+    socket.position = $V(data.player.position);
+    socket.speed = data.player.speed;
     ack();
   });
 

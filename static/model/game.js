@@ -24,6 +24,7 @@ class Game extends createjs.Stage {
     this.netticktime  = 0;
     this.netrate      = 30;
     this.renderVals   = [];
+    this.screencenter = $V([window.innerWidth/2, window.innerHeight/2]);
 
     this.setHandlers();
 
@@ -50,26 +51,37 @@ class Game extends createjs.Stage {
       this.socket.emit("firebullet", e.data);
     });
 
+    this.on("playerhit", e => {
+      this.socket.emit("playerhit", e.data);
+    });
+
     this.socket = io(location.origin);
 
     // only create and add player when we know the socket id
     this.socket.on("connect", () => {
-      this.player = new Player(this.socket.id);
-      this.addChild(this.player);
-      this.lastnetupdate = performance.now();
+      if (!this.player) {
+        this.player = new Player(this.socket.id);
+        this.addChild(this.player);
+      } else if (this.player.id !== this.socket.id) {
+        this.player.die();
+        this.player = new Player(this.socket.id);
+        this.addChild(this.player);
+      }
     });
 
     this.socket.on("update", data => {
       // update payload
+      this.player.txtPoints.text = data.playerscore;
       for (var p in data.players) {
-        !this.entities[p] && this.addChild(new Entity(p));
+        !this.entities[p] && this.addChild(new OnlinePlayer(p));
         this.entities[p].moveTo($V(data.players[p].position), data.players[p].speed);
+        this.entities[p].txtPoints.text = data.players[p].score;
       }
     });
 
     this.socket.on("firebullet", data => {
       this.addChild(new Bullet(
-        $V(data.position), $V(data.direction), data.speed, data.id
+        $V(data.position), $V(data.direction), data.speed, data.playerid
       ));
     });
 
