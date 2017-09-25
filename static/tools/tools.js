@@ -47,6 +47,13 @@ Math.randFloat = function (min, max) {
   return Math.random() * (max - min) + min;
 }
 
+/**
+ * @returns {String} a random RGB CSS value
+ */
+Math.randomRGB = function () {
+  return "rgb(" + Math.floor(Math.random() * 255) + ", " + Math.floor(Math.random() * 255) + ", " + Math.floor(Math.random() * 255) + ")";
+}
+
 // http://codereview.stackexchange.com/questions/83717/filter-out-duplicates-from-an-array-and-return-only-unique-value
 function unique (xs) {
   var seen = {};
