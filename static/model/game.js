@@ -118,7 +118,7 @@ class Game extends createjs.Stage {
     if (this.renderVals.length > 100) this.renderVals.shift(); // render values smoother
     this.txtrendertime.text = (debug ? "render time " + (this.renderVals.reduce((a,b)=>a+b, 0)/100).toPrecision(3) + " ms" : "");
     if (this.pingvals.length > 100) this.pingvals.shift(); // ping values smoother
-    this.txtping.text = (debug ? "ping " + (this.pingvals.reduce((a,b)=>a+b, 0)/100).toPrecision(1) : "");
+    this.txtping.text = (debug ? "ping " + Math.round(this.pingvals.reduce((a,b)=>a+b, 0)/100) : "");
   }
 
   /**
