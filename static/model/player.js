@@ -23,20 +23,28 @@ class Player extends Entity {
    * @param {eventdata} e
    */
   update (e) {
-    const oldpos = this.position.dup();
-    var pos = this.position.add(input.direction.x(this.speed * e.sdelta));
-    pos.setElements([
-      pos.e(1).clamp(-window.innerWidth/2, window.innerWidth/2),
-      pos.e(2).clamp(-window.innerHeight/2, window.innerHeight/2)
-    ]);
-    this.position = pos.dup();
-    this.hasMoved = !this.position.eql(oldpos); // to reduce necessary updates
-    pos = pos.add(game.screencenter.dup());
+    if (input.direction.modulus() !== 0) {
+      this.hasMoved = true; // to reduce necessary updates
+      const oldpos = this.position.dup();
+      const movement = input.direction.x(this.speed * e.sdelta);
+      this.position = $V(this.position.add(movement).elements.map(a => a.clamp(-game.dimension/2,game.dimension/2)));
+      const realpos = this.position.add(game.background.position);
+      if (realpos.modulus() > 0.3 * window.innerHeight) {
+        const realmovement = this.position.subtract(oldpos);
+        game.background.position = realpos.subtract(this.position).subtract(realmovement);
+      } else {
+        this.realpos = realpos;
+      }
+    } else {
+      this.hasMoved = false; // to reduce necessary updates
+    }
+
+    const pos = this.realpos.add(game.screencenter);
 
     this.set({ x: pos.e(1), y: pos.e(2) });
     this.txtPoints.set({ x: pos.e(1), y: pos.e(2) });
 
-    this.hitbox.pos = this.position.toSAT();
+    this.hitbox.pos = this.realpos.toSAT();
 
     this.time += e.delta;
     if (input.keys.mouse1 && this.time >= 1000 / this.fireRate) {
@@ -49,7 +57,8 @@ class Player extends Entity {
    * Fires a Bullet
    */
   fire () {
-    const direction = input.mousePos.subtract(this.position.add(game.screencenter.dup())).toUnitVector();
+    const realmousePos = input.mousePos.subtract(game.background.position).subtract(game.screencenter);
+    const direction = realmousePos.subtract(this.position).toUnitVector();
     const bullet = new Bullet(this.position.add(direction.x(this.radius + 2)), direction, 1200, this.id);
     game.addChild(bullet);
 

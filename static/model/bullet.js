@@ -13,7 +13,7 @@ class Bullet extends createjs.Shape {
     // TODO : hitbox maybe useless for bullet
     this.hitbox    = new SAT.Circle(this.position.toSAT(), this.radius);
 
-    var pos = this.position.add(game.screencenter.dup());
+    var pos = this.position.add(game.background.position).add(game.screencenter);
     this.set({ x: pos.e(1), y: pos.e(2) });
 
     this.graphics.c().f("#EEE").dc(0,0,this.radius);
@@ -21,6 +21,7 @@ class Bullet extends createjs.Shape {
   }
 
   update (e) {
+    // So that the bullet doesn't dissapear before visually colliding
     if (this.toDie) {
       this.die();
       return;
@@ -55,10 +56,10 @@ class Bullet extends createjs.Shape {
     }
 
     // display
-    const pos = this.position.add($V([window.innerWidth/2, window.innerHeight/2]));
+    const pos = this.position.add(game.background.position).add(game.screencenter);
     this.set({ x: pos.e(1), y: pos.e(2) });
     // destruction
-    if (Math.abs(this.x) > window.innerWidth || Math.abs(this.y) > window.innerHeight)
+    if (Math.abs(this.position.e(1)) > game.dimension/2 || Math.abs(this.position.e(2)) > game.dimension/2)
       this.die();
   }
 

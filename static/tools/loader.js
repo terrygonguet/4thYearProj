@@ -5,7 +5,7 @@
  */
 var game;
 const queue = new createjs.LoadQueue();
-const debug = true;
+var debug = true;
 
 (function () {
   queue.on("complete", handleComplete, this);

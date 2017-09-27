@@ -17,13 +17,15 @@ class Game extends createjs.Stage {
     this.txtFps       = new QuickText({ x: 10, y: 10 });
     this.txtrendertime= new QuickText({ x: 10, y: 30 });
     this.txtping      = new QuickText({ x: 10, y: 50 });
-    this.txtqwerty    = new QuickText({ x: 10, y: 70, text: "press K to switch to QWERTY, P to pause" });
+    this.txtqwerty    = new QuickText({ x: 10, y: 70, text: debug ? "press K to switch to QWERTY, P to pause" : "" });
     this.entities     = {};
     this.player       = null;
-    this.background   = new Background();
+    this.dimension    = 5000;
+    this.background   = new Background("sea", $V([this.dimension, this.dimension]));
     this.netticktime  = 0;
     this.netrate      = 30;
     this.renderVals   = [];
+    this.pingvals     = [];
     this.screencenter = $V([window.innerWidth/2, window.innerHeight/2]);
 
     this.setHandlers();
@@ -113,8 +115,10 @@ class Game extends createjs.Stage {
     super.update(e);
     game.rendertime += (performance.now() - time);
     this.renderVals.push(game.rendertime);
-    if (this.renderVals.length > 100) this.renderVals.shift();
+    if (this.renderVals.length > 100) this.renderVals.shift(); // render values smoother
     this.txtrendertime.text = (debug ? "render time " + (this.renderVals.reduce((a,b)=>a+b, 0)/100).toPrecision(3) + " ms" : "");
+    if (this.pingvals.length > 100) this.pingvals.shift(); // ping values smoother
+    this.txtping.text = (debug ? "ping " + (this.pingvals.reduce((a,b)=>a+b, 0)/100).toPrecision(1) : "");
   }
 
   /**
@@ -133,7 +137,7 @@ class Game extends createjs.Stage {
       smthToSend = true;
     }
     const now = Date.now();
-    smthToSend && this.socket.emit("update", data, () => this.txtping.text = "ping " + (Date.now() - now));
+    smthToSend && this.socket.emit("update", data, () => this.pingvals.push(Date.now() - now));
   }
 
   addChild (child) {
