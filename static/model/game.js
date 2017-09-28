@@ -94,6 +94,7 @@ class Game extends createjs.Stage {
 
     input.on("pause", () => createjs.Ticker.paused = !createjs.Ticker.paused);
     input.on("qwerty", () => input.bindings = { up:"w", down:"s", left:"a", right:"d" });
+    input.on("debug", () => debug = !debug);
 
   }
 

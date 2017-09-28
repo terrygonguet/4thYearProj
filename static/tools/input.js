@@ -33,12 +33,13 @@ class InputManager extends createjs.EventDispatcher {
     // changeable bindings
     // this.bindings["bindingname"] = ["keyid1", "keyid2", ...]
     this.bindings = {
-      up      : ["z"],
-      down    : ["s"],
-      left    : ["q"],
-      right   : ["d"],
+      up      : ["z", "ArrowUp"],
+      down    : ["s", "ArrowDown"],
+      left    : ["q", "ArrowLeft"],
+      right   : ["d", "ArrowRight"],
       pause   : ["p"],
-      qwerty  : ["k"]
+      qwerty  : ["k"],
+      debug   : ["o"]
     };
 
     // native events listeners
