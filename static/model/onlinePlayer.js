@@ -11,7 +11,8 @@ class OnlinePlayer extends Player {
     } else
       this.realpos = this.position;
 
-    const pos = this.realpos.add($V([window.innerWidth/2, window.innerHeight/2]));
+    const pos = this.position.add(game.background.position).add(game.screencenter);
+
     this.set({ x: pos.e(1), y: pos.e(2) });
     this.txtPoints.set({ x: pos.e(1), y: pos.e(2) });
 

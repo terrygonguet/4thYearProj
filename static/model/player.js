@@ -10,7 +10,7 @@ class Player extends Entity {
     this.hasMoved = false;
     this.fireRate = 3;
     this.time     = 0;
-    this.txtPoints= new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#999" });
+    this.txtPoints= new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#111" });
 
     this.hitbox.r = this.radius;
 

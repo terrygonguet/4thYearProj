@@ -39,6 +39,7 @@ class Bullet extends createjs.Shape {
 
     const rect = new SAT.Polygon(oldpos.toSAT(), points);
     for (var entid in game.entities) {
+      console.log(this.playerid);
       if (game.entities.hasOwnProperty(entid) &&
           this.playerid !== entid &&
           SAT.testPolygonCircle(rect, game.entities[entid].hitbox))
