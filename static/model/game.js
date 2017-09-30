@@ -41,7 +41,7 @@ class Game extends createjs.Stage {
    * To separate the handlers from the constructor
    */
   setHandlers () {
-    createjs.Ticker.timingMode = createjs.Ticker.TIMEOUT ;
+    createjs.Ticker.timingMode = createjs.Ticker.RAF ;
     createjs.Ticker.framerate = 60;
     createjs.Ticker.on("tick", this.update, this);
 

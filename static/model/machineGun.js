@@ -26,8 +26,8 @@ class MachineGun extends createjs.EventDispatcher {
       e.data = {
         position: player.position.elements,
         direction: direction.elements,
-        speed: this.speed,
-        playerid: player.playerid
+        speed: this.bulletSpeed,
+        playerid: player.id
       };
       game.dispatchEvent(e);
     }
