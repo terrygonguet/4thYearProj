@@ -16,7 +16,7 @@ class OnlinePlayer extends Player {
     this.set({ x: pos.e(1), y: pos.e(2) });
     this.txtPoints.set({ x: pos.e(1), y: pos.e(2) });
 
-    this.hitbox.pos = this.realpos.toSAT();
+    this.hitbox.pos = this.position.toSAT();
   }
 
 }

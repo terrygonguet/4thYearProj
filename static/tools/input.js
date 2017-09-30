@@ -37,6 +37,7 @@ class InputManager extends createjs.EventDispatcher {
       down    : ["s", "ArrowDown"],
       left    : ["q", "ArrowLeft"],
       right   : ["d", "ArrowRight"],
+      reload  : ["r"],
       pause   : ["p"],
       qwerty  : ["k"],
       debug   : ["o"]
