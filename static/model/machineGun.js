@@ -8,6 +8,7 @@ class MachineGun extends createjs.EventDispatcher {
     this.bulletSpeed = 5000; // pixel/second
     this.fireRate    = 10; // bullets/second
     this.time        = 0; // ms
+    this.spread      = 0.05; // radians
     this.isReloading = false;
 
     this.ammo        = this.maxAmmo;
@@ -18,7 +19,8 @@ class MachineGun extends createjs.EventDispatcher {
     if (!this.isReloading && this.ammo > 0 && this.time >= 1000 / this.fireRate) {
       this.ammo--;
       this.time = 0;
-      const b = new Bullet(player.position, direction, this.bulletSpeed, player.id);
+      const realdir = direction.rotate(Math.randFloat(-this.spread/2, this.spread/2), Vector.Zero(2));
+      const b = new Bullet(player.position, realdir, this.bulletSpeed, player.id);
       game.addChild(b);
       this.dispatchEvent(new createjs.Event("fire"));
 
