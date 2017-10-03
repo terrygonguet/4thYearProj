@@ -19,6 +19,7 @@ class Game extends createjs.Stage {
     this.txtping      = new QuickText({ x: 10, y: 50 });
     this.txtqwerty    = new QuickText({ x: 10, y: 70, text: debug ? "press K to switch to QWERTY, P to pause" : "" });
     this.entities     = {};
+    this.collidables  = [];
     this.player       = null;
     this.dimension    = 5000;
     this.background   = new Background("sea", $V([this.dimension, this.dimension]));
@@ -69,6 +70,9 @@ class Game extends createjs.Stage {
         this.player = new Player(this.socket.id);
         this.addChild(this.player);
       }
+
+      const b = new Block("b1", $V([100, 100]), $V([50, 50]), Math.PI / 4);
+      game.addChild(b);
     });
 
     this.socket.on("update", data => {
@@ -151,12 +155,17 @@ class Game extends createjs.Stage {
       if (this.entities[child.id]) return;
       this.entities[child.id] = child;
     }
-    super.addChild(child);
+    if (child.isCollidable && this.collidables.indexOf(child) === -1)
+      this.collidables.push(child);
+
+    if (child.isBullet) super.addChildAt(child, this.getChildIndex(this.player));
+    else super.addChild(child);
   }
 
   removeChild (child) {
     super.removeChild(child);
     if (child.isEntity) delete this.entities[child.id];
+    if (child.isCollidable) this.collidables.splice(this.collidables.indexOf(child), 1);
   }
 
 }

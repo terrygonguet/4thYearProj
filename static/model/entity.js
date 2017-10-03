@@ -5,13 +5,14 @@ class Entity extends createjs.Shape {
    */
   constructor(id) {
     super();
-    this.id       = id;
-    this.position = $V([0,0]);
-    this.realpos  = $V([0,0]);
-    this.radius   = 10;
-    this.speed    = 0;
-    this.isEntity = true;
-    this.hitbox   = new SAT.Circle(new SAT.V(), this.radius);
+    this.id           = id;
+    this.position     = $V([0,0]);
+    this.realpos      = $V([0,0]);
+    this.radius       = 10;
+    this.speed        = 0;
+    this.isEntity     = true;
+    this.isCollidable = true;
+    this.hitbox       = new SAT.Circle(new SAT.V(), this.radius);
 
     this.graphics.c().f("#555").s("#EEE").dc(0,0,this.radius);
     this.on("tick", e => !e.paused && this.update(e), this);

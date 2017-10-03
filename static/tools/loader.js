@@ -45,7 +45,8 @@ var debug = true;
     {id: "Player", src:"model/player.js"},
     {id: "OnlinePlayer", src:"model/onlinePlayer.js"},
     {id: "Bullet", src:"model/bullet.js"},
-    {id: "machineGun", src:"model/machineGun.js"},
+    {id: "MachineGun", src:"model/machineGun.js"},
+    {id: "Block", src:"model/block.js"},
 
     {id: "QuickText", src:"model/quickText.js"}
 
