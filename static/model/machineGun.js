@@ -5,8 +5,8 @@ class MachineGun extends createjs.EventDispatcher {
 
     this.maxAmmo     = 31;
     this.reloadTime  = 1200; // ms
-    this.bulletSpeed = 2500; // pixel/second
-    this.fireRate    = 7; // bullets/second
+    this.bulletSpeed = 5000; // pixel/second
+    this.fireRate    = 10; // bullets/second
     this.time        = 0; // ms
     this.isReloading = false;
 

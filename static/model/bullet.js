@@ -6,44 +6,33 @@ class Bullet extends createjs.Shape {
     this.position  = position;
     this.direction = direction.toUnitVector(); // to be sure
     this.speed     = speed;
-    this.radius    = 4;
     this.isBullet  = true;
-    this.toDie     = false;
+    this.color     = "#EE4";
+    this.thickness = 3;
 
-    // TODO : hitbox maybe useless for bullet
-    this.hitbox    = new SAT.Circle(this.position.toSAT(), this.radius);
+    this.hitbox    = new SAT.Polygon(this.position.toSAT());
 
     var pos = this.position.add(game.background.position).add(game.screencenter);
     this.set({ x: pos.e(1), y: pos.e(2) });
 
-    this.graphics.c().f("#EEE").dc(0,0,this.radius);
     this.on("tick", e => !e.paused && this.update(e), this);
   }
 
   update (e) {
-    // So that the bullet doesn't dissapear before visually colliding
-    if (this.toDie) {
-      this.die();
-      return;
-    }
-
+    const movement = this.direction.x(this.speed * e.sdelta);
     const oldpos = this.position.dup();
-    this.position = this.position.add(this.direction.x(this.speed * e.sdelta));
-    const movement = this.position.subtract(oldpos);
-    const points = [
-      this.direction.rotate(Math.PI/2, Vector.Zero(2).x(this.radius)).toSAT(),
-      this.direction.rotate(-Math.PI/2, Vector.Zero(2).x(this.radius)).toSAT(),
-      movement.add(this.direction.rotate(-Math.PI/2, Vector.Zero(2).x(this.radius))).toSAT(),
-      movement.add(this.direction.rotate(Math.PI/2, Vector.Zero(2).x(this.radius))).toSAT(),
-    ];
+    this.hitbox.pos = this.position.toSAT();
+    this.position = this.position.add(movement);
 
-    const rect = new SAT.Polygon(oldpos.toSAT(), points);
+    this.graphics.c().s(this.color).ss(this.thickness).mt(0,0).lt(movement.e(1), movement.e(2));
+
+    this.hitbox.setPoints([ $V([0,0]).toSAT(), movement.toSAT() ]);
     for (var entid in game.entities) {
       if (game.entities.hasOwnProperty(entid) &&
           this.playerid !== entid &&
-          SAT.testPolygonCircle(rect, game.entities[entid].hitbox))
+          SAT.testPolygonCircle(this.hitbox, game.entities[entid].hitbox))
       {
-        this.toDie = true;
+        this.die();
         if (game.player.id === this.playerid) {
           const evt = new createjs.Event("playerhit");
           evt.data = {
