@@ -1,5 +1,11 @@
 class Bullet extends createjs.Shape {
 
+  /**
+   * @param {Vector} position : the position (in the center of the block)
+   * @param {Vector} direction : the direction of the bullet, will be normalized
+   * @param {Number} speed : speed in unit/s
+   * @param {String} playerid : ID of the player that fired the bullet
+   */
   constructor(position, direction, speed, playerid) {
     super();
     this.playerid  = playerid;
@@ -33,23 +39,25 @@ class Bullet extends createjs.Shape {
     this.hitbox.pos = this.position.toSAT();
     this.position = this.position.add(movement);
 
-
     this.hitbox.setPoints([ $V([0,0]).toSAT(), movement.toSAT() ]);
     for (var collidable of game.collidables) {
       const test = (collidable.hitbox instanceof SAT.Circle ? SAT.testPolygonCircle : SAT.testPolygonPolygon);
       if (this.playerid !== collidable.id &&
           test(this.hitbox, collidable.hitbox))
       {
-        // this.die();
         this.toDie = true;
-        if (game.player.id === this.playerid) {
+        if (collidable.isOnlinePlayer &&
+          game.player.id === this.playerid)
+        {
           const evt = new createjs.Event("playerhit");
           evt.data = {
             target: collidable.id,
             shooter: this.playerid
           };
           game.dispatchEvent(evt);
+          createjs.Sound.play("Ping");
         }
+        break;
       }
     }
 

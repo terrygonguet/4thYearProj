@@ -2,6 +2,7 @@ class OnlinePlayer extends Player {
 
   constructor(id) {
     super(id);
+    this.isOnlinePlayer = true;
   }
 
   /**

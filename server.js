@@ -31,7 +31,16 @@ function update (delta) {
   }
 }
 
+const randInt = function (min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 const players = {};
+const blocks = [];
+
+for (var i = 0; i < 50; i++) {
+  blocks.push({ position: [ randInt(-1000, 1000), randInt(-1000, 1000)  ], dimension: [ randInt(20, 200), randInt(20, 200) ], angle: Math.random() * Math.PI * 2, id: "b" + i })
+}
 
 server.listen(80, function () {
   console.log("Server started");
@@ -46,6 +55,7 @@ io.on('connection', function (socket) {
   console.log("A fucker joined : " + socket.id + " (" + Object.keys(players).length + " players in)");
   socket.position = $V([0,0]);
   socket.score    = 0;
+  socket.emit("createblocks", blocks);
 
   socket.on("disconnect", () => {
     socket.to("players").emit("playerleave", { id: socket.id });
@@ -59,6 +69,7 @@ io.on('connection', function (socket) {
 
   socket.on("playerhit", data => {
     players[data.shooter] && players[data.shooter].score++;
+    players[data.target] && players[data.target].emit("gethit");
   });
 
   socket.on("update", (data, ack) => {

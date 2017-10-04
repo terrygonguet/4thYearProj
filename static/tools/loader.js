@@ -53,7 +53,9 @@ var debug = true;
     // Sprites ----------------------------------------
 
     // Sounds ----------------------------------------
-    {id: "Pew", src:"resources/sounds/pew.wav"}
+    {id: "Pew", src:"resources/sounds/pew.wav"},
+    {id: "Ping", src:"resources/sounds/ping.wav"},
+    {id: "Kick", src:"resources/sounds/kick.wav"}
 
   ];
   queue.loadManifest(queue.manifest);

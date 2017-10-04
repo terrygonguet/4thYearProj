@@ -12,6 +12,7 @@ class Player extends Entity {
     this.txtPoints= new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#111" });
     this.weapon   = new MachineGun();
     this.reloadBar= new createjs.Shape();
+    this.isplayer = true;
 
     this.hitbox.r = this.radius;
 

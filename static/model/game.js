@@ -49,6 +49,7 @@ class Game extends createjs.Stage {
 
     input.enableMouseMouve();
 
+    // Events stuff ----------------------------------------------------------------------
     this.on("nettick", this.netupdate, this);
 
     this.on("firebullet", e => {
@@ -59,6 +60,8 @@ class Game extends createjs.Stage {
       this.socket.emit("playerhit", e.data);
     });
 
+
+    // Socket stuff ----------------------------------------------------------------------
     this.socket = io(location.origin);
 
     // only create and add player when we know the socket id
@@ -71,9 +74,12 @@ class Game extends createjs.Stage {
         this.player = new Player(this.socket.id);
         this.addChild(this.player);
       }
+    });
 
-      const b = new Block("b1", $V([100, 100]), $V([50, 50]), Math.PI / 4);
-      game.addChild(b);
+    this.socket.on("createblocks", data => {
+      for (var b of data) {
+        game.addChild(new Block(b.id, $V(b.position), $V(b.dimension), b.angle));
+      }
     });
 
     this.socket.on("update", data => {
@@ -92,11 +98,16 @@ class Game extends createjs.Stage {
       ));
     });
 
+    this.socket.on("gethit", () => {
+      createjs.Sound.play("Kick");
+    });
+
     this.socket.on("playerleave", data => {
       this.entities[data.id] && this.entities[data.id].die();
       console.log("left " + data.id);
     });
 
+    // input stuff -------------------------------------------------------------------------------
     input.on("pause", () => createjs.Ticker.paused = !createjs.Ticker.paused);
     input.on("qwerty", () => {
       input.bindings.up[0] = "w";
@@ -123,7 +134,7 @@ class Game extends createjs.Stage {
     }
     // more perf monitoring
     this.rendertime = 0;
-    this.children.forEach(c => c.update && c.update(e));
+    !e.paused && this.children.forEach(c => c.update && c.update(e));
     super.update(e);
     game.rendertime += (performance.now() - time);
     this.renderVals.push(game.rendertime);
