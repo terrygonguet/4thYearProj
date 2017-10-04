@@ -45,6 +45,7 @@ class Game extends createjs.Stage {
     createjs.Ticker.timingMode = createjs.Ticker.RAF ;
     createjs.Ticker.framerate = 60;
     createjs.Ticker.on("tick", this.update, this);
+    createjs.Sound.volume = 0.05;
 
     input.enableMouseMouve();
 

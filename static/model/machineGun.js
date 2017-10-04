@@ -23,6 +23,7 @@ class MachineGun extends createjs.EventDispatcher {
       const b = new Bullet(player.position, realdir, this.bulletSpeed, player.id);
       game.addChild(b);
       this.dispatchEvent(new createjs.Event("fire"));
+      createjs.Sound.play("Pew");
 
       const e = new createjs.Event("firebullet");
       e.data = {

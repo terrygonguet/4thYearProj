@@ -48,11 +48,12 @@ var debug = true;
     {id: "MachineGun", src:"model/machineGun.js"},
     {id: "Block", src:"model/block.js"},
 
-    {id: "QuickText", src:"model/quickText.js"}
+    {id: "QuickText", src:"model/quickText.js"},
 
     // Sprites ----------------------------------------
 
     // Sounds ----------------------------------------
+    {id: "Pew", src:"resources/sounds/pew.wav"}
 
   ];
   queue.loadManifest(queue.manifest);
