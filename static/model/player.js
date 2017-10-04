@@ -40,6 +40,19 @@ class Player extends Entity {
       const oldpos = this.position.dup();
       const movement = input.direction.x(this.speed * e.sdelta);
       this.position = $V(this.position.add(movement).elements.map(a => a.clamp(-game.dimension/2,game.dimension/2)));
+
+      this.hitbox.pos = this.position.toSAT();
+      for (var collidable of game.collidables) {
+        if (this === collidable) continue;
+        const res = new SAT.Response();
+        const test = (collidable.hitbox instanceof SAT.Circle ? SAT.testCircleCircle : SAT.testCirclePolygon);
+        if (test(this.hitbox, collidable.hitbox, res)) {
+          this.position = this.position.subtract($V([res.overlapV.x, res.overlapV.y]));
+          this.hitbox.pos = this.position.toSAT();
+          break;
+        }
+      }
+
       const realpos = this.position.add(game.background.position);
       if (realpos.modulus() > 0.3 * window.innerHeight) {
         const realmovement = this.position.subtract(oldpos);
@@ -56,8 +69,6 @@ class Player extends Entity {
     this.set({ x: pos.e(1), y: pos.e(2) });
     this.txtPoints.set({ x: pos.e(1), y: pos.e(2) });
     this.reloadBar.set({ x: pos.e(1), y: pos.e(2) });
-
-    this.hitbox.pos = this.position.toSAT();
 
     this.weapon.update(e);
     input.keys.mouse1 && this.fire();

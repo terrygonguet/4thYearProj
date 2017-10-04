@@ -5,12 +5,12 @@
 class Game extends createjs.Stage {
 
   /**
-   * @param canvasName { String } ID of the <canvas> element to wrap
+   * @param {String} canvasName ID of the <canvas> element to wrap
    */
   constructor (canvasName) {
     super(canvasName);
     // createjs props
-    this.tickEnabled  = true;
+    this.tickEnabled  = false;
 
     // other props
     this.socket       = null;
@@ -122,6 +122,7 @@ class Game extends createjs.Stage {
     }
     // more perf monitoring
     this.rendertime = 0;
+    this.children.forEach(c => c.update && c.update(e));
     super.update(e);
     game.rendertime += (performance.now() - time);
     this.renderVals.push(game.rendertime);

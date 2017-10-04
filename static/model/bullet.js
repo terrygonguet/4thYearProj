@@ -19,6 +19,9 @@ class Bullet extends createjs.Shape {
     this.on("tick", e => !e.paused && this.update(e), this);
   }
 
+  /**
+   * @param {eventdata} e
+   */
   update (e) {
     if (this.toDie) {
       this.die();

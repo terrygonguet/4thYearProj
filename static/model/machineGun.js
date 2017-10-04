@@ -44,6 +44,9 @@ class MachineGun extends createjs.EventDispatcher {
     }
   }
 
+  /**
+   * @param {eventdata} e
+   */
   update(e) {
     this.time += e.delta;
     if (this.isReloading) {

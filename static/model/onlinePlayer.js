@@ -4,6 +4,9 @@ class OnlinePlayer extends Player {
     super(id);
   }
 
+  /**
+   * @param {eventdata} e
+   */
   update (e) {
     if (this.realpos.distanceFrom(this.position) >= this.speed * e.sdelta) {
       const direction = this.position.subtract(this.realpos).toUnitVector();

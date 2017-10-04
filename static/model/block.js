@@ -27,6 +27,9 @@ class Block extends createjs.Shape {
     this.on("tick", e => !e.paused && this.update(e));
   }
 
+  /**
+   * @param {eventdata} e
+   */
   update (e) {
     var pos = this.position.add(game.background.position).add(game.screencenter);
     this.set({ x: pos.e(1), y: pos.e(2) });
