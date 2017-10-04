@@ -15,6 +15,7 @@ class Block extends createjs.Shape {
     this.angle        = angle;
     this.isCollidable = true;
     this.hitbox       = null;
+    this.radius       = dimensions.max();
 
     // setup hitbox
     const points = [

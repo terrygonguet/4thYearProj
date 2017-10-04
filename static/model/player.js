@@ -44,7 +44,7 @@ class Player extends Entity {
 
       this.hitbox.pos = this.position.toSAT();
       for (var collidable of game.collidables) {
-        if (this === collidable) continue;
+        if (this === collidable || this.position.distanceFrom(collidable.position) > collidable.radius + this.radius) continue;
         const res = new SAT.Response();
         const test = (collidable.hitbox instanceof SAT.Circle ? SAT.testCircleCircle : SAT.testCirclePolygon);
         if (test(this.hitbox, collidable.hitbox, res)) {
