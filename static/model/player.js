@@ -50,7 +50,6 @@ class Player extends Entity {
         if (test(this.hitbox, collidable.hitbox, res)) {
           this.position = this.position.subtract($V([res.overlapV.x, res.overlapV.y]));
           this.hitbox.pos = this.position.toSAT();
-          break;
         }
       }
 

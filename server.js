@@ -38,8 +38,8 @@ const randInt = function (min, max) {
 const players = {};
 const blocks = [];
 
-for (var i = 0; i < 50; i++) {
-  blocks.push({ position: [ randInt(-1000, 1000), randInt(-1000, 1000)  ], dimension: [ randInt(20, 200), randInt(20, 200) ], angle: Math.random() * Math.PI * 2, id: "b" + i })
+for (var i = 0; i < 150; i++) {
+  blocks.push({ position: [ randInt(-2500, 2500), randInt(-2500, 2500) ], dimension: [ randInt(20, 200), randInt(20, 200) ], angle: Math.random() * Math.PI * 2, id: "b" + i })
 }
 
 server.listen(80, function () {
