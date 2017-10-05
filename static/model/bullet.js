@@ -16,6 +16,7 @@ class Bullet extends createjs.Shape {
     this.color     = "#EE4";
     this.thickness = 3;
     this.toDie     = false;
+    this.shadow    = new Neon("#E11", 15);
 
     this.hitbox    = new SAT.Polygon(this.position.toSAT());
 

@@ -16,6 +16,8 @@ class Block extends createjs.Shape {
     this.isCollidable = true;
     this.hitbox       = null;
     this.radius       = dimensions.max();
+    this.shadow       = new Neon();
+    this.isForeground = true;
 
     // setup hitbox
     const points = [
@@ -30,18 +32,9 @@ class Block extends createjs.Shape {
     this.graphics.s("#EEE").f("#111").r(dimensions.e(1) * -0.5, dimensions.e(2) * -0.5, dimensions.e(1), dimensions.e(2));
     this.hitbox.setAngle(angle);
     this.rotation = 57.2958 * angle;
-    var pos = this.position.add(game.background.position).add(game.screencenter);
-    this.set({ x: pos.e(1), y: pos.e(2) });
+    this.set({ x: this.position.e(1), y: this.position.e(2) });
 
     this.on("tick", e => !e.paused && this.update(e));
-  }
-
-  /**
-   * @param {eventdata} e
-   */
-  update (e) {
-    var pos = this.position.add(game.background.position).add(game.screencenter);
-    this.set({ x: pos.e(1), y: pos.e(2) });
   }
 
   /**
@@ -51,6 +44,7 @@ class Block extends createjs.Shape {
   moveTo (position) {
     this.position = position;
     this.hitbox.pos = position.toSAT();
+    this.set({ x: this.position.e(1), y: this.position.e(2) });
   }
 
   /**

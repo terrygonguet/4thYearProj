@@ -3,10 +3,10 @@ class MachineGun extends createjs.EventDispatcher {
   constructor() {
     super();
 
-    this.maxAmmo     = 31;
+    this.maxAmmo     = Infinity;
     this.reloadTime  = 1200; // ms
     this.bulletSpeed = 5000; // pixel/second
-    this.fireRate    = 10; // bullets/second
+    this.fireRate    = 3; // bullets/second
     this.time        = 0; // ms
     this.spread      = 0.05; // radians
     this.isReloading = false;

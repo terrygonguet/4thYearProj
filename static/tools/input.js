@@ -40,7 +40,8 @@ class InputManager extends createjs.EventDispatcher {
       reload  : ["r"],
       pause   : ["p"],
       qwerty  : ["k"],
-      debug   : ["o"]
+      debug   : ["o"],
+      radar   : ["tab"]
     };
 
     // native events listeners

@@ -23,6 +23,7 @@ class Game extends createjs.Stage {
     this.player       = null;
     this.dimension    = 5000;
     this.background   = new Background("sea", $V([this.dimension, this.dimension]));
+    this.foreground   = new createjs.Container();
     this.netticktime  = 0;
     this.netrate      = 30;
     this.renderVals   = [];
@@ -30,8 +31,14 @@ class Game extends createjs.Stage {
     this.screencenter = $V([window.innerWidth/2, window.innerHeight/2]);
 
     this.setHandlers();
+    
+    this.foreground.cache(-this.dimension/2, -this.dimension/2, this.dimension, this.dimension);
+    this.foreground.update = function (e) {
+      this.set({ x: game.background.x, y: game.background.y });
+    }
 
     this.addChild(this.background);
+    this.addChild(this.foreground);
     this.addChild(this.txtFps);
     this.addChild(this.txtrendertime);
     this.addChild(this.txtping);
@@ -80,6 +87,7 @@ class Game extends createjs.Stage {
       for (var b of data) {
         game.addChild(new Block(b.id, $V(b.position), $V(b.dimension), b.angle));
       }
+      this.foreground.updateCache();
     });
 
     this.socket.on("update", data => {
@@ -96,6 +104,8 @@ class Game extends createjs.Stage {
       this.addChild(new Bullet(
         $V(data.position), $V(data.direction), data.speed, data.playerid
       ));
+      const volume = (2000 - game.player.position.distanceFrom($V(data.position)).clamp(0,2000)) / 2000;
+      createjs.Sound.play("Pew", { volume });
     });
 
     this.socket.on("gethit", () => {
@@ -168,16 +178,19 @@ class Game extends createjs.Stage {
       if (this.entities[child.id]) return;
       this.entities[child.id] = child;
     }
+
     if (child.isCollidable && this.collidables.indexOf(child) === -1)
       this.collidables.push(child);
 
-    if (child.isBullet) super.addChildAt(child, this.getChildIndex(this.player));
+    if (child.isBullet) super.addChildAt(child, this.getChildIndex(this.foreground));
+    else if (child.isForeground) this.foreground.addChild(child);
     else super.addChild(child);
   }
 
   removeChild (child) {
     super.removeChild(child);
     if (child.isEntity) delete this.entities[child.id];
+    if (child.isForeground) this.foreground.removeChild(child);
     if (child.isCollidable) this.collidables.splice(this.collidables.indexOf(child), 1);
   }
 

@@ -13,13 +13,14 @@ class Background extends createjs.Container {
     this.position = $V([0,0]);
     this.width    = dimension.e(1);
     this.height   = dimension.e(2);
+    this.blockSize= 100;
 
     const halfW = Math.ceil(this.width/2);
     const halfH = Math.ceil(this.height/2);
-    for (var i = -halfW; i <= halfW; i+=50) {
-      for (var j = -halfH; j <= halfH; j+=50) {
+    for (var i = -halfW; i <= halfW; i+=this.blockSize) {
+      for (var j = -halfH; j <= halfH; j+=this.blockSize) {
         var sprite = new createjs.Shape();
-        sprite.graphics.s("#babf2f").f("#111").r(0,0,50,50);
+        sprite.graphics.s("#babf2f").f("#111").r(0,0,this.blockSize,this.blockSize);
         sprite.set({
           x: i, y: j
         });
