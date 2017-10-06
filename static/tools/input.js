@@ -101,9 +101,11 @@ class InputManager extends createjs.EventDispatcher {
         switch (e.button) {
           case 0:
             this.keys.mouse1 = true;
+            custEvent.type = "mouse1";
             break;
           case 2:
             this.keys.mouse2 = true;
+            custEvent.type = "mouse2";
             break;
         }
         break;
@@ -111,9 +113,11 @@ class InputManager extends createjs.EventDispatcher {
         switch (e.button) {
           case 0:
             this.keys.mouse1 = false;
+            custEvent.type = "mouse1U";
             break;
           case 2:
             this.keys.mouse2 = false;
+            custEvent.type = "mouse2U";
             break;
         }
         break;
