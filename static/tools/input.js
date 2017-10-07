@@ -41,7 +41,7 @@ class InputManager extends createjs.EventDispatcher {
       pause   : ["p"],
       qwerty  : ["k"],
       debug   : ["o"],
-      radar   : ["tab"]
+      radar   : ["Tab"]
     };
 
     // native events listeners
@@ -89,6 +89,7 @@ class InputManager extends createjs.EventDispatcher {
    * @param {eventdata} e Native event data
    */
   getEvent (e) {
+    e.preventDefault();
     const custEvent = new createjs.Event(""); // custom event to be fired if necessary
 
     switch (e.type) {

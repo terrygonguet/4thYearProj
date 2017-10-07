@@ -41,13 +41,14 @@ var debug = true;
     {id: "Input Manager", src:"tools/input.js"},
     {id: "Game", src:"model/game.js"},
     {id: "Background", src:"model/background.js"},
-    {id: "Entity", src:"model/entity.js"},
-    {id: "Player", src:"model/player.js"},
-    {id: "OnlinePlayer", src:"model/onlinePlayer.js"},
-    {id: "Bullet", src:"model/bullet.js"},
-    {id: "MachineGun", src:"model/machineGun.js"},
+    {id: "Entity", src:"model/entities/entity.js"},
+    {id: "Player", src:"model/entities/player.js"},
+    {id: "OnlinePlayer", src:"model/entities/onlinePlayer.js"},
+    {id: "Bullet", src:"model/weapons/bullet.js"},
+    {id: "MachineGun", src:"model/weapons/machineGun.js"},
     {id: "Block", src:"model/block.js"},
     {id: "Noen", src:"model/neon.js"},
+    {id: "Radar", src:"model/radar.js"},
 
     {id: "QuickText", src:"model/quickText.js"},
 
@@ -56,6 +57,8 @@ var debug = true;
     // Sounds ----------------------------------------
     {id: "Pew", src:"resources/sounds/pew.wav"},
     {id: "Ping", src:"resources/sounds/ping.wav"},
+    {id: "RadarSearch", src:"resources/sounds/radar.wav"},
+    {id: "RadarWrong", src:"resources/sounds/radar_wrong.wav"},
     {id: "Kick", src:"resources/sounds/kick.wav"}
 
   ];

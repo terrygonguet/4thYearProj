@@ -31,7 +31,7 @@ class Game extends createjs.Stage {
     this.screencenter = $V([window.innerWidth/2, window.innerHeight/2]);
 
     this.setHandlers();
-    
+
     this.foreground.cache(-this.dimension/2, -this.dimension/2, this.dimension, this.dimension);
     this.foreground.update = function (e) {
       this.set({ x: game.background.x, y: game.background.y });
@@ -43,6 +43,7 @@ class Game extends createjs.Stage {
     this.addChild(this.txtrendertime);
     this.addChild(this.txtping);
     this.addChild(this.txtqwerty);
+    this.addChild(new Radar());
   }
 
   /**
@@ -66,6 +67,8 @@ class Game extends createjs.Stage {
     this.on("playerhit", e => {
       this.socket.emit("playerhit", e.data);
     });
+
+    window.addEventListener("resize", e => this.screencenter = $V([window.innerWidth/2, window.innerHeight/2]));
 
 
     // Socket stuff ----------------------------------------------------------------------

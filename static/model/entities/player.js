@@ -5,10 +5,11 @@ class Player extends Entity {
    */
   constructor(id) {
     super(id);
+    Math.seedrandom(this.id);
     this.speed    = 300;
     this.position = $V([0,0]);
     this.hasMoved = false;
-    this.fireRate = 3;
+    this.color    = Math.randomRGB();
     this.txtPoints= new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#111" });
     this.weapon   = new MachineGun();
     this.reloadBar= new createjs.Shape();
@@ -16,8 +17,7 @@ class Player extends Entity {
 
     this.hitbox.r = this.radius;
 
-    Math.seedrandom(this.id);
-    this.graphics.c().f(Math.randomRGB()).s("#EEE").dc(0,0,this.radius);
+    this.graphics.c().f(this.color).s("#EEE").dc(0,0,this.radius);
     this.on("added", e => {
       game.addChild(this.txtPoints);
       game.addChild(this.reloadBar);
