@@ -84,3 +84,7 @@ function hexToRgbA(hex, alpha){
 Vector.prototype.toSAT = function () {
   return new SAT.V(this.e(1), this.e(2));
 };
+
+SAT.Vector.prototype.toSylv = function () {
+  return $V([this.x, this.y]);
+};

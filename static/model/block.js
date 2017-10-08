@@ -18,6 +18,7 @@ class Block extends createjs.Shape {
     this.radius       = dimensions.max();
     this.shadow       = new Neon();
     this.isForeground = true;
+    this.lines        = null;
 
     // setup hitbox
     const points = [
@@ -35,6 +36,10 @@ class Block extends createjs.Shape {
     this.set({ x: this.position.e(1), y: this.position.e(2) });
 
     this.on("tick", e => !e.paused && this.update(e));
+  }
+
+  getContact (line) {
+    // TODO : make hitting things prettier
   }
 
   /**
