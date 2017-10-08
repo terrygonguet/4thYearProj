@@ -47,6 +47,7 @@ var debug = true;
     {id: "Bullet", src:"model/weapons/bullet.js"},
     {id: "MachineGun", src:"model/weapons/machineGun.js"},
     {id: "Block", src:"model/block.js"},
+    {id: "Plant", src:"model/plant.js"},
     {id: "Noen", src:"model/neon.js"},
     {id: "Radar", src:"model/radar.js"},
 

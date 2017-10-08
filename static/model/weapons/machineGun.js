@@ -15,6 +15,10 @@ class MachineGun extends createjs.EventDispatcher {
     this.reloadBar   = 0;
   }
 
+  /**
+   * @param {Player} player : the player firing the weapon
+   * @param {Vector} direction : where the weapon is pointed at
+   */
   fire(player, direction) {
     if (!this.isReloading && this.ammo > 0 && this.time >= 1000 / this.fireRate) {
       this.ammo--;

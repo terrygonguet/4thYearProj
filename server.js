@@ -39,7 +39,22 @@ const players = {};
 const blocks = [];
 
 for (var i = 0; i < 150; i++) {
-  blocks.push({ position: [ randInt(-2500, 2500), randInt(-2500, 2500) ], dimension: [ randInt(20, 200), randInt(20, 200) ], angle: Math.random() * Math.PI * 2, id: "b" + i })
+  if (Math.random() < 0.2)
+    blocks.push({
+      position: [ randInt(-2500, 2500), randInt(-2500, 2500) ],
+      radiusmin: Math.random() * 5 + 10,
+      radiusmax: Math.random() * 20 + 60,
+      id: "p" + i ,
+      type: "Plant"
+    });
+  else
+    blocks.push({
+      position: [ randInt(-2500, 2500), randInt(-2500, 2500) ],
+      dimension: [ randInt(20, 200), randInt(20, 200) ],
+      angle: Math.random() * Math.PI * 2,
+      id: "b" + i ,
+      type: "Block"
+    });
 }
 
 server.listen(80, function () {

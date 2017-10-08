@@ -9,21 +9,27 @@ class Radar extends createjs.Shape {
     input.on("radar", this.scan, this);
   }
 
+  /**
+   * @param {eventdata} e
+   */
   scan(e) {
+    // if the cooldown isn't finished
     if (this.time < this.cooldown) {
       createjs.Sound.play("RadarWrong");
       return;
     }
+
     createjs.Sound.play("RadarSearch");
     this.alpha = 1;
     this.time = 0;
+    // draw the circle
     this.graphics.c()
       .s("#171")
       .dc(window.innerWidth/2, window.innerHeight/2, 0.35 * window.innerHeight);
-    const bgrealpos = game.background.position;
+    const bgrealpos = game.background.position; // shortcut
     for (var entid in game.entities) {
-      const ent = game.entities[entid];
-      if (!ent.isOnlinePlayer) continue;
+      const ent = game.entities[entid]; // shortcut
+      if (!ent.isOnlinePlayer) continue; // only point at players
 
       if (bgrealpos.distanceFrom(ent.position) >= window.innerHeight / 2) {
         const direction = ent.position.subtract(bgrealpos).toUnitVector();
@@ -40,6 +46,9 @@ class Radar extends createjs.Shape {
     }
   }
 
+  /**
+   * @param {eventdata} e
+   */
   update(e) {
     if (this.alpha > 0) {
       this.alpha = (this.alpha - e.sdelta / (this.timeShown / 1000)).clamp(0,1);

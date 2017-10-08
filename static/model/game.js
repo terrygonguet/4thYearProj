@@ -22,7 +22,7 @@ class Game extends createjs.Stage {
     this.collidables  = [];
     this.player       = null;
     this.dimension    = 5000;
-    this.background   = new Background("sea", $V([this.dimension, this.dimension]));
+    this.background   = new Background($V([this.dimension, this.dimension]));
     this.foreground   = new createjs.Container();
     this.netticktime  = 0;
     this.netrate      = 30;
@@ -88,7 +88,14 @@ class Game extends createjs.Stage {
 
     this.socket.on("createblocks", data => {
       for (var b of data) {
-        game.addChild(new Block(b.id, $V(b.position), $V(b.dimension), b.angle));
+        switch (b.type) {
+          case "Block":
+            game.addChild(new Block(b.id, $V(b.position), $V(b.dimension), b.angle));
+            break;
+          case "Plant":
+            game.addChild(new Plant(b.id, $V(b.position), b.radiusmin, b.radiusmax));
+            break;
+        }
       }
       this.foreground.updateCache();
     });
@@ -185,9 +192,11 @@ class Game extends createjs.Stage {
     if (child.isCollidable && this.collidables.indexOf(child) === -1)
       this.collidables.push(child);
 
-    if (child.isBullet) super.addChildAt(child, this.getChildIndex(this.foreground));
-    else if (child.isForeground) this.foreground.addChild(child);
-    else super.addChild(child);
+    if (child.isForeground) this.foreground.addChild(child);
+    else {
+      var i = this.getChildIndex(this.foreground);
+      i !== -1 ? super.addChildAt(child, i) : super.addChild(child);
+    }
   }
 
   removeChild (child) {

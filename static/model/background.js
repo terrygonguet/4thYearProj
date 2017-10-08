@@ -7,9 +7,8 @@ class Background extends createjs.Container {
   /**
    * @param {String} type : enum {"sea", "island"} defaults to sea if invalid
    */
-  constructor(type = "sea", dimension) {
+  constructor(dimension) {
     super();
-    this.type         = type;
     this.position     = $V([0,0]);
     this.width        = dimension.e(1);
     this.height       = dimension.e(2);
@@ -39,6 +38,8 @@ class Background extends createjs.Container {
    * @param {eventdata} e
    */
   update (e) {
+    if (!game.player) return;
+
     const distFromCenter = game.player.position.distanceFrom(this.position);
     if (distFromCenter > this.centerRadius.cur * window.innerHeight) {
       this.centerRadius.cur = (this.centerRadius.cur - e.sdelta / 10)
