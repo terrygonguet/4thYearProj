@@ -5,7 +5,8 @@ class Entity extends createjs.Shape {
    */
   constructor(id) {
     super();
-    this.id           = id;
+    this.id
+    = id;
     this.position     = $V([0,0]);
     this.realpos      = $V([0,0]);
     this.radius       = 10;
@@ -28,7 +29,7 @@ class Entity extends createjs.Shape {
     } else
       this.realpos = this.position;
 
-    const pos = this.position.add(game.background.position).add(game.screencenter);
+    const pos = this.position.subtract(game.background.position).add(game.screencenter);
 
     this.set({
       x: pos.e(1), y: pos.e(2)

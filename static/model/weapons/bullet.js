@@ -20,7 +20,7 @@ class Bullet extends createjs.Shape {
 
     this.hitbox    = new SAT.Polygon(this.position.toSAT());
 
-    var pos = this.position.add(game.background.position).add(game.screencenter);
+    var pos = this.position.subtract(game.background.position).add(game.screencenter);
     this.set({ x: pos.e(1), y: pos.e(2) });
 
     this.on("tick", e => !e.paused && this.update(e), this);
@@ -64,7 +64,7 @@ class Bullet extends createjs.Shape {
 
     // display
     this.graphics.c().s(this.color).ss(this.thickness).mt(0,0).lt(-movement.e(1), -movement.e(2));
-    const pos = this.position.add(game.background.position).add(game.screencenter);
+    const pos = this.position.subtract(game.background.position).add(game.screencenter);
     this.set({ x: pos.e(1), y: pos.e(2) });
     // destruction
     if (Math.abs(this.position.e(1)) > game.dimension/2 || Math.abs(this.position.e(2)) > game.dimension/2)

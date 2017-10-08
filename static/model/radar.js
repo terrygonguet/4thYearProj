@@ -20,7 +20,7 @@ class Radar extends createjs.Shape {
     this.graphics.c()
       .s("#171")
       .dc(window.innerWidth/2, window.innerHeight/2, 0.35 * window.innerHeight);
-    const bgrealpos = game.background.position.x(-1);
+    const bgrealpos = game.background.position;
     for (var entid in game.entities) {
       const ent = game.entities[entid];
       if (!ent.isOnlinePlayer) continue;

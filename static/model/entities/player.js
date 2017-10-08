@@ -52,19 +52,11 @@ class Player extends Entity {
           this.hitbox.pos = this.position.toSAT();
         }
       }
-
-      const realpos = this.position.add(game.background.position);
-      if (realpos.modulus() > 0.3 * window.innerHeight) {
-        const realmovement = this.position.subtract(oldpos);
-        game.background.position = realpos.subtract(this.position).subtract(realmovement);
-      } else {
-        this.realpos = realpos;
-      }
     } else {
       this.hasMoved = false; // to reduce necessary updates
     }
 
-    const pos = this.realpos.add(game.screencenter);
+    const pos = this.position.subtract(game.background.position).add(game.screencenter);
 
     this.set({ x: pos.e(1), y: pos.e(2) });
     this.txtPoints.set({ x: pos.e(1), y: pos.e(2) });
@@ -78,7 +70,7 @@ class Player extends Entity {
    * Fires a Bullet
    */
   fire () {
-    const realmousePos = input.mousePos.subtract(game.background.position).subtract(game.screencenter);
+    const realmousePos = input.mousePos.add(game.background.position).subtract(game.screencenter);
     const direction = realmousePos.subtract(this.position).toUnitVector();
     this.weapon.fire(this, direction);
   }
