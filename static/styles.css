@@ -39,6 +39,7 @@ html, body {
 	border: 2px solid #1EE;
 	width: 70%;
 	background-color: #111;
+	box-shadow: 0 0 20px 3px #E1E;
 }
 
 .keylist td, .keylist th {
@@ -61,7 +62,8 @@ html, body {
 }
 
 .keylist button:hover {
-	border: 1px solid #EE1;
+	/*border: 1px solid #EE1;*/
+	box-shadow: 0 0 10px 3px #EE1;
 }
 
 .keylist button:active {

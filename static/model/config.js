@@ -24,7 +24,7 @@ class Config extends createjs.EventDispatcher {
                      .addClass("keylist")
                      .appendTo(this.container);
 
-    input.on("config", this.toggle, this);
+    input.on("menu", this.toggle, this);
   }
 
   toggle () {

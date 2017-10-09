@@ -138,7 +138,7 @@ class Game extends createjs.Stage {
       pause   : ["p"],
       debug   : ["o"],
       radar   : ["Tab"],
-      config  : ["Escape"]
+      menu    : ["Escape"]
     };
 
   }

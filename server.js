@@ -8,8 +8,8 @@ const sylvester = require('sylvester');
 setTimeout(function tick(old) {
   var delta = (now() - old);
   update(delta);
-  setTimeout(tick, 30, now());
-}, 30, now());
+  setTimeout(tick, 15, now());
+}, 15, now());
 
 function update (delta) {
   for (var player in players) {
