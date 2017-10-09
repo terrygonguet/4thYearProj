@@ -42,6 +42,7 @@ var debug = true;
     {id: "Game", src:"model/game.js"},
     {id: "Config", src:"model/config.js"},
     {id: "Background", src:"model/background.js"},
+    {id: "Foreground", src:"model/foreground.js"},
     {id: "Entity", src:"model/entities/entity.js"},
     {id: "Player", src:"model/entities/player.js"},
     {id: "OnlinePlayer", src:"model/entities/onlinePlayer.js"},

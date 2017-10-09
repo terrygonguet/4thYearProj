@@ -23,7 +23,7 @@ class Game extends createjs.Stage {
     this.player       = null;
     this.dimension    = 5000;
     this.background   = new Background($V([this.dimension, this.dimension]));
-    this.foreground   = new createjs.Container();
+    this.foreground   = new Foreground($V([this.dimension, this.dimension]));
     this.netticktime  = 0;
     this.netrate      = 30;
     this.renderVals   = [];
@@ -32,17 +32,12 @@ class Game extends createjs.Stage {
 
     this.setHandlers();
 
-    this.foreground.cache(-this.dimension/2, -this.dimension/2, this.dimension, this.dimension);
-    this.foreground.update = function (e) {
-      this.set({ x: game.background.x, y: game.background.y });
-    }
-
     this.addChild(this.background);
     this.addChild(this.foreground);
-    this.addChild(this.txtFps);
-    this.addChild(this.txtrendertime);
-    this.addChild(this.txtping);
-    this.addChild(this.txtqwerty);
+    this.addChildAt(this.txtFps, this.children.length);
+    this.addChildAt(this.txtrendertime, this.children.length);
+    this.addChildAt(this.txtping, this.children.length);
+    this.addChildAt(this.txtqwerty, this.children.length);
     this.addChild(new Radar());
   }
 
@@ -96,7 +91,6 @@ class Game extends createjs.Stage {
             break;
         }
       }
-      this.foreground.updateCache();
     });
 
     this.socket.on("update", data => {
@@ -139,7 +133,8 @@ class Game extends createjs.Stage {
       pause   : localBindings.pause || ["p"],
       debug   : localBindings.debug || ["o"],
       radar   : localBindings.radar || ["Tab"],
-      menu    : localBindings.menu || ["Escape"]
+      menu    : localBindings.menu || ["Escape"],
+      turbofunk : localBindings.turbofunk || ["T"]
     };
 
   }
