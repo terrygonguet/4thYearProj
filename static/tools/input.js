@@ -33,15 +33,13 @@ class InputManager extends createjs.EventDispatcher {
     // changeable bindings
     // this.bindings["bindingname"] = ["keyid1", "keyid2", ...]
     this.bindings = {
-      up      : ["z", "ArrowUp"],
-      down    : ["s", "ArrowDown"],
-      left    : ["q", "ArrowLeft"],
-      right   : ["d", "ArrowRight"],
-      reload  : ["r"],
+      up      : ["z"],
+      down    : ["s"],
+      left    : ["q"],
+      right   : ["d"],
       pause   : ["p"],
-      qwerty  : ["k"],
       debug   : ["o"],
-      radar   : ["Tab"]
+      config  : ["Escape"]
     };
 
     // native events listeners
@@ -164,8 +162,9 @@ class InputManager extends createjs.EventDispatcher {
           this.mouseDelta = $V([0,0]);
         break;
     }
-    custEvent.type && this.dispatchEvent(custEvent); // dispatch additionnal event if we found one
     this.dispatchEvent(e);
+    // dispatch additionnal event if we found one and the native event didnt get stopped
+    custEvent.type && !e.cancelBubble && this.dispatchEvent(custEvent);
   }
 
 }

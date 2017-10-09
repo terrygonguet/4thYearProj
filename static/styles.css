@@ -6,6 +6,8 @@
 html, body {
 	height: 100%;
 	width: 100%;
+	color: #EEE;
+	font-family: Montserrat;
 }
 
 #game {
@@ -17,4 +19,53 @@ html, body {
 	position: relative;
 	top: 0;
 	left: 0;
+}
+
+/* --------------- Config --------------- */
+.configContainer {
+	position: absolute;
+	/*background-color: #2B3856;
+	border: 1px solid #EEE;*/
+	border-radius: 25px;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: center;
+	justify-content: center;
+	color: #EEE;
+}
+
+.keylist {
+	border-collapse: collapse;
+	border: 2px solid #1EE;
+	width: 70%;
+	background-color: #111;
+}
+
+.keylist td, .keylist th {
+	border: 1px solid #1EE;
+	width: 50%;
+	text-align: center;
+	height: 45px;
+}
+
+.keylist button {
+	width: 50%;
+	background-color: #A1A;
+  border: none;
+  color: #EEE;
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+}
+
+.keylist button:hover {
+	border: 1px solid #EE1;
+}
+
+.keylist button:active {
+	background-color: #EEE;
+	color: #111;
+	border-color: #1EE;
 }

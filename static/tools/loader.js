@@ -1,7 +1,7 @@
 /* Loads all the necessary game files and handles loading screen */
 
 /** Only globals allowed :
- *  game, input, queue, debug
+ *  game, input, queue, debug, config
  */
 var game;
 const queue = new createjs.LoadQueue();
@@ -40,6 +40,7 @@ var debug = true;
     {id: "Tools", src:"tools/tools.js"},
     {id: "Input Manager", src:"tools/input.js"},
     {id: "Game", src:"model/game.js"},
+    {id: "Config", src:"model/config.js"},
     {id: "Background", src:"model/background.js"},
     {id: "Entity", src:"model/entities/entity.js"},
     {id: "Player", src:"model/entities/player.js"},
