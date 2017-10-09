@@ -53,7 +53,6 @@ class Game extends createjs.Stage {
     createjs.Ticker.timingMode = createjs.Ticker.RAF ;
     createjs.Ticker.framerate = 60;
     createjs.Ticker.on("tick", this.update, this);
-    createjs.Sound.volume = 0.05;
 
     input.enableMouseMouve();
 
@@ -130,7 +129,7 @@ class Game extends createjs.Stage {
     // input stuff -------------------------------------------------------------------------------
     input.on("pause", () => createjs.Ticker.paused = !createjs.Ticker.paused);
     input.on("debug", () => debug = !debug);
-    input.bindings = {
+    input.bindings = JSON.parse(localStorage.getItem("bindings")) || {
       up      : ["z"],
       down    : ["s"],
       left    : ["q"],

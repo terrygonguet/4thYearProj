@@ -3,7 +3,7 @@ class Config extends createjs.EventDispatcher {
   constructor () {
     super();
 
-    this.volume = 1;
+    createjs.Sound.volume = localStorage.getItem("volume") || 0.25;
 
     this.width  = 0.8 * window.innerHeight;
     this.height = 0.8 * window.innerHeight;
@@ -35,7 +35,7 @@ class Config extends createjs.EventDispatcher {
 
   buildKeylist () {
     $(".keylist tr").detach();
-    $("<tr><th>Binding</th><th>Key</th></tr>").appendTo(".keylist");
+    $("<tr><th>Setting</th><th>Value</th></tr>").appendTo(".keylist");
     for (var binding in input.bindings) {
       if (input.bindings.hasOwnProperty(binding)) {
         var btn = $("<button binding='" + binding + "'>" + input.bindings[binding][0] + "</button>")
@@ -46,9 +46,12 @@ class Config extends createjs.EventDispatcher {
                     this.keylistener = input.on("keydown", f => {
                       input.bindings[$(e.target).attr("binding")][0] = f.key;
                       $(e.target).text(f.key);
-                      f.cancelBubble = true;
+                      // f.cancelBubble = true;
                       input.off("keydown", this.keylistener);
                       this.keylistener = null;
+                      try {
+                        localStorage.setItem("bindings", JSON.stringify(input.bindings));
+                      } catch (e) { console.log(e); }
                     });
                   });
         var tr = $("<tr></tr>")
@@ -57,6 +60,21 @@ class Config extends createjs.EventDispatcher {
                  .appendTo(this.keylist);
       }
     }
+    $("<tr></tr>")
+      .append("<td>Volume</td>")
+      .append($("<td></td>")
+        .append(
+          $("<input type='range' min='0' max='1' step='0.05' />")
+          .val(createjs.Sound.volume)
+          .change(e => {
+            createjs.Sound.volume = $(e.target).val();
+            try {
+              localStorage.setItem("volume", createjs.Sound.volume);
+            } catch (e) {}
+          })
+        )
+      )
+      .appendTo(this.keylist);
   }
 
 }

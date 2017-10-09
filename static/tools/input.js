@@ -87,7 +87,6 @@ class InputManager extends createjs.EventDispatcher {
    * @param {eventdata} e Native event data
    */
   getEvent (e) {
-    e.preventDefault();
     const custEvent = new createjs.Event(""); // custom event to be fired if necessary
 
     switch (e.type) {
@@ -121,6 +120,7 @@ class InputManager extends createjs.EventDispatcher {
         }
         break;
       case "keydown": {
+        e.preventDefault();
         if (!this.enabledListeners[e.type]) {
           Object.keys(this.keys).forEach(k => {
             k !== "mouse1" && k !== "mouse2" && (this.keys[k] = false);
