@@ -17,7 +17,7 @@ class Game extends createjs.Stage {
     this.txtFps       = new QuickText({ x: 10, y: 10 });
     this.txtrendertime= new QuickText({ x: 10, y: 30 });
     this.txtping      = new QuickText({ x: 10, y: 50 });
-    this.txtqwerty    = new QuickText({ x: 10, y: 70, text: debug ? "press K to switch to QWERTY, P to pause" : "" });
+    this.txtqwerty    = new QuickText({ x: 10, y: 70, text: debug ? "Escape for the menu" : "" });
     this.entities     = {};
     this.collidables  = [];
     this.player       = null;
@@ -129,16 +129,17 @@ class Game extends createjs.Stage {
     // input stuff -------------------------------------------------------------------------------
     input.on("pause", () => createjs.Ticker.paused = !createjs.Ticker.paused);
     input.on("debug", () => debug = !debug);
-    input.bindings = JSON.parse(localStorage.getItem("bindings")) || {
-      up      : ["z"],
-      down    : ["s"],
-      left    : ["q"],
-      right   : ["d"],
-      reload  : ["r"],
-      pause   : ["p"],
-      debug   : ["o"],
-      radar   : ["Tab"],
-      menu    : ["Escape"]
+    var localBindings = JSON.parse(localStorage.getItem("bindings")) || {};
+    input.bindings = {
+      up      : localBindings.up || ["z"],
+      down    : localBindings.down || ["s"],
+      left    : localBindings.left || ["q"],
+      right   : localBindings.right || ["d"],
+      reload  : localBindings.reload || ["r"],
+      pause   : localBindings.pause || ["p"],
+      debug   : localBindings.debug || ["o"],
+      radar   : localBindings.radar || ["Tab"],
+      menu    : localBindings.menu || ["Escape"]
     };
 
   }
