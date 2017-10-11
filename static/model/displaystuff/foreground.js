@@ -26,7 +26,7 @@ class Foreground extends createjs.Container {
     this.set({ x: game.background.x, y: game.background.y });
     this.isdirty && (this.isdirty = !!this.updateCache());
 
-    if (this.turbofunk && (this.time += e.delta) > 400) {
+    if (this.turbofunk && (this.time += e.delta) > 100) {
       this.time = 0;
       for (var child of this.children) {
         child.shadow && (child.shadow = new Neon());

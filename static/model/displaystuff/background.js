@@ -2,7 +2,7 @@
  * The element displaying the Background textures
  */
 
-class Background extends createjs.Container {
+class Background extends createjs.Shape {
 
   /**
    * @param {String} type : enum {"sea", "island"} defaults to sea if invalid
@@ -13,25 +13,39 @@ class Background extends createjs.Container {
     this.width        = dimension.e(1);
     this.height       = dimension.e(2);
     this.blockSize    = 100;
-    this.centerRadius = { max: 0.3, min: 0.05, cur: 0.3 };
+    this.color        = neonColor();
+    this.turbofunk    = false;
+    this.time         = 0;
+    this.centerRadius = { max: 0.3, min: 0.05, cur: 0.3 }; // in % of window.innerHeight
 
     const halfW = Math.ceil(this.width/2);
     const halfH = Math.ceil(this.height/2);
-    for (var i = -halfW; i <= halfW; i+=this.blockSize) {
-      for (var j = -halfH; j <= halfH; j+=this.blockSize) {
-        var sprite = new createjs.Shape();
-        sprite.graphics.s("#babf2f").f("#111").r(0,0,this.blockSize,this.blockSize);
-        sprite.set({
-          x: i, y: j
-        });
-        this.addChild(sprite);
-      }
-    }
+    this.drawLines();
     this.cache(-halfW, -halfH, this.width, this.height);
+
     this.on("tick", this.update, this);
     this.set({
       x: window.innerWidth/2, y: window.innerHeight/2
     });
+
+    input.on("turbofunk", e => {
+      this.turbofunk = !this.turbofunk;
+      // can't update the cache this fast so uncache
+      if (this.turbofunk) this.uncache();
+      else this.cache(-halfW, -halfH, this.width, this.height);
+    });
+  }
+
+  drawLines () {
+    const halfW = Math.ceil(this.width/2);
+    const halfH = Math.ceil(this.height/2);
+    this.graphics.s(this.color);
+    for (var i = -halfW; i <= halfW; i+=this.blockSize) {
+      this.graphics.mt(i, -halfH).lt(i, halfH);
+    }
+    for (var i = -halfH; i <= halfH; i+=this.blockSize) {
+      this.graphics.mt(-halfH, i).lt(halfH, i);
+    }
   }
 
   /**
@@ -51,6 +65,12 @@ class Background extends createjs.Container {
     } else {
       this.centerRadius.cur = (this.centerRadius.cur + e.sdelta / 5)
                               .clamp(this.centerRadius.min, this.centerRadius.max);
+    }
+
+    if (this.turbofunk && (this.time += e.delta) > 100) {
+      this.time = 0;
+      this.color = neonColor();
+      this.drawLines();
     }
 
     const pos = this.position.x(-1).add(game.screencenter);

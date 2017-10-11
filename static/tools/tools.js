@@ -79,6 +79,17 @@ function hexToRgbA(hex, alpha){
 }
 
 /**
+ * return a color between { #11E, #1E1, #E11, #EE1, #E1E, #1EE, #EEE }
+ */
+function neonColor () {
+  var c;
+  do {
+    c = "#" + (Math.random() < 0.5 ? "1" : "E") + (Math.random() < 0.5 ? "1" : "E") + (Math.random() < 0.5 ? "1" : "E");
+  } while (c === "#111");
+  return c;
+}
+
+/**
  * Transform a sylvester vector into a SAT Vector
  */
 Vector.prototype.toSAT = function () {
