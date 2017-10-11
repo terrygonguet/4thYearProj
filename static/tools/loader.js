@@ -47,7 +47,9 @@ var debug = true;
     {id: "Player", src:"model/entities/player.js"},
     {id: "OnlinePlayer", src:"model/entities/onlinePlayer.js"},
     {id: "Bullet", src:"model/weapons/bullet.js"},
-    {id: "MachineGun", src:"model/weapons/machineGun.js"},
+    {id: "Weapon", src:"model/weapons/weapon.js"},
+    {id: "Blaster", src:"model/weapons/blaster.js"},
+    {id: "MachineGun", src:"model/weapons/machinegun.js"},
     {id: "Block", src:"model/displaystuff/block.js"},
     {id: "Plant", src:"model/displaystuff/plant.js"},
     {id: "Noen", src:"model/displaystuff/neon.js"},
@@ -59,6 +61,7 @@ var debug = true;
 
     // Sounds ----------------------------------------
     {id: "Pew", src:"resources/sounds/pew.wav"},
+    {id: "Boup", src:"resources/sounds/boup.wav"},
     {id: "Ping", src:"resources/sounds/ping.wav"},
     {id: "RadarSearch", src:"resources/sounds/radar.wav"},
     {id: "RadarWrong", src:"resources/sounds/radar_wrong.wav"},

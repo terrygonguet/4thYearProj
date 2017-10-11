@@ -36,10 +36,11 @@ class Config extends createjs.EventDispatcher {
       pause     : localBindings.pause     || ["p"],
       debug     : localBindings.debug     || ["o"],
       radar     : localBindings.radar     || ["Tab"],
-      menu      : localBindings.menu      || ["Escape"]
+      menu      : localBindings.menu      || ["Escape"],
+      ratata    : ["!"]
     };
     input.lockedBindings = [ "menu" ];
-    input.hiddenBindings = [ "pause", "debug" ];
+    input.hiddenBindings = [ "pause", "debug", "ratata" ];
   }
 
   /**

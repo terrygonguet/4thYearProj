@@ -19,7 +19,7 @@ class Player extends Entity {
     this.hasMoved = true;
     this.color    = Math.randomRGB();
     this.txtPoints= new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#111" });
-    this.weapon   = new MachineGun();
+    this.weapon   = new Blaster();
     this.reloadBar= new createjs.Shape();
     this.isplayer = true;
 
@@ -30,12 +30,17 @@ class Player extends Entity {
       game.addChild(this.txtPoints);
       game.addChild(this.reloadBar);
     }); // placeholder
+    this.reloadBar.shadow = new Neon("#E1E");
 
+    input.on("ratata", e => this.setWeapon(new MachineGun()));
     input.on("reload", e => this.weapon.reload());
+  }
 
+  setWeapon (weapon) {
+    this.weapon = weapon;
     this.weapon.on("reloadstart", e => this.reloadBar.visible = true);
     this.weapon.on("reloadend", e => this.reloadBar.visible = false);
-    this.weapon.on("reloadtick", e => this.reloadBar.graphics.c().s("#EEE").ss(3).a(
+    this.weapon.on("reloadtick", e => this.reloadBar.graphics.c().s("#1EE").ss(3).a(
       0,0, this.radius + 4, -Math.PI/2, 2 * Math.PI * this.weapon.reloadBar - Math.PI/2, false
     ));
   }

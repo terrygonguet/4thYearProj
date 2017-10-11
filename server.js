@@ -33,6 +33,7 @@ function makePlayersSmall (excludedId = 0) {
       };
     }
   }
+  return data;
 }
 
 const randInt = function (min, max) {
