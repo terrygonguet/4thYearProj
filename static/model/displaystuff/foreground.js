@@ -11,7 +11,7 @@ class Foreground extends createjs.Container {
     this.time       = 0;
 
     this.cache(-this.dimensions.e(1)/2, -this.dimensions.e(2)/2, this.dimensions.e(1), this.dimensions.e(2));
-    input.on("turbofunk", e => {
+    input.on("konami", e => {
       this.turbofunk = !this.turbofunk;
       // can't update the cache this fast so uncache
       if (this.turbofunk) this.uncache();

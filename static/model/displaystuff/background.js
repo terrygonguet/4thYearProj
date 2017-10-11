@@ -28,7 +28,7 @@ class Background extends createjs.Shape {
       x: window.innerWidth/2, y: window.innerHeight/2
     });
 
-    input.on("turbofunk", e => {
+    input.on("konami", e => {
       this.turbofunk = !this.turbofunk;
       // can't update the cache this fast so uncache
       if (this.turbofunk) this.uncache();

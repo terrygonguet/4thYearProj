@@ -48,6 +48,15 @@ class InputManager extends createjs.EventDispatcher {
     // array of binding names that shouldn't be shown (not supported by this class)
     this.hiddenBindings = [ ];
 
+    // a string representing that last ~300 keys pressed last key in front
+    this.lastkeys = "";
+
+    // basically cheat codes
+    // will be removed from lastkeys if found
+    this.keypatterns = {
+      konami: "abArrowRightArrowLeftArrowRightArrowLeftArrowDownArrowDownArrowUpArrowUp"
+    };
+
     // native events listeners
     window.addEventListener("keydown", this._listener, true);
     window.addEventListener("keyup", this._listener, true);
@@ -133,6 +142,17 @@ class InputManager extends createjs.EventDispatcher {
           });
           break;
         }
+        // patterns
+        this.lastkeys = (e.key + this.lastkeys).slice(0,500);
+        for (var pattern in this.keypatterns) {
+          if (this.keypatterns.hasOwnProperty(pattern)) {
+            if (this.lastkeys.startsWith(this.keypatterns[pattern])) {
+              this.dispatchEvent(pattern);
+              this.lastkeys = this.lastkeys.slice(this.keypatterns[pattern]);
+            }
+          }
+        }
+
         this.keys[e.key] = true;
         let type = Object.keys(this.bindings).find(key => {
           if (this.bindings[key].indexOf(e.key) != -1) {
