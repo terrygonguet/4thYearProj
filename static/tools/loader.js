@@ -41,19 +41,19 @@ var debug = true;
     {id: "Input Manager", src:"tools/input.js"},
     {id: "Game", src:"model/game.js"},
     {id: "Config", src:"model/config.js"},
-    {id: "Background", src:"model/background.js"},
-    {id: "Foreground", src:"model/foreground.js"},
+    {id: "Background", src:"model/displaystuff/background.js"},
+    {id: "Foreground", src:"model/displaystuff/foreground.js"},
     {id: "Entity", src:"model/entities/entity.js"},
     {id: "Player", src:"model/entities/player.js"},
     {id: "OnlinePlayer", src:"model/entities/onlinePlayer.js"},
     {id: "Bullet", src:"model/weapons/bullet.js"},
     {id: "MachineGun", src:"model/weapons/machineGun.js"},
-    {id: "Block", src:"model/block.js"},
-    {id: "Plant", src:"model/plant.js"},
-    {id: "Noen", src:"model/neon.js"},
+    {id: "Block", src:"model/displaystuff/block.js"},
+    {id: "Plant", src:"model/displaystuff/plant.js"},
+    {id: "Noen", src:"model/displaystuff/neon.js"},
     {id: "Radar", src:"model/radar.js"},
 
-    {id: "QuickText", src:"model/quickText.js"},
+    {id: "QuickText", src:"model/displaystuff/quickText.js"},
 
     // Sprites ----------------------------------------
 
