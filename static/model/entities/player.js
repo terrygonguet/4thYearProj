@@ -2,16 +2,20 @@ class Player extends Entity {
 
   /**
    * @param {String_Number} id : the unique id of the Entity
+   * @param {Vector} position : starting position
    */
-  constructor(id) {
+  constructor(id, position = $V([0,0])) {
     super(id);
     Math.seedrandom(this.id);
     this.speed    = 300;
     this.curspeed = 0;
     this.acc      = 2000;
     this.dec      = 2300;
-    this.lastdir  = $V([0,0]);
-    this.position = $V([0,0]);
+    this.position = $V([
+      Math.randFloat(-game.dimensions.e(1)/2, game.dimensions.e(1)/2),
+      Math.randFloat(-game.dimensions.e(2)/2, game.dimensions.e(2)/2)
+    ]);
+    this.lastdir  = this.position.dup();
     this.hasMoved = true;
     this.color    = Math.randomRGB();
     this.txtPoints= new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#111" });
@@ -48,7 +52,7 @@ class Player extends Entity {
 
     const oldpos = this.position.dup();
     const movement = this.lastdir.x(this.curspeed * e.sdelta);
-    this.position = $V(this.position.add(movement).elements.map(a => a.clamp(-game.dimension/2,game.dimension/2)));
+    this.position = this.position.add(movement);
 
     this.hitbox.pos = this.position.toSAT();
     for (var collidable of game.collidables) {
@@ -61,6 +65,8 @@ class Player extends Entity {
       }
     }
 
+    this.position = $V(this.position.elements.map((e, i) => e.clamp(-game.dimensions.e(i+1)/2, game.dimensions.e(i+1)/2)));
+
     const pos = this.position.subtract(game.background.position).add(game.screencenter);
 
     this.set({ x: pos.e(1), y: pos.e(2) });
@@ -69,6 +75,14 @@ class Player extends Entity {
 
     this.weapon.update(e);
     input.keys.mouse1 && this.fire();
+  }
+
+  /**
+   * Sets the score displayed on the player
+   * @param {Number} score : the score to set to
+   */
+  setScore(score) {
+    this.txtPoints.text = score;
   }
 
   /**

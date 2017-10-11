@@ -21,9 +21,9 @@ class Game extends createjs.Stage {
     this.entities     = {};
     this.collidables  = [];
     this.player       = null;
-    this.dimension    = 5000;
-    this.background   = new Background($V([this.dimension, this.dimension]));
-    this.foreground   = new Foreground($V([this.dimension, this.dimension]));
+    this.dimensions   = null;
+    this.background   = null;
+    this.foreground   = null;
     this.netticktime  = 0;
     this.netrate      = 30;
     this.renderVals   = [];
@@ -31,14 +31,6 @@ class Game extends createjs.Stage {
     this.screencenter = $V([window.innerWidth/2, window.innerHeight/2]);
 
     this.setHandlers();
-
-    this.addChild(this.background);
-    this.addChild(this.foreground);
-    this.addChildAt(this.txtFps, this.children.length);
-    this.addChildAt(this.txtrendertime, this.children.length);
-    this.addChildAt(this.txtping, this.children.length);
-    this.addChildAt(this.txtqwerty, this.children.length);
-    this.addChild(new Radar());
   }
 
   /**
@@ -68,38 +60,17 @@ class Game extends createjs.Stage {
     // Socket stuff ----------------------------------------------------------------------
     this.socket = io(location.origin);
 
-    // only create and add player when we know the socket id
-    this.socket.on("connect", () => {
-      if (!this.player) {
-        this.player = new Player(this.socket.id);
-        this.addChild(this.player);
-      } else if (this.player.id !== this.socket.id) {
-        this.player.die();
-        this.player = new Player(this.socket.id);
-        this.addChild(this.player);
-      }
-    });
+    this.socket.on("connect", () => {});
 
-    this.socket.on("createblocks", data => {
-      for (var b of data) {
-        switch (b.type) {
-          case "Block":
-            game.addChild(new Block(b.id, $V(b.position), $V(b.dimension), b.angle));
-            break;
-          case "Plant":
-            game.addChild(new Plant(b.id, $V(b.position), b.radiusmin, b.radiusmax));
-            break;
-        }
-      }
-    });
+    this.socket.on("createarena", data => this.init(data));
 
     this.socket.on("update", data => {
       // update payload
-      this.player.txtPoints.text = data.playerscore;
+      this.player.setScore(data.playerscore);
       for (var p in data.players) {
         !this.entities[p] && this.addChild(new OnlinePlayer(p));
         this.entities[p].moveTo($V(data.players[p].position), data.players[p].speed);
-        this.entities[p].txtPoints.text = data.players[p].score;
+        this.entities[p].setScore(data.players[p].score);
       }
     });
 
@@ -137,6 +108,46 @@ class Game extends createjs.Stage {
       turbofunk : localBindings.turbofunk || ["T"]
     };
 
+  }
+
+  /**
+   * Cleans up the Stage and builds everything according to the daat supplied
+   * @param {Object} data : the Object from the server
+   */
+  init (data) {
+    this.removeAllChildren();
+    this.entities     = {};
+    this.collidables  = [];
+    this.dimensions   = $V(data.dimensions)
+    this.background   = new Background(this.dimensions);
+    this.foreground   = new Foreground(this.dimensions);
+    this.player       = new Player(this.socket.id);
+
+    this.addChild(this.background);
+    this.addChild(this.foreground);
+    this.addChildAt(this.txtFps, this.children.length);
+    this.addChildAt(this.txtrendertime, this.children.length);
+    this.addChildAt(this.txtping, this.children.length);
+    this.addChildAt(this.txtqwerty, this.children.length);
+    this.addChild(this.player);
+    this.addChild(new Radar());
+
+    for (var b of data.blocks) {
+      switch (b.type) {
+        case "Block":
+          game.addChild(new Block(b.id, $V(b.position), $V(b.dimension), b.angle));
+          break;
+        case "Plant":
+          game.addChild(new Plant(b.id, $V(b.position), b.radiusmin, b.radiusmax));
+          break;
+      }
+    }
+
+    for (var p in data.players) {
+      const ent = new OnlinePlayer(p)
+      this.addChild(ent, $V(data.players[p].position));
+      ent.setScore(data.players[p].score);
+    }
   }
 
   /**

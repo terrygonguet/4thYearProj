@@ -14,20 +14,24 @@ setTimeout(function tick(old) {
 function update (delta) {
   for (var player in players) {
     var data = {
-      players: {},
+      players: makePlayersSmall(player),
       time: Date.now(),
       playerscore: players[player].score
     };
-    for (var p in players) {
-      if (p !== player) {
-        data.players[p] = {
-          position: players[p].position.elements,
-          speed: players[p].speed,
-          score: players[p].score
-        };
-      }
-    }
     Object.keys(players).length > 1 && players[player].emit("update", data);
+  }
+}
+
+function makePlayersSmall (excludedId = 0) {
+  const data = {};
+  for (var p in players) {
+    if (p !== excludedId) {
+      data[p] = {
+        position: players[p].position.elements,
+        speed: players[p].speed,
+        score: players[p].score
+      };
+    }
   }
 }
 
@@ -37,6 +41,7 @@ const randInt = function (min, max) {
 
 const players = {};
 const blocks = [];
+const dimensions = [ 5000, 5000 ];
 
 for (var i = 0; i < 150; i++) {
   if (Math.random() < 0.2)
@@ -70,7 +75,9 @@ io.on('connection', function (socket) {
   console.log("A fucker joined : " + socket.id + " (" + Object.keys(players).length + " players in)");
   socket.position = $V([0,0]);
   socket.score    = 0;
-  socket.emit("createblocks", blocks);
+  socket.emit("createarena", {
+    blocks, dimensions, players: makePlayersSmall()
+  });
 
   socket.on("disconnect", () => {
     socket.to("players").emit("playerleave", { id: socket.id });
