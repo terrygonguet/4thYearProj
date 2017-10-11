@@ -94,24 +94,10 @@ class Game extends createjs.Stage {
     // input stuff -------------------------------------------------------------------------------
     input.on("pause", () => createjs.Ticker.paused = !createjs.Ticker.paused);
     input.on("debug", () => debug = !debug);
-    var localBindings = JSON.parse(localStorage.getItem("bindings")) || {};
-    input.bindings = {
-      up      : localBindings.up || ["z"],
-      down    : localBindings.down || ["s"],
-      left    : localBindings.left || ["q"],
-      right   : localBindings.right || ["d"],
-      reload  : localBindings.reload || ["r"],
-      pause   : localBindings.pause || ["p"],
-      debug   : localBindings.debug || ["o"],
-      radar   : localBindings.radar || ["Tab"],
-      menu    : localBindings.menu || ["Escape"],
-      turbofunk : localBindings.turbofunk || ["T"]
-    };
-
   }
 
   /**
-   * Cleans up the Stage and builds everything according to the daat supplied
+   * Cleans up the Stage and builds everything according to the data supplied
    * @param {Object} data : the Object from the server
    */
   init (data) {

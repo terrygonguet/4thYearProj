@@ -42,6 +42,12 @@ class InputManager extends createjs.EventDispatcher {
       config  : ["Escape"]
     };
 
+    // array of binding names that shouldn't be changed (not supported by this class)
+    this.lockedBindings = [ ];
+
+    // array of binding names that shouldn't be shown (not supported by this class)
+    this.hiddenBindings = [ ];
+
     // native events listeners
     window.addEventListener("keydown", this._listener, true);
     window.addEventListener("keyup", this._listener, true);

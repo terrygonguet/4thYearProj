@@ -63,11 +63,15 @@ html, body {
 
 .keylist button:hover {
 	/*border: 1px solid #EE1;*/
-	box-shadow: 0 0 10px 3px #EE1;
+	box-shadow: 0 0 10px 3px #1E1;
 }
 
 .keylist button:active {
 	background-color: #EEE;
 	color: #111;
 	border-color: #1EE;
+}
+
+.lockedBinding:hover {
+	box-shadow: 0 0 10px 3px #E11 !important;
 }
