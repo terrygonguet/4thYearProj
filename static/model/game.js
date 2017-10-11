@@ -67,7 +67,6 @@ class Game extends createjs.Stage {
     this.socket.on("update", data => {
       // update payload
       this.player.setScore(data.playerscore);
-      console.log(data);
       for (var p in data.players) {
         !this.entities[p] && this.addChild(new OnlinePlayer(p));
         this.entities[p].moveTo($V(data.players[p].position), data.players[p].speed);
