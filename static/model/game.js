@@ -75,11 +75,17 @@ class Game extends createjs.Stage {
     });
 
     this.socket.on("firebullet", data => {
-      this.addChild(new Bullet(
-        $V(data.position), $V(data.direction), data.speed, data.playerid
-      ));
-      const volume = (2000 - game.player.position.distanceFrom($V(data.position)).clamp(0,2000)) / 2000;
-      createjs.Sound.play("Pew", { volume });
+      const fireOne = function (props) {
+        this.addChild(new Bullet(
+          $V(props.position), $V(props.direction), props.speed, props.playerid, props.sound
+        ));
+      }
+      if (data instanceof Array) {
+        for (var b of data) {
+          fireOne(b);
+        }
+      } else fireOne(b);
+
     });
 
     this.socket.on("gethit", () => {

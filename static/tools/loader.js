@@ -53,6 +53,7 @@ const Hikari = {}; // Namespace
     {id: "Weapon", src:"model/weapons/weapon.js"},
     {id: "Blaster", src:"model/weapons/blaster.js"},
     {id: "MachineGun", src:"model/weapons/machinegun.js"},
+    {id: "Shotgun", src:"model/weapons/shotgun.js"},
     {id: "Block", src:"model/displaystuff/block.js"},
     {id: "Plant", src:"model/displaystuff/plant.js"},
     {id: "Noen", src:"model/displaystuff/neon.js"},

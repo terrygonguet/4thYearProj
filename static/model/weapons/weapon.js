@@ -32,17 +32,17 @@ class Weapon extends createjs.EventDispatcher {
       this.ammo--;
       this.time = 0;
       const realdir = direction.rotate(Math.randFloat(-this.spread/2, this.spread/2), Vector.Zero(2));
-      const b = new Bullet(player.position, realdir, this.bulletSpeed, player.id);
+      const b = new Bullet(player.position, realdir, this.bulletSpeed, player.id, this.fireSound);
       game.addChild(b);
       this.dispatchEvent(new createjs.Event("fire"));
-      createjs.Sound.play(this.fireSound);
 
       const e = new createjs.Event("firebullet");
       e.data = {
         position: player.position.elements,
         direction: direction.elements,
         speed: this.bulletSpeed,
-        playerid: player.id
+        playerid: player.id,
+        sound: this.fireSound
       };
       game.dispatchEvent(e);
     }

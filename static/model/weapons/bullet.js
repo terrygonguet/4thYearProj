@@ -5,8 +5,9 @@ class Bullet extends createjs.Shape {
    * @param {Vector} direction : the direction of the bullet, will be normalized
    * @param {Number} speed : speed in unit/s
    * @param {String} playerid : ID of the player that fired the bullet
+   * @param {String} sound : ID of the sound to play
    */
-  constructor(position, direction, speed, playerid) {
+  constructor(position, direction, speed, playerid, sound) {
     super();
     this.playerid  = playerid;
     this.position  = position;
@@ -24,6 +25,10 @@ class Bullet extends createjs.Shape {
     this.set({ x: pos.e(1), y: pos.e(2) });
 
     this.on("tick", e => !e.paused && this.update(e), this);
+    if (sound) {
+      const volume = (2000 - game.player.position.distanceFrom(position).clamp(0,2000)) / 2000;
+      createjs.Sound.play(sound, { volume });
+    }
   }
 
   /**
