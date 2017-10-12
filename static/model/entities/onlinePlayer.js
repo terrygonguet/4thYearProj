@@ -24,3 +24,4 @@ class OnlinePlayer extends Player {
   }
 
 }
+Hikari.OnlinePlayer = OnlinePlayer

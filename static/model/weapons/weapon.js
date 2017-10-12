@@ -75,3 +75,4 @@ class Weapon extends createjs.EventDispatcher {
   }
 
 }
+Hikari.Weapon = Weapon;

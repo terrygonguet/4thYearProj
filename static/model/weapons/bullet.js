@@ -80,3 +80,4 @@ class Bullet extends createjs.Shape {
   }
 
 }
+Hikari.Bullet = Bullet;

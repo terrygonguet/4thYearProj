@@ -6,6 +6,7 @@
 var game;
 const queue = new createjs.LoadQueue();
 var debug = true;
+const Hikari = {}; // Namespace
 
 (function () {
   queue.on("complete", handleComplete, this);
@@ -46,6 +47,8 @@ var debug = true;
     {id: "Entity", src:"model/entities/entity.js"},
     {id: "Player", src:"model/entities/player.js"},
     {id: "OnlinePlayer", src:"model/entities/onlinePlayer.js"},
+    {id: "Pickup", src:"model/entities/pickup.js"},
+    {id: "WeaponPickup", src:"model/entities/weaponpickup.js"},
     {id: "Bullet", src:"model/weapons/bullet.js"},
     {id: "Weapon", src:"model/weapons/weapon.js"},
     {id: "Blaster", src:"model/weapons/blaster.js"},

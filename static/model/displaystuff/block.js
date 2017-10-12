@@ -63,3 +63,4 @@ class Block extends createjs.Shape {
   }
 
 }
+Hikari.Block = Block;

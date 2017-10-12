@@ -6,3 +6,4 @@ class MachineGun extends Weapon {
   }
 
 }
+Hikari.MachineGun = MachineGun;

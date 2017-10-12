@@ -40,3 +40,4 @@ class Foreground extends createjs.Container {
   }
 
 }
+Hikari.Foreground = Foreground;

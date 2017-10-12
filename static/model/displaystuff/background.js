@@ -82,3 +82,4 @@ class Background extends createjs.Shape {
   }
 
 }
+Hikari.Background = Background;

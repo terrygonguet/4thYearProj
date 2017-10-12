@@ -2,20 +2,23 @@ class Entity extends createjs.Shape {
 
   /**
    * @param {String_Number} id : the unique id of the Entity
+   * @param {Vector} position : position ...
+   * @param {Number} radius : size of the entity
+   * @param {HTMLColor} color : color of the entity
    */
-  constructor(id) {
+  constructor(id, position=$V([0,0]), radius=10, color="#EEE") {
     super();
-    this.id
-    = id;
-    this.position     = $V([0,0]);
-    this.realpos      = $V([0,0]);
-    this.radius       = 10;
+    this.id           = id;
+    this.position     = position;
+    this.realpos      = position.dup();
+    this.radius       = radius;
+    this.color        = color;
     this.speed        = 0;
     this.isEntity     = true;
     this.isCollidable = true;
     this.hitbox       = new SAT.Circle(new SAT.V(), this.radius);
 
-    this.graphics.c().f("#555").s("#EEE").dc(0,0,this.radius);
+    this.graphics.c().f(this.color).s("#EEE").dc(0,0,this.radius);
     this.on("tick", e => !e.paused && this.update(e), this);
   }
 
@@ -62,3 +65,4 @@ class Entity extends createjs.Shape {
   }
 
 }
+Hikari.Entity = Entity;

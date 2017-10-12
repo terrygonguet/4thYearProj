@@ -5,3 +5,4 @@ class Blaster extends Weapon {
   }
 
 }
+Hikari.Blaster = Blaster;

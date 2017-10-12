@@ -4,28 +4,25 @@ class Player extends Entity {
    * @param {String_Number} id : the unique id of the Entity
    * @param {Vector} position : starting position
    */
-  constructor(id, position = $V([0,0])) {
-    super(id);
-    Math.seedrandom(this.id);
+  constructor(id, position) {
+    Math.seedrandom(id);
+    if (!position)
+      position = $V([
+        Math.randFloat(-game.dimensions.e(1)/2, game.dimensions.e(1)/2),
+        Math.randFloat(-game.dimensions.e(2)/2, game.dimensions.e(2)/2)
+      ]);
+    super(id, position, 10, Math.randomRGB());
     this.speed    = 300;
     this.curspeed = 0;
     this.acc      = 2000;
     this.dec      = 2300;
-    this.position = $V([
-      Math.randFloat(-game.dimensions.e(1)/2, game.dimensions.e(1)/2),
-      Math.randFloat(-game.dimensions.e(2)/2, game.dimensions.e(2)/2)
-    ]);
     this.lastdir  = this.position.dup();
     this.hasMoved = true;
-    this.color    = Math.randomRGB();
     this.txtPoints= new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#111" });
     this.weapon   = new Blaster();
     this.reloadBar= new createjs.Shape();
     this.isplayer = true;
 
-    this.hitbox.r = this.radius;
-
-    this.graphics.c().f(this.color).s("#EEE").dc(0,0,this.radius);
     this.on("added", e => {
       game.addChild(this.txtPoints);
       game.addChild(this.reloadBar);
@@ -106,3 +103,4 @@ class Player extends Entity {
   }
 
 }
+Hikari.Player = Player;

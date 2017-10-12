@@ -8,3 +8,4 @@ class QuickText extends createjs.Text {
     this.set(defaultSets);
   }
 }
+Hikari.QuickText = QuickText;

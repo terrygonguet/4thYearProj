@@ -9,3 +9,4 @@ class Neon extends createjs.Shadow {
   }
 
 }
+Hikari.Neon = Neon;

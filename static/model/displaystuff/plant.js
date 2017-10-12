@@ -40,3 +40,4 @@ class Plant extends createjs.Shape {
 
 
 }
+Hikari.Plant = Plant;
