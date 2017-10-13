@@ -57,3 +57,4 @@ class Radar extends createjs.Shape {
   }
 
 }
+Hikari.Radar = Radar;

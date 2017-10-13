@@ -210,3 +210,4 @@ class Game extends createjs.Stage {
   }
 
 }
+Hikari.Game = Game;
