@@ -16,6 +16,7 @@ class Plant extends createjs.Shape {
     this.shadow        = new Neon();
     this.isForeground  = true;
     this.points        = [];
+    this.isPlant       = true;
 
     this.graphics.s("#EEE").f("#111");
     const nbPts = Math.randInt(25, 50);

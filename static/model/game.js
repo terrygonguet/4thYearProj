@@ -123,6 +123,7 @@ class Game extends createjs.Stage {
     this.addChildAt(this.txtqwerty, this.children.length);
     this.addChild(this.player);
     this.addChild(new Radar());
+    this.addChildAt(new FOV(), this.children.length);
 
     for (var b of data.blocks) {
       switch (b.type) {

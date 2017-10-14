@@ -19,6 +19,7 @@ class Block extends createjs.Shape {
     this.shadow       = new Neon();
     this.isForeground = true;
     this.lines        = null;
+    this.isBlock      = true;
 
     // setup hitbox
     const points = [

@@ -68,6 +68,7 @@ class Player extends Entity {
     }
 
     this.position = $V(this.position.elements.map((e, i) => e.clamp(-game.dimensions.e(i+1)/2, game.dimensions.e(i+1)/2)));
+    this.hasMoved = !oldpos.eql(this.position);
 
     const pos = this.position.subtract(game.background.position).add(game.screencenter);
 

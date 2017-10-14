@@ -58,6 +58,7 @@ const Hikari = {}; // Namespace
     {id: "Plant", src:"model/displaystuff/plant.js"},
     {id: "Noen", src:"model/displaystuff/neon.js"},
     {id: "Radar", src:"model/radar.js"},
+    {id: "FOV", src:"model/fov.js"},
 
     {id: "QuickText", src:"model/displaystuff/quickText.js"},
 
