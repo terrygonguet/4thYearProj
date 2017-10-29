@@ -1,14 +1,14 @@
-function makePlayersSmall (excludedId = 0) {
-  const data = {};
-  for (var p in players) {
-    if (p !== excludedId) {
-      data[p] = {
-        position: players[p].position.elements,
-        speed: players[p].speed,
-        score: players[p].score
-      };
-    }
-  }
+function makePlayersSmall (player) {
+  const data = {
+    position: player.position.elements,
+    speed: player.speed,
+    score: player.score
+  };
   return data;
 }
 exports.makePlayersSmall = makePlayersSmall;
+
+function randInt (min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+exports.randInt = randInt;
