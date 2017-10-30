@@ -2,8 +2,6 @@ const sylvester = require('sylvester');
 
 class Player {
 
-  static players = [];
-
   static make(socket) {
     socket.join("players");
     Player.players.push(socket);
@@ -12,29 +10,35 @@ class Player {
     console.log("A fucker joined : " + socket.id + " (" + Player.players.length + " players left)");
 
     socket.on("disconnect", () => {
-      // socket.to("players").emit("playerleave", { id: socket.id });
+      socket.game && socket.game.removePlayer(socket);
       Player.players.splice(Player.players.indexOf(socket), 1);
       console.log("A fucker left : " + socket.id + " (" + Player.players.length + " players left)");
     });
 
-    // socket.on("firebullet", data => {
-    //   socket.to("players").emit("firebullet", data);
-    // });
-    //
-    // socket.on("playerhit", data => {
-    //   players[data.shooter] && players[data.shooter].score++;
-    //   players[data.target] && players[data.target].emit("gethit");
-    // });
-    //
-    // socket.on("update", (data, ack) => {
-    //   socket.position = $V(data.player.position);
-    //   socket.speed = data.player.speed;
-    //   ack();
-    // });
+    socket.on("firebullet", data => {
+      socket.to(socket.game.id).emit("firebullet", data);
+    });
+
+    socket.on("playerhit", data => {
+      var shooter = Player.getPlayer(data.shooter);
+      shooter && shooter.score++;
+      var target = Player.getPlayer(data.target);
+      target && target.emit("gethit");
+    });
+
+    socket.on("update", (data, ack) => {
+      socket.position = $V(data.player.position);
+      socket.speed = data.player.speed;
+      ack();
+    });
   }
 
-  constructor() {
-
+  static getPlayer(id) {
+    return Player.players.find(p => p.id === id);
   }
 
 }
+Player.players = [];
+
+
+module.exports = Player;

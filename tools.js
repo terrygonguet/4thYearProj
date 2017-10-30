@@ -1,14 +1,13 @@
-function makePlayersSmall (player) {
+exports.makePlayerSmall = function (player) {
   const data = {
     position: player.position.elements,
     speed: player.speed,
-    score: player.score
+    score: player.score,
+    id: player.id
   };
   return data;
 }
-exports.makePlayersSmall = makePlayersSmall;
 
-function randInt (min, max) {
+exports.randInt = function (min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
-exports.randInt = randInt;

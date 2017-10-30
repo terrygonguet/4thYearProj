@@ -5,12 +5,12 @@ class Player extends Entity {
    * @param {Vector} position : starting position
    */
   constructor(id, position) {
-    Math.seedrandom(id);
     if (!position)
       position = $V([
         Math.randFloat(-game.dimensions.e(1)/2, game.dimensions.e(1)/2),
         Math.randFloat(-game.dimensions.e(2)/2, game.dimensions.e(2)/2)
       ]);
+    Math.seedrandom(id);
     super(id, position, 10, Math.randomRGB());
     this.speed    = 300;
     this.curspeed = 0;

@@ -3,22 +3,24 @@ const SAT = require("sat");
 
 class Game {
 
-  static currentID = 0;
   static nextID () {
     return Game.currentID++;
   }
 
-  constructor() {
+  constructor(io) {
     this.id         = Game.nextID();
     this.type       = "deathmatch";
     this.players    = [];
     this.blocks     = [];
     this.dimensions = [5000,5000];
+    this.io         = io;
+
+    this.generateBlocks();
   }
 
-  generateBlocks() {
-    for (var i = 0; i < 150; i++) {
-      if (Math.random() < 0.2)
+  generateBlocks(nbBlocks=150, bushChance=0.2) {
+    for (var i = 0; i < nbBlocks; i++) {
+      if (Math.random() < bushChance)
         this.addBlock({
           position: [
             tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
@@ -46,21 +48,30 @@ class Game {
   update(delta) {
     var data = {
       players: [],
-      time: Date.now(),
+      time: Date.now()
     }
     for (var player of this.players) {
       data.players.push(tools.makePlayerSmall(player));
     }
-    io.to(this.id).emit("update", data);
+    this.io.to(this.id).emit("update", data);
   }
 
   addPlayer(player) {
     this.players.push(player);
-    for (var room of Object.keys(player.rooms)) {
-      if (room !== player.id && room !== this.id)
-        player.leave(room);
-    }
+    player.game && player.game.removePlayer(player);
     player.join(this.id);
+    player.game = this;
+    player.emit("createarena", {
+      blocks: this.blocks,
+      dimensions: this.dimensions,
+      players: this.players.map(p => tools.makePlayerSmall(p))
+    });
+  }
+
+  removePlayer(player) {
+    player.leave(this.id);
+    this.players.splice(this.players.indexOf(player), 1);
+    this.io.to(this.id).emit("playerleave", { id: player.id });
   }
 
   addBlock(block) {
@@ -68,5 +79,6 @@ class Game {
   }
 
 }
+Game.currentID = 0;
 
 module.exports = Game;

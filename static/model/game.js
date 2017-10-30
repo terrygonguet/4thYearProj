@@ -66,16 +66,17 @@ class Game extends createjs.Stage {
 
     this.socket.on("update", data => {
       // update payload
-      this.player.setScore(data.playerscore);
-      for (var p in data.players) {
-        !this.entities[p] && this.addChild(new OnlinePlayer(p));
-        this.entities[p].moveTo($V(data.players[p].position), data.players[p].speed);
-        this.entities[p].setScore(data.players[p].score);
+      this.player.setScore(data.players.find(p => p.id===this.player.id).score);
+      for (var p of data.players) {
+        if (p.id === this.player.id) continue;
+        !this.entities[p.id] && this.addChild(new OnlinePlayer(p.id));
+        this.entities[p.id].moveTo($V(p.position), p.speed);
+        this.entities[p.id].setScore(p.score);
       }
     });
 
     this.socket.on("firebullet", data => {
-      const fireOne = function (props) {
+      const fireOne = (props) => {
         this.addChild(new Bullet(
           $V(props.position), $V(props.direction), props.speed, props.playerid, props.sound
         ));
@@ -84,7 +85,7 @@ class Game extends createjs.Stage {
         for (var b of data) {
           fireOne(b);
         }
-      } else fireOne(b);
+      } else fireOne(data);
 
     });
 
@@ -136,10 +137,11 @@ class Game extends createjs.Stage {
       }
     }
 
-    for (var p in data.players) {
-      const ent = new OnlinePlayer(p)
-      this.addChild(ent, $V(data.players[p].position));
-      ent.setScore(data.players[p].score);
+    for (var p of data.players) {
+      if (p.id === this.player.id) continue;
+      const ent = new OnlinePlayer(p.id, $V(p.position));
+      ent.setScore(p.score);
+      this.addChild(ent);
     }
   }
 
