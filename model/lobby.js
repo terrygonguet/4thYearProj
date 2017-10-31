@@ -1,18 +1,18 @@
 const sylvester = require('sylvester');
 
-class Player {
+class Lobby {
 
-  static make(socket) {
+  static makePlayer(socket) {
     socket.join("players");
-    Player.players.push(socket);
+    Lobby.players.push(socket);
     socket.position = $V([0,0]);
     socket.score    = 0;
-    console.log("A fucker joined : " + socket.id + " (" + Player.players.length + " players left)");
+    console.log("A fucker joined : " + socket.id + " (" + Lobby.players.length + " players left)");
 
     socket.on("disconnect", () => {
       socket.game && socket.game.removePlayer(socket);
-      Player.players.splice(Player.players.indexOf(socket), 1);
-      console.log("A fucker left : " + socket.id + " (" + Player.players.length + " players left)");
+      Lobby.players.splice(Lobby.players.indexOf(socket), 1);
+      console.log("A fucker left : " + socket.id + " (" + Lobby.players.length + " players left)");
     });
 
     socket.on("firebullet", data => {
@@ -20,9 +20,9 @@ class Player {
     });
 
     socket.on("playerhit", data => {
-      var shooter = Player.getPlayer(data.shooter);
+      var shooter = Lobby.getPlayer(data.shooter);
       shooter && shooter.score++;
-      var target = Player.getPlayer(data.target);
+      var target = Lobby.getPlayer(data.target);
       target && target.emit("gethit");
     });
 
@@ -34,11 +34,11 @@ class Player {
   }
 
   static getPlayer(id) {
-    return Player.players.find(p => p.id === id);
+    return Lobby.players.find(p => p.id === id);
   }
 
 }
-Player.players = [];
+Lobby.players = [];
 
 
-module.exports = Player;
+module.exports = Lobby;

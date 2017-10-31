@@ -4,7 +4,7 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const now = require('present');
 
-const Player = require("./model/player");
+const Lobby = require("./model/lobby");
 const Game = require("./model/game");
 
 const games = [
@@ -24,6 +24,6 @@ server.listen(80, function () {
 app.use(express.static("static"));
 
 io.on('connection', function (socket) {
-  Player.make(socket);
+  Lobby.makePlayer(socket);
   games[0].addPlayer(socket);
 });
