@@ -1,5 +1,7 @@
 const tools = require("../tools");
 const SAT = require("sat");
+const Block = require("./block");
+const Plant = require("./plant");
 
 class Game {
 
@@ -21,27 +23,25 @@ class Game {
   generateBlocks(nbBlocks=150, bushChance=0.2) {
     for (var i = 0; i < nbBlocks; i++) {
       if (Math.random() < bushChance)
-        this.addBlock({
-          position: [
+        this.addBlock(new Plant(
+          "p"+i,
+          $V([
             tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
             tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
-          ],
-          radiusmin: Math.random() * 5 + 10,
-          radiusmax: Math.random() * 20 + 60,
-          id: "p" + i ,
-          type: "Plant"
-        });
+          ]),
+          Math.random() * 5 + 10,
+          Math.random() * 20 + 60
+        ));
       else
-        this.addBlock({
-          position: [
+        this.addBlock(new Block(
+          "b"+i,
+          $V([
             tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
             tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
-          ],
-          dimension: [ tools.randInt(20, 200), tools.randInt(20, 200) ],
-          angle: Math.random() * Math.PI * 2,
-          id: "b" + i ,
-          type: "Block"
-        });
+          ]),
+          $V([ tools.randInt(20, 200), tools.randInt(20, 200) ]),
+          Math.random() * Math.PI * 2
+        ));
     }
   }
 
@@ -51,7 +51,7 @@ class Game {
       time: Date.now()
     }
     for (var player of this.players) {
-      data.players.push(tools.makePlayerSmall(player));
+      data.players.push(player.serialize());
     }
     this.io.to(this.id).emit("update", data);
   }
@@ -62,9 +62,9 @@ class Game {
     player.join(this.id);
     player.game = this;
     player.emit("createarena", {
-      blocks: this.blocks,
+      blocks: this.blocks.map(b => b.serialize()),
       dimensions: this.dimensions,
-      players: this.players.map(p => tools.makePlayerSmall(p))
+      players: this.players.map(p => p.serialize())
     });
   }
 

@@ -31,10 +31,22 @@ class Lobby {
       socket.speed = data.player.speed;
       ack();
     });
+
+    socket.serialize = () => Lobby.serializePlayer(socket);
   }
 
   static getPlayer(id) {
     return Lobby.players.find(p => p.id === id);
+  }
+
+  static serializePlayer(player) {
+    const data = {
+      position: player.position.elements,
+      speed: player.speed,
+      score: player.score,
+      id: player.id
+    };
+    return data;
   }
 
 }
