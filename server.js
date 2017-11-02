@@ -17,7 +17,7 @@ setTimeout(function tick(old) {
   setTimeout(tick, 15, now());
 }, 15, now());
 
-server.listen(80, function () {
+server.listen(process.env.PORT || 80, function () {
   console.log("Server started");
 });
 
