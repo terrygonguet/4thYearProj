@@ -53,6 +53,7 @@ class InputManager extends createjs.EventDispatcher {
 
     // basically cheat codes
     // will be removed from lastkeys if found
+    // /!\ Needs to be specified in reverse as the latest key struct is at the satrt of the string
     this.keypatterns = {
       konami: "abArrowRightArrowLeftArrowRightArrowLeftArrowDownArrowDownArrowUpArrowUp"
     };

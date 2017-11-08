@@ -8,11 +8,11 @@ html, body {
 	width: 100%;
 	color: #EEE;
 	font-family: Montserrat;
+	background-color: #111;
 }
 
 #game {
 	display: block;
-  background-color: #111;
 }
 
 #gameWrapper {

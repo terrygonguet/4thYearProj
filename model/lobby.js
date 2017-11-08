@@ -1,6 +1,23 @@
 const sylvester = require('sylvester');
+const Game = require("./game");
 
 class Lobby {
+
+  constructor(io) {
+    this.rooms = [];
+    this.io    = io;
+
+    this.rooms.push(new Game(io));
+  }
+
+  join(socket) {
+    if (!socket.isPlayer) Lobby.makePlayer(socket);
+    this.rooms[0].addPlayer(socket);
+  }
+
+  update(delta) {
+    this.rooms.forEach(g => g.update(delta));
+  }
 
   static makePlayer(socket) {
     socket.join("players");
@@ -33,6 +50,7 @@ class Lobby {
     });
 
     socket.serialize = () => Lobby.serializePlayer(socket);
+    socket.isPlayer = true;
   }
 
   static getPlayer(id) {

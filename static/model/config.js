@@ -41,6 +41,7 @@ class Config extends createjs.EventDispatcher {
     };
     input.lockedBindings = [ "menu" ];
     input.hiddenBindings = [ "pause", "debug", "ratata" ];
+    input.keypatterns.goto80s = "08otog";
   }
 
   /**
