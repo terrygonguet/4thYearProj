@@ -30,6 +30,9 @@ class Block {
     this.hitbox.setAngle(angle);
   }
 
+  /**
+   * Returns the JSON representation of the object
+   */
   serialize() {
     return {
       position: this.position.elements,

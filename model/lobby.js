@@ -3,6 +3,9 @@ const Game = require("./game");
 
 class Lobby {
 
+  /**
+   * @param {IO} io : the IO object to handle sockets
+   */
   constructor(io) {
     this.rooms = [];
     this.io    = io;
@@ -10,15 +13,27 @@ class Lobby {
     this.rooms.push(new Game(io));
   }
 
+  /**
+   * If the socket isn't a player it is made so and joins the lobby
+   * @param {socket} socket : the player
+   */
   join(socket) {
     if (!socket.isPlayer) Lobby.makePlayer(socket);
     this.rooms[0].addPlayer(socket);
   }
 
+  /**
+   * update
+   * @param {Number} delta : number of seconds since last update
+   */
   update(delta) {
     this.rooms.forEach(g => g.update(delta));
   }
 
+  /**
+   * Transforms a socket into a player object
+   * @param {socket} socket
+   */
   static makePlayer(socket) {
     socket.join("players");
     Lobby.players.push(socket);
@@ -57,6 +72,10 @@ class Lobby {
     return Lobby.players.find(p => p.id === id);
   }
 
+  /**
+   * Returns the JSON representation of the object
+   * @param {socket} socket
+   */
   static serializePlayer(player) {
     const data = {
       position: player.position.elements,

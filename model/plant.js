@@ -17,6 +17,9 @@ class Plant {
     this.radiusmax     = radiusmax;
   }
 
+  /**
+   * Returns the JSON representation of the object
+   */
   serialize() {
     return {
       position: this.position.elements,
