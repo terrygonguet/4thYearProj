@@ -155,13 +155,13 @@ class InputManager extends createjs.EventDispatcher {
         }
 
         this.keys[e.key] = true;
-        let type = Object.keys(this.bindings).find(key => {
+        let type = Object.keys(this.bindings).filter(key => {
           if (this.bindings[key].indexOf(e.key) != -1) {
             this.keys[key] = true;
             return true;
           }
         });
-        custEvent.type = (type ? type : ""); // custom binding event if we found a keybind
+        custEvent.type = (type.length ? type : ""); // custom binding event if we found a keybind
         } break;
       case "keyup": {
         this.keys[e.key] = false;
@@ -191,7 +191,12 @@ class InputManager extends createjs.EventDispatcher {
     }
     this.dispatchEvent(e);
     // dispatch additionnal event if we found one and the native event didnt get stopped
-    custEvent.type && !e.cancelBubble && this.dispatchEvent(custEvent);
+    if (custEvent.type && !e.cancelBubble) {
+      if (custEvent.type instanceof Array) {
+        custEvent.type.forEach(ev => this.dispatchEvent(ev));
+      } else
+        this.dispatchEvent(custEvent);
+    }
   }
 
 }
