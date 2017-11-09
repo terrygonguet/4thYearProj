@@ -1,16 +1,45 @@
 const sylvester = require('sylvester');
-const Game = require("./game");
+const now = require('present');
 
 class Lobby {
 
   /**
    * @param {IO} io : the IO object to handle sockets
    */
-  constructor(io) {
-    this.rooms = [];
-    this.io    = io;
+  constructor(io, updateRate=60, netUpdateRate=15) {
+    const self = this;
+    this.rooms         = [];
+    this.io            = io;
+    this.updateRate    = updateRate;
+    this.netUpdateRate = netUpdateRate;
+    this.gamelist      = {
+      "Game": require("./game")
+    };
 
-    this.rooms.push(new Game(io));
+    // Update
+    (function tick(old) {
+      var delta = (now() - old);
+      self.update(delta);
+      setTimeout(tick, 1000 / self.updateRate, now());
+    })(now());
+
+    // Net Update
+    (function tick(old) {
+      var delta = (now() - old);
+      self.netupdate(delta);
+      setTimeout(tick, 1000 / self.netUpdateRate, now());
+    })(now());
+
+    this.createRoom("Game");
+  }
+
+  /**
+   * Creates a room in the lobby
+   * @param {String} type : the type of room to create
+   * @param {Object} params : the conf object to give to the Game constructor, defaults if null
+   */
+  createRoom(type, params) {
+    this.rooms.push(new this.gamelist[type](this.io, params));
   }
 
   /**
@@ -24,10 +53,18 @@ class Lobby {
 
   /**
    * update
-   * @param {Number} delta : number of seconds since last update
+   * @param {Number} delta : number of ms since last update
    */
   update(delta) {
     this.rooms.forEach(g => g.update(delta));
+  }
+
+  /**
+   * send update to the clients
+   * @param {Number} delta : number of ms since last update
+   */
+  netupdate(delta) {
+    this.rooms.forEach(g => g.netupdate(delta));
   }
 
   /**

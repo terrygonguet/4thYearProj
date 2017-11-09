@@ -5,10 +5,16 @@ const Plant = require("./plant");
 
 class Game {
 
+  /**
+   * @return {Number} the next unique ID
+   */
   static nextID () {
     return Game.currentID++;
   }
 
+  /**
+   * @param {IO} io
+   */
   constructor(io) {
     this.id         = Game.nextID();
     this.type       = "deathmatch";
@@ -20,6 +26,11 @@ class Game {
     this.generateBlocks();
   }
 
+  /**
+   * Creates blocks and bushes at random
+   * @param {Number} nbBlocks : Number of objects
+   * @param {Number} bushChance : Proportion of bushes [0,1]
+   */
   generateBlocks(nbBlocks=150, bushChance=0.2) {
     for (var i = 0; i < nbBlocks; i++) {
       if (Math.random() < bushChance)
@@ -45,7 +56,19 @@ class Game {
     }
   }
 
+  /**
+   * Updates the game state
+   * @param {Number} delta : the number of ms since last update
+   */
   update(delta) {
+
+  }
+
+  /**
+   * Transmits the game state to the players
+   * @param {Number} delta : the number of ms since last update
+   */
+  netupdate(delta) {
     var data = {
       players: [],
       time: Date.now()
@@ -56,6 +79,10 @@ class Game {
     this.io.to(this.id).emit("update", data);
   }
 
+  /**
+   * Make the player join this room and sends him the arena
+   * @param {Player} player
+   */
   addPlayer(player) {
     this.players.push(player);
     player.game && player.game.removePlayer(player);
@@ -68,12 +95,20 @@ class Game {
     });
   }
 
+  /**
+   * Make player leave and cleans up
+   * @param {Player} player
+   */
   removePlayer(player) {
     player.leave(this.id);
     this.players.splice(this.players.indexOf(player), 1);
     this.io.to(this.id).emit("playerleave", { id: player.id });
   }
 
+  /**
+   * Adds a block to the Arena
+   * @param {Block|Plant} block
+   */
   addBlock(block) {
     this.blocks.push(block);
   }
