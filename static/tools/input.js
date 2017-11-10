@@ -48,6 +48,9 @@ class InputManager extends createjs.EventDispatcher {
     // array of binding names that shouldn't be shown (not supported by this class)
     this.hiddenBindings = [ ];
 
+    // Keys that won't trigger anny event or use preventDefault
+    this.ignoredKeys = [ "F12", "F11" ];
+
     // a string representing that last ~300 keys pressed last key in front
     this.lastkeys = "";
 
@@ -136,6 +139,7 @@ class InputManager extends createjs.EventDispatcher {
         }
         break;
       case "keydown": {
+        if (this.ignoredKeys.indexOf(e.key) !== -1) break;
         e.preventDefault();
         if (!this.enabledListeners[e.type]) {
           Object.keys(this.keys).forEach(k => {
@@ -164,6 +168,7 @@ class InputManager extends createjs.EventDispatcher {
         custEvent.type = (type.length ? type : ""); // custom binding event if we found a keybind
         } break;
       case "keyup": {
+        if (this.ignoredKeys.indexOf(e.key) !== -1) break;
         this.keys[e.key] = false;
         let type = Object.keys(this.bindings).filter(key => {
           if (this.bindings[key].indexOf(e.key) != -1) {

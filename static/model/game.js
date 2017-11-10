@@ -25,7 +25,7 @@ class Game extends createjs.Stage {
     this.background   = null;
     this.foreground   = null;
     this.netticktime  = 0;
-    this.netrate      = 30;
+    this.netrate      = 15;
     this.renderVals   = [];
     this.pingvals     = [];
     this.screencenter = $V([window.innerWidth/2, window.innerHeight/2]);
@@ -68,9 +68,7 @@ class Game extends createjs.Stage {
       // update payload
       for (var p of data.players) {
         if (p.id === this.player.id) {
-          this.player.setScore(p.score);
-          if ($V(p.position).distanceFrom(this.player.lastSentPos) >= 1 * this.player.radius)
-            this.player.position = $V(p.position);
+          this.player.serverState = p;
           continue;
         }
         !this.entities[p.id] && this.addChild(new OnlinePlayer(p.id));

@@ -63,19 +63,22 @@ class Game {
   update(delta) {
     const collidables = this.blocks.filter(b => !!b.hitbox);
     for (var player of this.players) {
-      var deplacement = player.inputs.reduce((d,i) => d.add($V(i.direction).x(i.speed * i.delta / 1000)), $V([0,0]));
+      for (var input of player.inputs) {
+        player.position = player.position.add($V(input.direction).x(input.speed * input.delta / 1000));
+        player.hitbox.pos = tools.toSAT(player.position);
+        this.collide(player, collidables.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius));
+      }
       player.inputs = [];
-      player.position = player.position.add(deplacement);
-      player.hitbox.pos = tools.toSAT(player.position);
+    }
+  }
 
-      for (var collidable of collidables) {
-        if (player.position.distanceFrom(collidable.position) > player.radius + collidable.radius) continue;
-        const res = new SAT.Response();
-        const test = (collidable.hitbox instanceof SAT.Circle ? SAT.testCircleCircle : SAT.testCirclePolygon);
-        if (test(player.hitbox, collidable.hitbox, res)) {
-          player.position = player.position.subtract($V([res.overlapV.x, res.overlapV.y]));
-          player.hitbox.pos = tools.toSAT(player.position);
-        }
+  collide (player, collidables) {
+    for (var collidable of collidables) {
+      const res = new SAT.Response();
+      const test = (collidable.hitbox instanceof SAT.Circle ? SAT.testCircleCircle : SAT.testCirclePolygon);
+      if (test(player.hitbox, collidable.hitbox, res)) {
+        player.position = player.position.subtract($V([res.overlapV.x, res.overlapV.y]));
+        player.hitbox.pos = tools.toSAT(player.position);
       }
     }
   }
