@@ -165,13 +165,13 @@ class InputManager extends createjs.EventDispatcher {
         } break;
       case "keyup": {
         this.keys[e.key] = false;
-        let type = Object.keys(this.bindings).find(key => {
+        let type = Object.keys(this.bindings).filter(key => {
           if (this.bindings[key].indexOf(e.key) != -1) {
             this.keys[key] = false;
             return true;
           }
         });
-        custEvent.type = (type ? type + "U" : "");  // custom binding event if we found a keybind
+        custEvent.type = (type.length ? type.map(t => t+"U") : "");  // custom binding event if we found a keybind
         } break;
       case "focus" : break;
       case "blur" :

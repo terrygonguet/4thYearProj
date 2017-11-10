@@ -66,9 +66,13 @@ class Game extends createjs.Stage {
 
     this.socket.on("update", data => {
       // update payload
-      this.player.setScore(data.players.find(p => p.id===this.player.id).score);
       for (var p of data.players) {
-        if (p.id === this.player.id) continue;
+        if (p.id === this.player.id) {
+          this.player.setScore(p.score);
+          if ($V(p.position).distanceFrom(this.player.lastSentPos) >= 1 * this.player.radius)
+            this.player.position = $V(p.position);
+          continue;
+        }
         !this.entities[p.id] && this.addChild(new OnlinePlayer(p.id));
         this.entities[p.id].moveTo($V(p.position), p.speed);
         this.entities[p.id].setScore(p.score);
@@ -178,11 +182,14 @@ class Game extends createjs.Stage {
     if (!this.player) return;
     var data = { };
     var smthToSend = false;
-    if (this.player.hasMoved) {
+    if (this.player.inputHistory.length) {
       data.player = {
         position: this.player.position.elements,
-        speed: this.player.speed
+        speed: this.player.speed,
+        inputs: this.player.inputHistory.slice()
       };
+      this.player.inputHistory = [];
+      this.player.lastSentPos = this.player.position.dup();
       smthToSend = true;
     }
     const now = Date.now();

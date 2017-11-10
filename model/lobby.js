@@ -1,4 +1,5 @@
 const sylvester = require('sylvester');
+const SAT = require("sat");
 const now = require('present');
 
 class Lobby {
@@ -37,9 +38,12 @@ class Lobby {
    * Creates a room in the lobby
    * @param {String} type : the type of room to create
    * @param {Object} params : the conf object to give to the Game constructor, defaults if null
+   * @return {Game} the game created
    */
   createRoom(type, params) {
-    this.rooms.push(new this.gamelist[type](this.io, params));
+    const game = new this.gamelist[type](this.io, params);
+    this.rooms.push(game);
+    return game;
   }
 
   /**
@@ -74,8 +78,14 @@ class Lobby {
   static makePlayer(socket) {
     socket.join("players");
     Lobby.players.push(socket);
+
     socket.position = $V([0,0]);
     socket.score    = 0;
+    socket.speed    = 0;
+    socket.inputs   = [];
+    socket.radius   = 10;
+    socket.hitbox   = new SAT.Circle(new SAT.V(), socket.radius);
+
     console.log("A fucker joined : " + socket.id + " (" + Lobby.players.length + " players left)");
 
     socket.on("disconnect", () => {
@@ -96,8 +106,9 @@ class Lobby {
     });
 
     socket.on("update", (data, ack) => {
-      socket.position = $V(data.player.position);
+      // socket.position = $V(data.player.position);
       socket.speed = data.player.speed;
+      socket.inputs = socket.inputs.concat(data.player.inputs);
       ack();
     });
 

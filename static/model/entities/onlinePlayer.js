@@ -13,7 +13,7 @@ class OnlinePlayer extends Player {
       const direction = this.position.subtract(this.realpos).toUnitVector();
       this.realpos = this.realpos.add(direction.x(this.speed * e.sdelta));
     } else
-      this.realpos = this.position;
+      this.realpos = this.position.dup();
 
     const pos = this.position.subtract(game.background.position).add(game.screencenter);
 

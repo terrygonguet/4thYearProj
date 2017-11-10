@@ -61,7 +61,23 @@ class Game {
    * @param {Number} delta : the number of ms since last update
    */
   update(delta) {
+    const collidables = this.blocks.filter(b => !!b.hitbox);
+    for (var player of this.players) {
+      var deplacement = player.inputs.reduce((d,i) => d.add($V(i.direction).x(i.speed * i.delta / 1000)), $V([0,0]));
+      player.inputs = [];
+      player.position = player.position.add(deplacement);
+      player.hitbox.pos = tools.toSAT(player.position);
 
+      for (var collidable of collidables) {
+        if (player.position.distanceFrom(collidable.position) > player.radius + collidable.radius) continue;
+        const res = new SAT.Response();
+        const test = (collidable.hitbox instanceof SAT.Circle ? SAT.testCircleCircle : SAT.testCirclePolygon);
+        if (test(player.hitbox, collidable.hitbox, res)) {
+          player.position = player.position.subtract($V([res.overlapV.x, res.overlapV.y]));
+          player.hitbox.pos = tools.toSAT(player.position);
+        }
+      }
+    }
   }
 
   /**
@@ -93,6 +109,10 @@ class Game {
       dimensions: this.dimensions,
       players: this.players.map(p => p.serialize())
     });
+    player.position = $V([
+      tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
+      tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
+    ]);
   }
 
   /**
