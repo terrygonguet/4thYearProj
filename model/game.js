@@ -22,6 +22,29 @@ class Game {
     this.blocks     = [];
     this.dimensions = [5000,5000];
     this.io         = io;
+    this.countdown  = 0;
+    this.ingame     = false;
+    this.state      = "waiting"; // enum : { "waiting", "starting", "running", "ending" }
+    this.states     = {
+      waiting: {
+        type: "message",
+        title: "Waiting for players",
+        message: "<players> in game"
+      },
+      starting: {
+        type: "message",
+        title: "Starting in",
+        message: "<countdown>"
+      },
+      running: {
+        type: "game"
+      },
+      ending: {
+        type: "message",
+        title: "Game Over",
+        message: "<name> won !"
+      }
+    };
 
     this.generateBlocks();
   }
@@ -61,21 +84,66 @@ class Game {
    * @param {Number} delta : the number of ms since last update
    */
   update(delta) {
-    const collidables = this.blocks.filter(b => !!b.hitbox);
-    for (var player of this.players) {
-      var id;
-      player.inputs[0] && (id = player.inputs[0].id);
-      for (var input of player.inputs.filter(i => i.id === id)) {
-        player.position = player.position.add($V(input.direction).x(input.speed * input.delta / 1000));
-        player.hitbox.pos = tools.toSAT(player.position);
-        this.collide(player, collidables.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius));
-        player.position = tools.clampVect(player.position, this.dimensions);
-      }
-      player.inputs = player.inputs.filter(i => i.id !== id);
-      player.currentID = id;
+    switch (this.state) {
+      case "waiting":
+        if (this.players.length >= 3) {
+          this.state = "starting";
+          this.countdown = 5;
+        }
+        break;
+      case "starting":
+        if ((this.countdown -= (delta/1000)) <= 0) {
+          this.state = "running";
+          this.countdown = 10;
+        }
+        break;
+      case "running":
+        if ((this.countdown -= (delta/1000)) <= 0) {
+          this.state = "ending";
+          this.countdown = 5;
+        }
+        const collidables = this.blocks.filter(b => !!b.hitbox);
+        for (var player of this.players) {
+          var id;
+          player.inputs[0] && (id = player.inputs[0].id);
+          for (var input of player.inputs.filter(i => i.id === id)) {
+            player.position = player.position.add($V(input.direction).x(input.speed * input.delta / 1000));
+            player.hitbox.pos = tools.toSAT(player.position);
+            this.collide(player, collidables.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius));
+            player.position = tools.clampVect(player.position, this.dimensions);
+          }
+          player.inputs = player.inputs.filter(i => i.id !== id);
+          player.currentID = id;
+        }
+        break;
+      case "ending":
+        if ((this.countdown -= (delta/1000)) <= 0) {
+          this.state = "waiting";
+        }
+        break;
     }
   }
 
+  // TODO
+  switchToState(state) {
+    this.state = state;
+    switch (this.states[state].type) {
+      case "message":
+
+        break;
+    }
+  }
+
+  // TODO
+  updateState() {
+
+  }
+
+  /**
+   * collides player with the collidables
+   * @param {Player} player
+   * @param {Array} collidables an array of objects with a hitbox property
+   */
   collide (player, collidables) {
     for (var collidable of collidables) {
       const res = new SAT.Response();
@@ -92,14 +160,38 @@ class Game {
    * @param {Number} delta : the number of ms since last update
    */
   netupdate(delta) {
-    var data = {
-      players: [],
-      time: Date.now()
+
+    switch (this.state) {
+      case "waiting":
+
+        break;
+      case "starting":
+        this.io.to(this.id).emit("gotomessage", {
+          title: this.states["starting"].title,
+          message: this.states["starting"].message.replace("<countdown>", parseInt(this.countdown))
+        });
+        break;
+      case "running":
+        if (!this.ingame) {
+          this.ingame = true;
+          this.io.to(this.id).emit("gotogame");
+        }
+        var data = {
+          players: [],
+          time: Date.now()
+        }
+        for (var player of this.players) {
+          data.players.push(player.serialize());
+        }
+        this.io.to(this.id).emit("update", data);
+        break;
+      case "ending":
+        this.io.to(this.id).emit("gotomessage", {
+          title: this.states["ending"].title,
+          message: this.states["ending"].message.replace("<name>", "someone")
+        });
+        break;
     }
-    for (var player of this.players) {
-      data.players.push(player.serialize());
-    }
-    this.io.to(this.id).emit("update", data);
   }
 
   /**
@@ -111,6 +203,7 @@ class Game {
     player.game && player.game.removePlayer(player);
     player.join(this.id);
     player.game = this;
+
     player.emit("createarena", {
       blocks: this.blocks.map(b => b.serialize()),
       dimensions: this.dimensions,
@@ -120,6 +213,30 @@ class Game {
       tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
       tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
     ]);
+
+    switch (this.state) {
+      case "waiting":
+        this.io.to(this.id).emit("gotomessage", {
+          title: this.states["waiting"].title,
+          message: this.states["waiting"].message.replace("<players>", this.players.length)
+        });
+        break;
+      case "starting":
+        player.emit("gotomessage", {
+          title: this.states["starting"].title,
+          message: this.states["starting"].message.replace("<countdown>", parseInt(this.countdown))
+        });
+        break;
+      case "running":
+        player.emit("gotogame");
+        break;
+      case "ending":
+        player.emit("gotomessage", {
+          title: this.states["ending"].title,
+          message: this.states["ending"].message.replace("<name>", "someone")
+        });
+        break;
+    }
   }
 
   /**

@@ -14,10 +14,10 @@ class Game extends createjs.Stage {
 
     // other props
     this.socket       = null;
-    this.txtFps       = new QuickText({ x: 10, y: 10 });
-    this.txtrendertime= new QuickText({ x: 10, y: 30 });
-    this.txtping      = new QuickText({ x: 10, y: 50 });
-    this.txtqwerty    = new QuickText({ x: 10, y: 70, text: debug ? "Escape for the menu" : "" });
+    this.txtFps       = new QuickText({ x: 10, y: 30 });
+    this.txtrendertime= new QuickText({ x: 10, y: 50 });
+    this.txtping      = new QuickText({ x: 10, y: 70 });
+    this.txtqwerty    = new QuickText({ x: 10, y: 10, text: debug ? "Escape for the menu" : "" });
     this.entities     = {};
     this.collidables  = [];
     this.player       = null;
@@ -63,6 +63,20 @@ class Game extends createjs.Stage {
     this.socket.on("connect", () => {});
 
     this.socket.on("createarena", data => this.init(data));
+
+    this.socket.on("gotomessage", data => {
+      $("#game").hide();
+      $("#messagebox").show();
+      createjs.Ticker.paused = true;
+      $("#title").text(data.title);
+      $("#message").text(data.message);
+    });
+
+    this.socket.on("gotogame", data => {
+      $("#game").show();
+      $("#messagebox").hide();
+      createjs.Ticker.paused = false;
+    });
 
     this.socket.on("update", data => {
       // update payload

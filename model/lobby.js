@@ -86,6 +86,7 @@ class Lobby {
     socket.radius   = 10;
     socket.hitbox   = new SAT.Circle(new SAT.V(), socket.radius);
     socket.currentID= null;
+    socket.isPlayer = true;
 
     console.log("A fucker joined : " + socket.id + " (" + Lobby.players.length + " players left)");
 
@@ -114,7 +115,6 @@ class Lobby {
     });
 
     socket.serialize = () => Lobby.serializePlayer(socket);
-    socket.isPlayer = true;
   }
 
   static getPlayer(id) {
