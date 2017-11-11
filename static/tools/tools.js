@@ -106,6 +106,18 @@ SAT.Vector.prototype.toSylv = function () {
 };
 
 /**
+ * Returns the next unique ID (only unique for this instance)
+ * In its own namespace so that id isn't accessible
+ */
+var nextID = null;
+(function () {
+  var id = 0;
+  nextID = function () {
+    return id++;
+  }
+})();
+
+/**
  * Finds the point of contact between a line and a Polygon closest to the line's anchor
  * @param {SAT.Polygon} line : the ray
  * @param {SAT.Polygon} poly : the polygon to test

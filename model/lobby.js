@@ -85,6 +85,7 @@ class Lobby {
     socket.inputs   = [];
     socket.radius   = 10;
     socket.hitbox   = new SAT.Circle(new SAT.V(), socket.radius);
+    socket.currentID= null;
 
     console.log("A fucker joined : " + socket.id + " (" + Lobby.players.length + " players left)");
 
@@ -127,6 +128,7 @@ class Lobby {
   static serializePlayer(player) {
     const data = {
       position: player.position.elements,
+      currentID: player.currentID,
       speed: player.speed,
       score: player.score,
       id: player.id

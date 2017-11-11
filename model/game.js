@@ -63,12 +63,15 @@ class Game {
   update(delta) {
     const collidables = this.blocks.filter(b => !!b.hitbox);
     for (var player of this.players) {
-      for (var input of player.inputs) {
+      var id;
+      player.inputs[0] && (id = player.inputs[0].id);
+      for (var input of player.inputs.filter(i => i.id === id)) {
         player.position = player.position.add($V(input.direction).x(input.speed * input.delta / 1000));
         player.hitbox.pos = tools.toSAT(player.position);
         this.collide(player, collidables.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius));
       }
-      player.inputs = [];
+      player.inputs = player.inputs.filter(i => i.id !== id);
+      player.currentID = id;
     }
   }
 

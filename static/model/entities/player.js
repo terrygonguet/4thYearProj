@@ -12,7 +12,8 @@ class Player extends Entity {
     this.acc          = 2000;
     this.dec          = 2300;
     this.lastdir      = this.position.dup();
-    this.lastSentPos  = this.position.dup();
+    this.lastSentPos  = {};
+    this.currentID    = nextID();
     this.serverState  = null;
     this.hasMoved     = true;
     this.txtPoints    = new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#111" });
@@ -45,6 +46,15 @@ class Player extends Entity {
    */
   update (e) {
     if (this.serverState) {
+      this.setScore(this.serverState.score);
+      if (this.serverState.currentID &&
+          $V(this.serverState.position).distanceFrom(this.lastSentPos[this.serverState.currentID]) > this.radius)
+      {
+        this.position = $V(this.serverState.position);
+      }
+      delete this.lastSentPos[this.serverState.currentID];
+      Object.keys(this.lastSentPos).forEach(k => (k < this.serverState.currentID - 10) && delete this.lastSentPos[k]);
+      this.serverState = null;
 
     }
 
@@ -58,34 +68,35 @@ class Player extends Entity {
       this.inputHistory.push({
         direction: this.lastdir.elements,
         speed: this.curspeed,
-        delta: e.delta
+        delta: e.delta,
+        id: this.currentID
       });
+    }
 
-      const oldpos = this.position.dup();
-      const movement = this.lastdir.x(this.curspeed * e.sdelta);
-      this.position = this.position.add(movement);
-      this.hitbox.pos = this.position.toSAT();
+    const oldpos = this.position.dup();
+    const movement = this.lastdir.x(this.curspeed * e.sdelta);
+    this.position = this.position.add(movement);
+    this.hitbox.pos = this.position.toSAT();
 
-      for (var collidable of game.collidables) {
-        if (this === collidable || this.position.distanceFrom(collidable.position) > collidable.radius + this.radius) continue;
-        const res = new SAT.Response();
-        const test = (collidable.hitbox instanceof SAT.Circle ? SAT.testCircleCircle : SAT.testCirclePolygon);
-        if (test(this.hitbox, collidable.hitbox, res)) {
-          this.position = this.position.subtract($V([res.overlapV.x, res.overlapV.y]));
-          this.hitbox.pos = this.position.toSAT();
-        }
+    for (var collidable of game.collidables) {
+      if (this === collidable || this.position.distanceFrom(collidable.position) > collidable.radius + this.radius) continue;
+      const res = new SAT.Response();
+      const test = (collidable.hitbox instanceof SAT.Circle ? SAT.testCircleCircle : SAT.testCirclePolygon);
+      if (test(this.hitbox, collidable.hitbox, res)) {
+        this.position = this.position.subtract($V([res.overlapV.x, res.overlapV.y]));
+        this.hitbox.pos = this.position.toSAT();
       }
+
 
       this.position = $V(this.position.elements.map((e, i) => e.clamp(-game.dimensions.e(i+1)/2, game.dimensions.e(i+1)/2)));
       this.hasMoved = !oldpos.eql(this.position);
-
-      const pos = this.position.subtract(game.background.position).add(game.screencenter);
-
-      this.set({ x: pos.e(1), y: pos.e(2) });
-      this.txtPoints.set({ x: pos.e(1), y: pos.e(2) });
-      this.reloadBar.set({ x: pos.e(1), y: pos.e(2) });
     }
 
+    const pos = this.position.subtract(game.background.position).add(game.screencenter);
+
+    this.set({ x: pos.e(1), y: pos.e(2) });
+    this.txtPoints.set({ x: pos.e(1), y: pos.e(2) });
+    this.reloadBar.set({ x: pos.e(1), y: pos.e(2) });
 
 
     this.weapon.update(e);

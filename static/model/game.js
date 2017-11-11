@@ -187,7 +187,8 @@ class Game extends createjs.Stage {
         inputs: this.player.inputHistory.slice()
       };
       this.player.inputHistory = [];
-      this.player.lastSentPos = this.player.position.dup();
+      this.player.lastSentPos[this.player.currentID] = this.player.position.dup();
+      this.player.currentID = nextID();
       smthToSend = true;
     }
     const now = Date.now();
