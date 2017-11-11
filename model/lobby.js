@@ -131,8 +131,10 @@ class Lobby {
       currentID: player.currentID,
       speed: player.speed,
       score: player.score,
+      force: player.force,
       id: player.id
     };
+    player.force = false;
     return data;
   }
 

@@ -47,8 +47,9 @@ class Player extends Entity {
   update (e) {
     if (this.serverState) {
       this.setScore(this.serverState.score);
-      if (this.serverState.currentID &&
-          $V(this.serverState.position).distanceFrom(this.lastSentPos[this.serverState.currentID]) > this.radius)
+      if (this.serverState.force ||
+          (this.serverState.currentID &&
+          $V(this.serverState.position).distanceFrom(this.lastSentPos[this.serverState.currentID]) > this.radius))
       {
         this.position = $V(this.serverState.position);
       }

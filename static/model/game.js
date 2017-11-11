@@ -76,6 +76,7 @@ class Game extends createjs.Stage {
       $("#game").show();
       $("#messagebox").hide();
       createjs.Ticker.paused = false;
+      console.log("gotogame");
     });
 
     this.socket.on("update", data => {

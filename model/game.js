@@ -94,13 +94,14 @@ class Game {
       case "starting":
         if ((this.countdown -= (delta/1000)) <= 0) {
           this.state = "running";
-          this.countdown = 10;
+          this.countdown = 60;
         }
         break;
       case "running":
         if ((this.countdown -= (delta/1000)) <= 0) {
           this.state = "ending";
           this.countdown = 5;
+          this.ingame = false;
         }
         const collidables = this.blocks.filter(b => !!b.hitbox);
         for (var player of this.players) {
@@ -119,6 +120,10 @@ class Game {
       case "ending":
         if ((this.countdown -= (delta/1000)) <= 0) {
           this.state = "waiting";
+          this.io.to(this.id).emit("gotomessage", {
+            title: this.states["waiting"].title,
+            message: this.states["waiting"].message.replace("<players>", this.players.length)
+          });
         }
         break;
     }
@@ -213,6 +218,11 @@ class Game {
       tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
       tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
     ]);
+    player.force = true;
+    player.emit("update", {
+      players: [ player.serialize() ],
+      time: Date.now()
+    });
 
     switch (this.state) {
       case "waiting":
@@ -222,19 +232,11 @@ class Game {
         });
         break;
       case "starting":
-        player.emit("gotomessage", {
-          title: this.states["starting"].title,
-          message: this.states["starting"].message.replace("<countdown>", parseInt(this.countdown))
-        });
         break;
       case "running":
         player.emit("gotogame");
         break;
       case "ending":
-        player.emit("gotomessage", {
-          title: this.states["ending"].title,
-          message: this.states["ending"].message.replace("<name>", "someone")
-        });
         break;
     }
   }
