@@ -25,3 +25,22 @@ exports.toSAT = function (vector) {
 exports.toSylv = function (vector) {
   return $V([vector.x, vector.y]);
 };
+
+/**
+ * clamp
+ * @param {Number} number the number to clamp
+ * @param {Number} min
+ * @param {Number} max
+ */
+exports.clamp = function (number, min, max) {
+  return Math.min(Math.max(number, min), max);
+};
+
+/**
+ * Restricts the vector to a box of specified dimensions with 0,0 in the center
+ * @param {Vector} vector the vector to clamp
+ * @param {Array} dimensions the dimensions of the box
+ */
+exports.clampVect = function (vector, dimensions) {
+  return $V(vector.elements.map((e, i) => exports.clamp(e, -dimensions[i]/2, dimensions[i]/2)));
+};

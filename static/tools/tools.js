@@ -98,6 +98,14 @@ Vector.prototype.toSAT = function () {
 };
 
 /**
+ * Restricts the vector to a box of specified dimensions with 0,0 in the center
+ * @param {Array} dimensions the dimensions of the box
+ */
+Vector.prototype.clamp = function (dimensions) {
+  return $V(this.elements.map((e, i) => e.clamp(-dimensions[i]/2, dimensions[i]/2)));
+}
+
+/**
  * Transform a SAT vector into a sylvester Vector
  * @return {Vector} the same vector but from sylvester
  */

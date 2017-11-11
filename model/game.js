@@ -69,6 +69,7 @@ class Game {
         player.position = player.position.add($V(input.direction).x(input.speed * input.delta / 1000));
         player.hitbox.pos = tools.toSAT(player.position);
         this.collide(player, collidables.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius));
+        player.position = tools.clampVect(player.position, this.dimensions);
       }
       player.inputs = player.inputs.filter(i => i.id !== id);
       player.currentID = id;
