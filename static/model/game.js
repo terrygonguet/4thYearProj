@@ -50,10 +50,6 @@ class Game extends createjs.Stage {
       this.socket.emit("firebullet", e.data);
     });
 
-    this.on("playerhit", e => {
-      this.socket.emit("playerhit", e.data);
-    });
-
     window.addEventListener("resize", e => this.screencenter = $V([window.innerWidth/2, window.innerHeight/2]));
 
 
@@ -76,7 +72,6 @@ class Game extends createjs.Stage {
       $("#game").show();
       $("#messagebox").hide();
       createjs.Ticker.paused = false;
-      console.log("gotogame");
     });
 
     this.socket.on("update", data => {

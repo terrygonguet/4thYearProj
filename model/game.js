@@ -105,16 +105,12 @@ class Game {
         }
         const collidables = this.blocks.filter(b => !!b.hitbox);
         for (var player of this.players) {
-          var id;
-          player.inputs[0] && (id = player.inputs[0].id);
+          var id = player.getID();
           for (var input of player.inputs.filter(i => i.id === id)) {
-            player.position = player.position.add($V(input.direction).x(input.speed * input.delta / 1000));
-            player.hitbox.pos = tools.toSAT(player.position);
-            this.collide(player, collidables.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius));
-            player.position = tools.clampVect(player.position, this.dimensions);
+            var near =  collidables.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius);
+            player.updateAndCollide(input, this.collide.bind(this), near);
           }
-          player.inputs = player.inputs.filter(i => i.id !== id);
-          player.currentID = id;
+          player.clearInput(id);
         }
         break;
       case "ending":

@@ -16,7 +16,7 @@ class Player extends Entity {
     this.currentID    = nextID();
     this.serverState  = null;
     this.hasMoved     = true;
-    this.txtPoints    = new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#111" });
+    this.txtPoints    = new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#EEE" });
     this.weapon       = new Blaster();
     this.reloadBar    = new createjs.Shape();
     this.isplayer     = true;

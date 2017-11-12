@@ -19,6 +19,7 @@
   "homepage": "https://github.com/terrygonguet/4thYearProj#readme",
   "dependencies": {
     "express": "^4.15.4",
+    "merge": "^1.2.0",
     "present": "^1.0.0",
     "sat": "^0.6.0",
     "socket.io": "^2.0.3",

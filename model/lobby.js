@@ -1,6 +1,8 @@
 const sylvester = require('sylvester');
 const SAT = require("sat");
 const now = require('present');
+const io = require('socket.io');
+const Player = require('./player');
 
 class Lobby {
 
@@ -51,8 +53,20 @@ class Lobby {
    * @param {socket} socket : the player
    */
   join(socket) {
-    if (!socket.isPlayer) Lobby.makePlayer(socket);
-    this.rooms[0].addPlayer(socket);
+    var player = socket;
+    if (!socket.isPlayer) player = Lobby.makePlayer(socket);
+    player.lobby = this;
+    this.rooms[0].addPlayer(player);
+  }
+
+  /**
+   * Leaves the lobby
+   * @param {socket} socket : the player
+   */
+  leave(socket) {
+    socket.lobby = null;
+    Lobby.players.splice(Lobby.players.indexOf(socket), 1);
+    console.log("A fucker left : " + socket.id + " (" + Lobby.players.length + " players left)");
   }
 
   /**
@@ -76,66 +90,14 @@ class Lobby {
    * @param {socket} socket
    */
   static makePlayer(socket) {
-    socket.join("players");
-    Lobby.players.push(socket);
-
-    socket.position = $V([0,0]);
-    socket.score    = 0;
-    socket.speed    = 0;
-    socket.inputs   = [];
-    socket.radius   = 10;
-    socket.hitbox   = new SAT.Circle(new SAT.V(), socket.radius);
-    socket.currentID= null;
-    socket.isPlayer = true;
-
+    var player = new Player(socket);
+    Lobby.players.push(player);
     console.log("A fucker joined : " + socket.id + " (" + Lobby.players.length + " players left)");
-
-    socket.on("disconnect", () => {
-      socket.game && socket.game.removePlayer(socket);
-      Lobby.players.splice(Lobby.players.indexOf(socket), 1);
-      console.log("A fucker left : " + socket.id + " (" + Lobby.players.length + " players left)");
-    });
-
-    socket.on("firebullet", data => {
-      socket.to(socket.game.id).emit("firebullet", data);
-    });
-
-    socket.on("playerhit", data => {
-      var shooter = Lobby.getPlayer(data.shooter);
-      shooter && shooter.score++;
-      var target = Lobby.getPlayer(data.target);
-      target && target.emit("gethit");
-    });
-
-    socket.on("update", (data, ack) => {
-      // socket.position = $V(data.player.position);
-      socket.speed = data.player.speed;
-      socket.inputs = socket.inputs.concat(data.player.inputs);
-      ack();
-    });
-
-    socket.serialize = () => Lobby.serializePlayer(socket);
+    return player;
   }
 
   static getPlayer(id) {
     return Lobby.players.find(p => p.id === id);
-  }
-
-  /**
-   * Returns the JSON representation of the object
-   * @param {socket} socket
-   */
-  static serializePlayer(player) {
-    const data = {
-      position: player.position.elements,
-      currentID: player.currentID,
-      speed: player.speed,
-      score: player.score,
-      force: player.force,
-      id: player.id
-    };
-    player.force = false;
-    return data;
   }
 
 }
