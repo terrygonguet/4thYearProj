@@ -108,7 +108,7 @@ class Game {
           var id = player.getID();
           for (var input of player.inputs.filter(i => i.id === id)) {
             var near =  collidables.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius);
-            player.updateAndCollide(input, this.collide.bind(this), near);
+            player.updateAndCollide(input, this, near);
           }
           player.clearInput(id);
         }
