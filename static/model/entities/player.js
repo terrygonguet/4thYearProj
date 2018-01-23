@@ -47,16 +47,14 @@ class Player extends Entity {
   update (e) {
     if (this.serverState) {
       this.setScore(this.serverState.score);
-      if (this.serverState.force ||
-          (this.serverState.currentID &&
-          $V(this.serverState.position).distanceFrom(this.lastSentPos[this.serverState.currentID]) > this.radius))
+      if (this.serverState.force)
       {
         this.position = $V(this.serverState.position);
+        console.log("forced position");
       }
-      delete this.lastSentPos[this.serverState.currentID];
-      Object.keys(this.lastSentPos).forEach(k => (k < this.serverState.currentID - 10) && delete this.lastSentPos[k]);
+      // delete this.lastSentPos[this.serverState.currentID];
+      // Object.keys(this.lastSentPos).forEach(k => (k < this.serverState.currentID - 10) && delete this.lastSentPos[k]);
       this.serverState = null;
-
     }
 
     if (input.direction.modulus() !== 0) {
@@ -64,15 +62,6 @@ class Player extends Entity {
       this.lastdir = input.direction.dup();
     } else
       this.curspeed = (this.curspeed - this.dec * e.sdelta).clamp(0,this.speed);
-
-    if (this.curspeed) {
-      this.inputHistory.push({
-        direction: this.lastdir.elements,
-        speed: this.curspeed,
-        delta: e.delta,
-        id: this.currentID
-      });
-    }
 
     const oldpos = this.position.dup();
     const movement = this.lastdir.x(this.curspeed * e.sdelta);
@@ -89,9 +78,18 @@ class Player extends Entity {
       }
     }
 
-
     this.position = this.position.clamp(game.dimensions.elements);
     this.hasMoved = !oldpos.eql(this.position);
+
+    if (this.curspeed) {
+      this.inputHistory.push({
+        position: this.position.elements,
+        direction: this.lastdir.elements,
+        speed: this.curspeed,
+        delta: e.delta,
+        id: this.currentID
+      });
+    }
 
     const pos = this.position.subtract(game.background.position).add(game.screencenter);
 

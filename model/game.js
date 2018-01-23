@@ -86,7 +86,7 @@ class Game {
   update(delta) {
     switch (this.state) {
       case "waiting":
-        if (this.players.length >= 3) {
+        if (this.players.length >= 1) {
           this.state = "starting";
           this.countdown = 5;
         }
@@ -105,12 +105,13 @@ class Game {
         }
         const collidables = this.blocks.filter(b => !!b.hitbox);
         for (var player of this.players) {
-          var id = player.getID();
-          for (var input of player.inputs.filter(i => i.id === id)) {
+          for (var input of player.inputs) {//.inputs.filter(i => i.id === id)) {
             var near =  collidables.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius);
             player.updateAndCollide(input, this, near);
+            if (!player.force && player.position.distanceFrom($V(input.position)) < 2)
+              player.force = true;
           }
-          player.clearInput(id);
+          player.clearInput();
         }
         break;
       case "ending":
@@ -161,7 +162,6 @@ class Game {
    * @param {Number} delta : the number of ms since last update
    */
   netupdate(delta) {
-
     switch (this.state) {
       case "waiting":
 
@@ -183,6 +183,7 @@ class Game {
         }
         for (var player of this.players) {
           data.players.push(player.serialize());
+          player.force = false;
         }
         this.io.to(this.id).emit("update", data);
         break;
@@ -204,20 +205,15 @@ class Game {
     player.game && player.game.removePlayer(player);
     player.join(this.id);
     player.game = this;
+    player.position = $V([
+      tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
+      tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
+    ]);
 
     player.emit("createarena", {
       blocks: this.blocks.map(b => b.serialize()),
       dimensions: this.dimensions,
       players: this.players.map(p => p.serialize())
-    });
-    player.position = $V([
-      tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
-      tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
-    ]);
-    player.force = true;
-    player.emit("update", {
-      players: [ player.serialize() ],
-      time: Date.now()
     });
 
     switch (this.state) {
@@ -243,7 +239,7 @@ class Game {
    */
   removePlayer(player) {
     player.leave(this.id);
-    this.players.splice(this.players.indexOf(player), 1);
+    this.players = this.players.filter(p => p.id !== player.id);
     this.io.to(this.id).emit("playerleave", { id: player.id });
   }
 

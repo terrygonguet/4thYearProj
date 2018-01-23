@@ -85,6 +85,13 @@ class Game extends createjs.Stage {
         this.entities[p.id].moveTo($V(p.position), p.speed);
         this.entities[p.id].setScore(p.score);
       }
+      for (var e in this.entities) {
+        if (!data.players.find(p => p.id===e)) {
+          console.log(data.players, this.entities);
+          this.entities[e].die();
+          console.log("killed " + e);
+        }
+      }
     });
 
     this.socket.on("firebullet", data => {
@@ -150,10 +157,14 @@ class Game extends createjs.Stage {
     }
 
     for (var p of data.players) {
-      if (p.id === this.player.id) continue;
-      const ent = new OnlinePlayer(p.id, $V(p.position));
-      ent.setScore(p.score);
-      this.addChild(ent);
+      if (p.id === this.player.id) {
+        this.player.position = $V(p.position);
+        this.player.setScore(p.score);
+      } else {
+        const ent = new OnlinePlayer(p.id, $V(p.position));
+        ent.setScore(p.score);
+        this.addChild(ent);
+      }
     }
   }
 

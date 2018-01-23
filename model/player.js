@@ -22,6 +22,7 @@ class Player {
     this.lobby    = null;
     this.game     = null;
     this.isPlayer = true;
+    this.force    = false;
 
     merge(this, socket);
 
@@ -68,8 +69,8 @@ class Player {
    * Remove the input objects matching the id or all if not specified
    * @param {Number} id
    */
-  clearInput(id) {
-    this.inputs = this.inputs.filter(i => i.id !== id || id === undefined);
+  clearInput(id=false) {
+    this.inputs = [];//this.inputs.filter(i => i.id !== id || id);
     this.currentID = id;
   }
 
@@ -95,7 +96,6 @@ class Player {
       force: this.force,
       id: this.id
     };
-    this.force = false;
     return data;
   }
 
