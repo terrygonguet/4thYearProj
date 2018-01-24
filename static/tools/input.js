@@ -49,7 +49,7 @@ class InputManager extends createjs.EventDispatcher {
     this.hiddenBindings = [ ];
 
     // Keys that won't trigger anny event or use preventDefault
-    this.ignoredKeys = [ "F12", "F11" ];
+    this.ignoredKeys = [ "F12", "F11", "F5" ];
 
     // a string representing that last ~300 keys pressed last key in front
     this.lastkeys = "";

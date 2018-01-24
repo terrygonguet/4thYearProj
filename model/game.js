@@ -171,7 +171,8 @@ class Game {
         }
       } else if (object.isBullet && !object.toDie) {
         if (SAT[test](object.hitbox, collidable.hitbox) && collidable.id !== object.playerid) {
-          console.log(collidable.id + " " + object.playerid);
+          if (collidable.isPlayer)
+            collidable.score = tools.clamp(collidable.score - 5, 0, 100);
           object.toDie = true;
           break;
         }
