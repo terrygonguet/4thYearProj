@@ -88,21 +88,21 @@ class Game {
   update(delta) {
     switch (this.state) {
       case "waiting":
-        if (this.players.length >= 1) {
+        if (this.players.length >= 2) {
           this.state = "starting";
-          this.countdown = 5;
+          this.countdown = 3;
         }
         break;
       case "starting":
         if ((this.countdown -= (delta/1000)) <= 0) {
           this.state = "running";
-          this.countdown = 60;
         }
         break;
       case "running":
-        if ((this.countdown -= (delta/1000)) <= 0) {
+        this.winner = this.players.filter(p => p.score !== 0);
+        if (this.winner.length === 1) {
           this.state = "ending";
-          this.countdown = 5;
+          this.countdown = 3;
           this.ingame = false;
         }
         const blocks = this.blocks.filter(b => !!b.hitbox); // TODO cache result
@@ -133,6 +133,7 @@ class Game {
             title: this.states["waiting"].title,
             message: this.states["waiting"].message.replace("<players>", this.players.length)
           });
+          this.reset();
         }
         break;
     }
@@ -214,10 +215,38 @@ class Game {
       case "ending":
         this.io.to(this.id).emit("gotomessage", {
           title: this.states["ending"].title,
-          message: this.states["ending"].message.replace("<name>", "someone")
+          message: this.states["ending"].message.replace("<name>", this.winner[0].id)
         });
         break;
     }
+  }
+
+  /**
+   * Resets map and players
+   */
+  reset() {
+    this.players.forEach(p => {
+      p.setPos($V([
+        tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
+        tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
+      ]));
+      p.score = 100;
+      p.force = true;
+      p.inputs = [{
+        position: p.position.elements,
+        direction: [0,0],
+        speed: 0,
+        delta: 0
+      }];
+    });
+    this.winner = null;
+    this.blocks = [];
+    this.generateBlocks();
+    this.io.to(this.id).emit("createarena", {
+      blocks: this.blocks.map(b => b.serialize()),
+      dimensions: this.dimensions,
+      players: this.players.map(p => p.serialize())
+    });
   }
 
   /**
