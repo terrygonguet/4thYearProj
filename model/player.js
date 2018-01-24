@@ -32,7 +32,8 @@ class Player {
     });
 
     socket.on("firebullet", data => {
-      socket.to(this.game.id).emit("firebullet", data);
+      // socket.to(this.game.id).emit("firebullet", data);
+      this.game && this.game.fireBullet(data);
     });
 
     socket.on("update", (data, ack) => {
@@ -44,13 +45,17 @@ class Player {
 
   }
 
+  setPos(vector) {
+    this.position = vector.dup();
+    this.hitbox.pos = tools.toSAT(this.position);
+  }
+
   /**
    * Calculates the movement for one input frame
    * @param {Object} inputobj the object detailing the input to process
    */
   update(inputobj) {
-    this.position = this.position.add($V(inputobj.direction).x(inputobj.speed * inputobj.delta / 1000));
-    this.hitbox.pos = tools.toSAT(this.position);
+    this.setPos(this.position.add($V(inputobj.direction).x(inputobj.speed * inputobj.delta / 1000)));
   }
 
   /**
@@ -62,7 +67,7 @@ class Player {
   updateAndCollide(inputobj, gameobj, collidables) {
     this.update(inputobj);
     gameobj.collide(this, collidables);
-    this.position = tools.clampVect(this.position, gameobj.dimensions);
+    this.setPos(tools.clampVect(this.position, gameobj.dimensions));
   }
 
   /**

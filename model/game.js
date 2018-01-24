@@ -2,6 +2,7 @@ const tools = require("../tools");
 const SAT = require("sat");
 const Block = require("./block");
 const Plant = require("./plant");
+const Bullet = require('./bullet');
 
 class Game {
 
@@ -20,6 +21,7 @@ class Game {
     this.type       = "deathmatch";
     this.players    = [];
     this.blocks     = [];
+    this.bullets    = [];
     this.dimensions = [5000,5000];
     this.io         = io;
     this.countdown  = 0;
@@ -103,15 +105,25 @@ class Game {
           this.countdown = 5;
           this.ingame = false;
         }
-        const collidables = this.blocks.filter(b => !!b.hitbox);
+        const blocks = this.blocks.filter(b => !!b.hitbox); // TODO cache result
         for (var player of this.players) {
           for (var input of player.inputs) {//.inputs.filter(i => i.id === id)) {
-            var near =  collidables.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius);
+            var near =  blocks.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius);
             player.updateAndCollide(input, this, near);
-            if (!player.force && player.position.distanceFrom($V(input.position)) < 2)
+            if (!player.force && player.position.distanceFrom($V(input.position)) > 2) {
               player.force = true;
+            }
           }
           player.clearInput();
+        }
+        const collidables = this.blocks.filter(b => !!b.hitbox).concat(this.players); // TODO cache
+        for (var bullet of this.bullets) {
+          if (bullet.toDie) {
+            this.bullets.splice(this.bullets.indexOf(bullet), 1);
+            continue;
+          }
+          // var near =  collidables.filter(c => bullet.position.distanceFrom(c.position) <= bullet.speed * delta + c.radius);
+          bullet.updateAndCollide(delta/1000, this, collidables);
         }
         break;
       case "ending":
@@ -143,17 +155,28 @@ class Game {
 
   /**
    * collides player with the collidables
-   * @param {Player} player
+   * @param {Player} object the object that updated (player, bullet ...)
    * @param {Array} collidables an array of objects with a hitbox property
    */
-  collide (player, collidables) {
+  collide (object, collidables) {
     for (var collidable of collidables) {
       const res = new SAT.Response();
-      const test = (collidable.hitbox instanceof SAT.Circle ? SAT.testCircleCircle : SAT.testCirclePolygon);
-      if (test(player.hitbox, collidable.hitbox, res)) {
-        player.position = player.position.subtract($V([res.overlapV.x, res.overlapV.y]));
-        player.hitbox.pos = tools.toSAT(player.position);
+      const test = "test" +
+        (object.hitbox instanceof SAT.Circle ? "Circle" : "Polygon") +
+        (collidable.hitbox instanceof SAT.Circle ? "Circle" : "Polygon");
+      if (object.isPlayer) {
+        if (SAT[test](object.hitbox, collidable.hitbox, res)) {
+          object.position = object.position.subtract($V([res.overlapV.x, res.overlapV.y]));
+          object.hitbox.pos = tools.toSAT(object.position);
+        }
+      } else if (object.isBullet && !object.toDie) {
+        if (SAT[test](object.hitbox, collidable.hitbox) && collidable.id !== object.playerid) {
+          console.log(collidable.id + " " + object.playerid);
+          object.toDie = true;
+          break;
+        }
       }
+
     }
   }
 
@@ -183,9 +206,9 @@ class Game {
         }
         for (var player of this.players) {
           data.players.push(player.serialize());
-          player.force = false;
         }
         this.io.to(this.id).emit("update", data);
+        this.players.forEach(p => p.force = false);
         break;
       case "ending":
         this.io.to(this.id).emit("gotomessage", {
@@ -205,10 +228,10 @@ class Game {
     player.game && player.game.removePlayer(player);
     player.join(this.id);
     player.game = this;
-    player.position = $V([
+    player.setPos($V([
       tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
       tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
-    ]);
+    ]));
 
     player.emit("createarena", {
       blocks: this.blocks.map(b => b.serialize()),
@@ -241,6 +264,12 @@ class Game {
     player.leave(this.id);
     this.players = this.players.filter(p => p.id !== player.id);
     this.io.to(this.id).emit("playerleave", { id: player.id });
+  }
+
+  fireBullet(data) {
+    this.io.to(this.id).emit("firebullet", data);
+    const b = new Bullet(data.position, data.direction, data.speed, data.playerid, data.sound);
+    this.bullets.push(b);
   }
 
   /**

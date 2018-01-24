@@ -26,15 +26,29 @@ class Bullet {
   /**
    * @param {eventdata} e
    */
-  update (e) {
-    
+  update (delta) {
+    const movement = this.direction.x(this.speed * delta);
+    const oldpos = this.position.dup();
+    this.hitbox.pos = tools.toSAT(this.position);
+    this.position = this.position.add(movement);
+
+    this.hitbox.setPoints([ tools.toSAT($V([0,0])), tools.toSAT(movement) ]);
   }
 
   /**
-   * Removes the object & cleans up
+   * Calculate movements and then calls gameobj.collide for every collidable
+   * @param {Object} inputobj refer to update
+   * @param {Game} gameobj the Game object on which collide will be called and given the player and the collidables
+   * @param {Array} collidables an array of collidables
    */
-  die () {
-    game.removeChild(this);
+  updateAndCollide(inputobj, gameobj, collidables) {
+    this.update(inputobj);
+    gameobj.collide(this, collidables);
+    if (
+      Math.abs(this.position.e(1)) > gameobj.dimensions[0]/2 ||
+      Math.abs(this.position.e(2)) > gameobj.dimensions[1]/2
+    )
+      this.toDie = true;
   }
 
 }

@@ -46,23 +46,23 @@ class Bullet extends createjs.Shape {
     this.position = this.position.add(movement);
 
     this.hitbox.setPoints([ $V([0,0]).toSAT(), movement.toSAT() ]);
-    for (var collidable of game.collidables) {
+    for (var collidable of game.collidables.concat(Object.values(game.entities).filter(e => e.isPlayer))) {
       const test = (collidable.hitbox instanceof SAT.Circle ? SAT.testPolygonCircle : SAT.testPolygonPolygon);
       if (this.playerid !== collidable.id &&
           test(this.hitbox, collidable.hitbox))
       {
         this.toDie = true;
-        if (collidable.isOnlinePlayer &&
-          game.player.id === this.playerid)
-        {
-          const evt = new createjs.Event("playerhit");
-          evt.data = {
-            target: collidable.id,
-            shooter: this.playerid
-          };
-          game.dispatchEvent(evt);
-          createjs.Sound.play("Ping");
-        }
+        // if (collidable.isOnlinePlayer &&
+        //   game.player.id === this.playerid)
+        // {
+        //   const evt = new createjs.Event("playerhit");
+        //   evt.data = {
+        //     target: collidable.id,
+        //     shooter: this.playerid
+        //   };
+        //   game.dispatchEvent(evt);
+        //   createjs.Sound.play("Ping");
+        // }
         break;
       }
     }
@@ -73,7 +73,6 @@ class Bullet extends createjs.Shape {
     this.set({ x: pos.e(1), y: pos.e(2) });
     // destruction
     if (Math.abs(this.position.e(1)) > game.dimensions.e(1)/2 || Math.abs(this.position.e(2)) > game.dimensions.e(2)/2)
-      // this.die();
       this.toDie = true;
   }
 

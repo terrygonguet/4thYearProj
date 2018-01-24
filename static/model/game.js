@@ -95,6 +95,7 @@ class Game extends createjs.Stage {
     });
 
     this.socket.on("firebullet", data => {
+      if (data.playerid === this.player.id) return;
       const fireOne = (props) => {
         this.addChild(new Bullet(
           $V(props.position), $V(props.direction), props.speed, props.playerid, props.sound

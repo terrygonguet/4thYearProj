@@ -19,7 +19,7 @@ class Player extends Entity {
     this.txtPoints    = new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#EEE" });
     this.weapon       = new Blaster();
     this.reloadBar    = new createjs.Shape();
-    this.isplayer     = true;
+    this.isPlayer     = true;
     this.inputHistory = [];
 
     this.on("added", e => {
@@ -49,8 +49,8 @@ class Player extends Entity {
       this.setScore(this.serverState.score);
       if (this.serverState.force)
       {
+        console.log("forced position to " + this.serverState.position + " from " + this.position.inspect());
         this.position = $V(this.serverState.position);
-        console.log("forced position");
       }
       // delete this.lastSentPos[this.serverState.currentID];
       // Object.keys(this.lastSentPos).forEach(k => (k < this.serverState.currentID - 10) && delete this.lastSentPos[k]);
