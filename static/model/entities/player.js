@@ -12,8 +12,6 @@ class Player extends Entity {
     this.acc          = 2000;
     this.dec          = 2300;
     this.lastdir      = this.position.dup();
-    this.lastSentPos  = {};
-    this.currentID    = nextID();
     this.serverState  = null;
     this.hasMoved     = true;
     this.txtPoints    = new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#EEE" });
@@ -52,8 +50,6 @@ class Player extends Entity {
         console.log("forced position to " + this.serverState.position + " from " + this.position.inspect());
         this.position = $V(this.serverState.position);
       }
-      // delete this.lastSentPos[this.serverState.currentID];
-      // Object.keys(this.lastSentPos).forEach(k => (k < this.serverState.currentID - 10) && delete this.lastSentPos[k]);
       this.serverState = null;
     }
 
@@ -86,8 +82,7 @@ class Player extends Entity {
         position: this.position.elements,
         direction: this.lastdir.elements,
         speed: this.curspeed,
-        delta: e.delta,
-        id: this.currentID
+        delta: e.delta
       });
     }
 

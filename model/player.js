@@ -14,11 +14,12 @@ class Player {
     this.socket   = socket;
     this.position = $V([0,0]);
     this.score    = 100;
-    this.speed    = 0;
+    this.speed    = 300;
+    this.acc      = 2000;
+    this.dec      = 2300;
     this.inputs   = [];
     this.radius   = 10;
     this.hitbox   = new SAT.Circle(new SAT.V(), this.radius);
-    this.currentID= null;
     this.lobby    = null;
     this.game     = null;
     this.isPlayer = true;
@@ -32,19 +33,20 @@ class Player {
     });
 
     socket.on("firebullet", data => {
-      // socket.to(this.game.id).emit("firebullet", data);
       this.game && this.game.fireBullet(data);
     });
 
     socket.on("update", (data, ack) => {
-      // socket.position = $V(data.player.position);
-      this.speed = data.player.speed;
       this.inputs = this.inputs.concat(data.player.inputs);
       ack();
     });
 
   }
 
+  /**
+   * Sets player and hitbox position
+   * @param {Vector} vector position as sylvester vector
+   */
   setPos(vector) {
     this.position = vector.dup();
     this.hitbox.pos = tools.toSAT(this.position);
