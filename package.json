@@ -24,5 +24,6 @@
     "sat": "^0.6.0",
     "socket.io": "^2.0.3",
     "sylvester": "0.0.21"
-  }
+  },
+  "devDependencies": {}
 }

@@ -87,7 +87,6 @@ class Game extends createjs.Stage {
       }
       for (var e in this.entities) {
         if (!data.players.find(p => p.id===e)) {
-          console.log(data.players, this.entities);
           this.entities[e].die();
           console.log("killed " + e);
         }
@@ -204,14 +203,13 @@ class Game extends createjs.Stage {
     var smthToSend = false;
     if (this.player.inputHistory.length) {
       data.player = {
-        position: this.player.position.elements,
-        speed: this.player.speed,
         inputs: this.player.inputHistory.slice()
       };
       this.player.inputHistory = [];
       smthToSend = true;
     }
     const now = Date.now();
+    data.direction && console.log(data);
     smthToSend && this.socket.emit("update", data, () => this.pingvals.push(Date.now() - now));
   }
 

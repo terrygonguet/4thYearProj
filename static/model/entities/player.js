@@ -53,11 +53,12 @@ class Player extends Entity {
       this.serverState = null;
     }
 
+    var deltaAcc = -this.dec;
     if (input.direction.modulus() !== 0) {
-      this.curspeed = (this.curspeed + this.acc * e.sdelta).clamp(0,this.speed);
-      this.lastdir = input.direction.dup();
-    } else
-      this.curspeed = (this.curspeed - this.dec * e.sdelta).clamp(0,this.speed);
+      this.lastdir = input.direction;
+      deltaAcc = this.acc;
+    }
+    this.curspeed = (this.curspeed + deltaAcc * e.sdelta).clamp(0,this.speed);
 
     const oldpos = this.position.dup();
     const movement = this.lastdir.x(this.curspeed * e.sdelta);
@@ -77,14 +78,10 @@ class Player extends Entity {
     this.position = this.position.clamp(game.dimensions.elements);
     this.hasMoved = !oldpos.eql(this.position);
 
-    if (this.curspeed) {
-      this.inputHistory.push({
-        position: this.position.elements,
-        direction: this.lastdir.elements,
-        speed: this.curspeed,
-        delta: e.delta
-      });
-    }
+    this.inputHistory.push(_.merge(input.keys, {
+      sdelta:e.sdelta,
+      position:this.position.elements.slice()
+    }));
 
     const pos = this.position.subtract(game.background.position).add(game.screencenter);
 

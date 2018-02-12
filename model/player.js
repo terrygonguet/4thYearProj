@@ -13,10 +13,12 @@ class Player {
 
     this.socket   = socket;
     this.position = $V([0,0]);
+    this.lastdir  = $V([0,0]);
     this.score    = 100;
     this.speed    = 300;
     this.acc      = 2000;
     this.dec      = 2300;
+    this.curspeed = 0;
     this.inputs   = [];
     this.radius   = 10;
     this.hitbox   = new SAT.Circle(new SAT.V(), this.radius);
@@ -57,7 +59,19 @@ class Player {
    * @param {Object} inputobj the object detailing the input to process
    */
   update(inputobj) {
-    this.setPos(this.position.add($V(inputobj.direction).x(inputobj.speed * inputobj.delta / 1000)));
+    if (inputobj.speed !== undefined || inputobj.direction !== undefined) return ;
+    var direction = $V([
+      Number(inputobj.right - inputobj.left),
+      Number(inputobj.down - inputobj.up)
+    ]);
+    var deltaAcc = -this.dec;
+    if (direction.modulus() !== 0) {
+      this.lastdir = direction;
+      deltaAcc = this.acc;
+    }
+    this.curspeed = tools.clamp(this.curspeed + deltaAcc * inputobj.sdelta, 0, this.speed);
+    if (this.curspeed !== 0 && !this.curspeed) debugger;
+    this.setPos(this.position.add(this.lastdir.x(this.curspeed * inputobj.sdelta)));
   }
 
   /**
@@ -96,7 +110,7 @@ class Player {
    */
   serialize() {
     const data = {
-      position: this.position.elements,
+      position: this.position.elements.slice(),
       currentID: this.currentID,
       speed: this.speed,
       score: this.score,
