@@ -202,6 +202,7 @@ class Game extends createjs.Stage {
     var data = { };
     var smthToSend = false;
     if (this.player.inputHistory.length) {
+      console.log(this.player.inputHistory);
       data.player = {
         inputs: this.player.inputHistory.slice()
       };

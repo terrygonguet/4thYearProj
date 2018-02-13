@@ -87,7 +87,7 @@ class InputManager extends createjs.EventDispatcher {
       this.direction = $V([
         Number(this.keys.right - this.keys.left),
         Number(this.keys.down - this.keys.up)
-      ]);
+      ]).toUnitVector();
     }
   }
 

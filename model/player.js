@@ -60,18 +60,19 @@ class Player {
    */
   update(inputobj) {
     if (inputobj.speed !== undefined || inputobj.direction !== undefined) return ;
+    inputobj.sdelta = inputobj.delta / 1000;
     var direction = $V([
       Number(inputobj.right - inputobj.left),
       Number(inputobj.down - inputobj.up)
-    ]);
-    var deltaAcc = -this.dec;
-    if (direction.modulus() !== 0) {
-      this.lastdir = direction;
-      deltaAcc = this.acc;
-    }
-    this.curspeed = tools.clamp(this.curspeed + deltaAcc * inputobj.sdelta, 0, this.speed);
-    if (this.curspeed !== 0 && !this.curspeed) debugger;
-    this.setPos(this.position.add(this.lastdir.x(this.curspeed * inputobj.sdelta)));
+    ]).toUnitVector();
+    // var deltaAcc = -this.dec;
+    // if (direction.modulus() !== 0) {
+    //   this.lastdir = direction;
+    //   deltaAcc = this.acc;
+    // }
+    // this.curspeed = tools.clamp(this.curspeed + deltaAcc * inputobj.sdelta, 0, this.speed);
+    this.setPos(this.position.add(direction.x(this.speed * inputobj.sdelta)));
+    // console.log(this.position.subtract($V(inputobj.position)).modulus());
   }
 
   /**
@@ -87,12 +88,10 @@ class Player {
   }
 
   /**
-   * Remove the input objects matching the id or all if not specified
-   * @param {Number} id
+   * Remove the input objects
    */
-  clearInput(id=false) {
+  clearInput() {
     this.inputs = [];//this.inputs.filter(i => i.id !== id || id);
-    this.currentID = id;
   }
 
   /**

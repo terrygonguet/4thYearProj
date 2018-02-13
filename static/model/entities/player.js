@@ -48,39 +48,39 @@ class Player extends Entity {
       if (this.serverState.force)
       {
         console.log("forced position to " + this.serverState.position + " from " + this.position.inspect());
-        this.position = $V(this.serverState.position);
+        this.setPos($V(this.serverState.position));
+        this.inputHistory = [];
       }
       this.serverState = null;
     }
 
-    var deltaAcc = -this.dec;
-    if (input.direction.modulus() !== 0) {
-      this.lastdir = input.direction;
-      deltaAcc = this.acc;
-    }
-    this.curspeed = (this.curspeed + deltaAcc * e.sdelta).clamp(0,this.speed);
+    // var deltaAcc = -this.dec;
+    // if (input.direction.modulus() !== 0) {
+    //   this.lastdir = input.direction;
+    //   deltaAcc = this.acc;
+    // }
+    // this.curspeed = (this.curspeed + deltaAcc * e.sdelta).clamp(0,this.speed);
 
     const oldpos = this.position.dup();
-    const movement = this.lastdir.x(this.curspeed * e.sdelta);
-    this.position = this.position.add(movement);
-    this.hitbox.pos = this.position.toSAT();
+    // const movement = this.lastdir.x(this.speed * e.sdelta);
+    const movement = input.direction.x(this.speed * e.sdelta);
+    this.setPos(this.position.add(movement));
 
     for (var collidable of game.collidables) {
       if (this === collidable || this.position.distanceFrom(collidable.position) > collidable.radius + this.radius) continue;
       const res = new SAT.Response();
       const test = (collidable.hitbox instanceof SAT.Circle ? SAT.testCircleCircle : SAT.testCirclePolygon);
       if (test(this.hitbox, collidable.hitbox, res)) {
-        this.position = this.position.subtract($V([res.overlapV.x, res.overlapV.y]));
-        this.hitbox.pos = this.position.toSAT();
+        this.setPos(this.position.subtract($V([res.overlapV.x, res.overlapV.y])));
       }
     }
 
-    this.position = this.position.clamp(game.dimensions.elements);
+    this.setPos(this.position.clamp(game.dimensions.elements));
     this.hasMoved = !oldpos.eql(this.position);
 
-    this.inputHistory.push(_.merge(input.keys, {
-      sdelta:e.sdelta,
-      position:this.position.elements.slice()
+    this.inputHistory.push(_.assign(_.clone(input.keys), {
+      delta:e.delta,
+      position:this.position.elements.slice(),
     }));
 
     const pos = this.position.subtract(game.background.position).add(game.screencenter);

@@ -110,8 +110,9 @@ class Game {
           for (var input of player.inputs) {//.inputs.filter(i => i.id === id)) {
             var near =  blocks.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius);
             player.updateAndCollide(input, this, near);
-            if (!player.force && player.position.distanceFrom($V(input.position)) > 2) {
+            if (!player.force && player.position.distanceFrom($V(input.position)) > 10) {
               player.force = true;
+              break;
             }
           }
           player.clearInput();
