@@ -14,6 +14,11 @@ class InputManager extends createjs.EventDispatcher {
       left    : false,
       right   : false
     };
+    // same as this.keys but keeps track of any
+    // keypress on the keyboard
+    this.keyboard = {
+
+    }
     this.mousePos   = $V([0,0]); // position of the last mouse click or last mousemove event
     this.direction  = $V([0,0]); // normalized direction using the up, down, left and right properties of this.keys
     this.mouseDelta = $V([0,0]); // mouse delta when pointer is locked to the window
@@ -145,31 +150,33 @@ class InputManager extends createjs.EventDispatcher {
           Object.keys(this.keys).forEach(k => {
             k !== "mouse1" && k !== "mouse2" && (this.keys[k] = false);
           });
+          Object.keys(this.keyboard).forEach(k => this.keyboard[k] = false);
           break;
         }
         // patterns
+        let type = [];
         this.lastkeys = (e.key + this.lastkeys).slice(0,500);
         for (var pattern in this.keypatterns) {
           if (this.keypatterns.hasOwnProperty(pattern)) {
             if (this.lastkeys.startsWith(this.keypatterns[pattern])) {
-              this.dispatchEvent(pattern);
-              this.lastkeys = this.lastkeys.slice(this.keypatterns[pattern]);
+              type.push(pattern);
+              this.lastkeys = this.lastkeys.slice(this.keypatterns[pattern].length-1);
             }
           }
         }
 
-        this.keys[e.key] = true;
-        let type = Object.keys(this.bindings).filter(key => {
+        this.keyboard[e.key] = true;
+        type.concat(Object.keys(this.bindings).filter(key => {
           if (this.bindings[key].indexOf(e.key) != -1) {
             this.keys[key] = true;
             return true;
           }
-        });
+        }));
         custEvent.type = (type.length ? type : ""); // custom binding event if we found a keybind
         } break;
       case "keyup": {
         if (this.ignoredKeys.indexOf(e.key) !== -1) break;
-        this.keys[e.key] = false;
+        this.keyboard[e.key] = false;
         let type = Object.keys(this.bindings).filter(key => {
           if (this.bindings[key].indexOf(e.key) != -1) {
             this.keys[key] = false;

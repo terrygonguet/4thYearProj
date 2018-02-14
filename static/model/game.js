@@ -201,8 +201,7 @@ class Game extends createjs.Stage {
     if (!this.player) return;
     var data = { };
     var smthToSend = false;
-    if (this.player.inputHistory.length) {
-      console.log(this.player.inputHistory);
+    if (this.player.consolidateInput()) {
       data.player = {
         inputs: this.player.inputHistory.slice()
       };
@@ -210,7 +209,6 @@ class Game extends createjs.Stage {
       smthToSend = true;
     }
     const now = Date.now();
-    data.direction && console.log(data);
     smthToSend && this.socket.emit("update", data, () => this.pingvals.push(Date.now() - now));
   }
 

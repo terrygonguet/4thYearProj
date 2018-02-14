@@ -39,6 +39,25 @@ class Player extends Entity {
     ));
   }
 
+  consolidateInput() {
+    const ih = this.inputHistory; // shorthand
+    const toOmit = ['position', 'delta', 'debug', 'pause']; // shorthand
+    if (!ih.length) return false;
+    if (ih.length >= 2) {
+      var i = 0;
+      while (ih.length > 1 && i < ih.length-1) {
+        var isConsolidable = _.isEqual(ih[i].position, ih[i+1].position);
+        isConsolidable && _.forIn(_.omit(ih[i], toOmit), (v,k) => isConsolidable = isConsolidable && !v);
+        isConsolidable && _.forIn(_.omit(ih[i+1], toOmit), (v,k) => isConsolidable = isConsolidable && !v);
+        if (isConsolidable) {
+          this.inputHistory[i+1].delta += this.inputHistory[i].delta;
+          this.inputHistory.shift();
+        } else i++;
+      }
+    }
+    return (ih.length > 1 || !_.values(_.omit(ih[0], toOmit)).every(k => !k));
+  }
+
   /**
    * @param {eventdata} e
    */
