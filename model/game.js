@@ -3,6 +3,7 @@ const SAT = require("sat");
 const Block = require("./block");
 const Plant = require("./plant");
 const Bullet = require('./bullet');
+const Pickup = require('./pickup');
 
 class Game {
 
@@ -21,6 +22,7 @@ class Game {
     this.type       = "deathmatch";
     this.players    = [];
     this.blocks     = [];
+    this.pickups    = [];
     this.bullets    = [];
     this.dimensions = [5000,5000];
     this.io         = io;
@@ -107,15 +109,21 @@ class Game {
         }
         const blocks = this.blocks.filter(b => !!b.hitbox); // TODO cache result
         for (var player of this.players) {
-          for (var input of player.inputs) {//.inputs.filter(i => i.id === id)) {
+          for (var input of player.inputs) {
             var near =  blocks.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius);
             player.updateAndCollide(input, this, near);
-            if (!player.force && player.position.distanceFrom($V(input.position)) > 10) {
+            if (!player.force && player.position.distanceFrom($V(input.position)) > 2) {
               player.force = true;
               break;
             }
           }
           player.clearInput();
+          for (var pickup of this.pickups) {
+            if (player.position.distanceFrom(pickup.position) <= player.radius + pickup.radius) {
+              player.emit("equipweapon", pickup.name);
+              this.pickups.splice(this.pickups.indexOf(pickup), 1);
+            }
+          }
         }
         const collidables = this.blocks.filter(b => !!b.hitbox).concat(this.players); // TODO cache
         for (var bullet of this.bullets) {
@@ -123,8 +131,22 @@ class Game {
             this.bullets.splice(this.bullets.indexOf(bullet), 1);
             continue;
           }
-          // var near =  collidables.filter(c => bullet.position.distanceFrom(c.position) <= bullet.speed * delta + c.radius);
           bullet.updateAndCollide(delta/1000, this, collidables);
+        }
+        if (Math.random()<0.001) {
+          var p = new Pickup($V([
+            tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
+            tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
+          ]),"MachineGun");
+          this.pickups.push(p);
+          this.io.to(this.id).emit("createobject", {
+            type:"WeaponPickup",
+            params: {
+              id:p.id,
+              position: { x:p.position.e(1), y:p.position.e(2) }
+            }
+          });
+          console.log("created pickup");
         }
         break;
       case "ending":

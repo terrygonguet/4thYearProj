@@ -35,11 +35,13 @@ class Block {
    */
   serialize() {
     return {
-      position: this.position.elements,
-      dimension: this.dimensions.elements,
-      angle: this.angle,
-      id: this.id,
-      type: "Block"
+      type: "Block",
+      params: {
+        position: { x:this.position.e(1), y: this.position.e(2) },
+        dimensions: { x:this.dimensions.e(1), y: this.dimensions.e(2) },
+        angle: this.angle,
+        id: this.id,
+      }
     };
   }
 

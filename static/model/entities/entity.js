@@ -6,13 +6,18 @@ class Entity extends createjs.Shape {
    * @param {Number} radius : size of the entity
    * @param {HTMLColor} color : color of the entity
    */
-  constructor(id, position=$V([0,0]), radius=10, color="#EEE") {
+  constructor(params={}) {
+    const settings = makeSettings({
+      position: { x:0, y:0 },
+      radius: 10,
+      color: "#EEE",
+    }, (typeof params !== "object" ? { id: params } : params));
     super();
-    this.id           = id;
-    this.position     = position;
-    this.realpos      = position.dup();
-    this.radius       = radius;
-    this.color        = color;
+    this.id           = settings.id;
+    this.position     = settings.position;
+    this.realpos      = settings.position.dup();
+    this.radius       = settings.radius;
+    this.color        = settings.color;
     this.speed        = 0;
     this.isEntity     = true;
     this.hitbox       = new SAT.Circle(new SAT.V(), this.radius);

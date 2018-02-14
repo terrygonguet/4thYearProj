@@ -22,11 +22,13 @@ class Plant {
    */
   serialize() {
     return {
-      position: this.position.elements,
-      radiusmin: this.radiusmin,
-      radiusmax: this.radiusmax,
-      id: this.id,
-      type: "Plant"
+      type: "Plant",
+      params: {
+        position: { x:this.position.e(1), y: this.position.e(2) },
+        radiusmin: this.radiusmin,
+        radiusmax: this.radiusmax,
+        id: this.id,
+      }
     };
   }
 

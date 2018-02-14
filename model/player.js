@@ -109,7 +109,7 @@ class Player {
    */
   serialize() {
     const data = {
-      position: this.position.elements.slice(),
+      position: { x:this.position.e(1), y:this.position.e(2)},
       currentID: this.currentID,
       speed: this.speed,
       score: this.score,

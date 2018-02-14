@@ -90,6 +90,22 @@ function neonColor () {
 }
 
 /**
+ * creates a settings object to be used by constructors
+ * @param {Object} defaults the dictionary of defaults to be overriden
+ * @param {Object} params the dictionary of values
+ * @return {Object} the completed settings object
+ */
+function makeSettings(defaults, params) {
+  const ret = _.assign(defaults, params);
+  _.forOwn(ret, (v, k) => {
+    if (_.xor(_.keys(v), ["x", "y"]).length === 0) {
+      ret[k] = $V([v.x, v.y]);
+    }
+  });
+  return ret;
+}
+
+/**
  * Transform a sylvester vector into a SAT Vector
  * @return {SAT.V} the same vector but from SAT
  */
@@ -133,48 +149,48 @@ var nextID = null;
  * @param {Boolean} noCheck : set to true to skip the collision check
  * @return {Vector} the point of collision closest to the line's anchor or null if no collision
  */
-SAT.getCollisionPoint = function (line, poly, res, noCheck=false) {
-  res = res || new SAT.Response();
-  if (!noCheck || SAT.testPolygonPolygon(line, poly, res)) {
-    const makeline = (p1, p2) => {
-      sp1 = p1.toSylv(); sp2 = p2.toSylv();
-      var l = $L(sp1, sp2.subtract(sp1));
-      l.length = sp1.distanceFrom(sp2);
-      l.p1 = sp1; l.p2 = sp2;
-      return l;
-    };
-    const ray = makeline(
-      line.calcPoints[0].clone().add(line.pos),
-      line.calcPoints[1].clone().add(line.pos)
-    );
-    const sides = [];
-    for (var i = 0; i < poly.calcPoints.length; i++) {
-      sides.push(makeline(
-        poly.calcPoints[i].clone().add(poly.pos),
-        poly.calcPoints[(i+1===poly.calcPoints.length ? 0 : i+1)].clone().add(poly.pos)
-      ));
-    }
-    const intersections = [];
-    for (var side of sides) {
-      var inter = side.intersectionWith(ray);
-      inter && (inter = $V([inter.e(1), inter.e(2)]));
-      if (inter && inter.distanceFrom(side.p1) <= side.length && inter.distanceFrom(side.p2) <= side.length)
-        intersections.push(inter);
-    }
-    var min = Infinity;
-    var closest = null;
-    if (intersections.length === 1)
-      closest = intersections[0];
-    else
-      intersections.forEach(i => {
-        var dist = i.distanceFrom(line.pos.toSylv());
-        if (dist < min) {
-          min = dist;
-          closest = i;
-        }
-      });
-    return closest;
-  } else {
-    return null;
-  }
-}
+// SAT.getCollisionPoint = function (line, poly, res, noCheck=false) {
+//   res = res || new SAT.Response();
+//   if (!noCheck || SAT.testPolygonPolygon(line, poly, res)) {
+//     const makeline = (p1, p2) => {
+//       sp1 = p1.toSylv(); sp2 = p2.toSylv();
+//       var l = $L(sp1, sp2.subtract(sp1));
+//       l.length = sp1.distanceFrom(sp2);
+//       l.p1 = sp1; l.p2 = sp2;
+//       return l;
+//     };
+//     const ray = makeline(
+//       line.calcPoints[0].clone().add(line.pos),
+//       line.calcPoints[1].clone().add(line.pos)
+//     );
+//     const sides = [];
+//     for (var i = 0; i < poly.calcPoints.length; i++) {
+//       sides.push(makeline(
+//         poly.calcPoints[i].clone().add(poly.pos),
+//         poly.calcPoints[(i+1===poly.calcPoints.length ? 0 : i+1)].clone().add(poly.pos)
+//       ));
+//     }
+//     const intersections = [];
+//     for (var side of sides) {
+//       var inter = side.intersectionWith(ray);
+//       inter && (inter = $V([inter.e(1), inter.e(2)]));
+//       if (inter && inter.distanceFrom(side.p1) <= side.length && inter.distanceFrom(side.p2) <= side.length)
+//         intersections.push(inter);
+//     }
+//     var min = Infinity;
+//     var closest = null;
+//     if (intersections.length === 1)
+//       closest = intersections[0];
+//     else
+//       intersections.forEach(i => {
+//         var dist = i.distanceFrom(line.pos.toSylv());
+//         if (dist < min) {
+//           min = dist;
+//           closest = i;
+//         }
+//       });
+//     return closest;
+//   } else {
+//     return null;
+//   }
+// }

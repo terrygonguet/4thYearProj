@@ -1,7 +1,7 @@
 class OnlinePlayer extends Player {
 
-  constructor(id, position = $V([0,0])) {
-    super(id, position);
+  constructor(params={}) {
+    super(params);
     this.isOnlinePlayer = true;
   }
 

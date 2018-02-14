@@ -4,9 +4,14 @@ class Player extends Entity {
    * @param {String_Number} id : the unique id of the Entity
    * @param {Vector} position : starting position
    */
-  constructor(id, position=$V([0,0])) {
-    Math.seedrandom(id);
-    super(id, position, 10, Math.randomRGB());
+  constructor(params) {
+    Math.seedrandom(typeof params !== "object" ? params : params.id);
+    const settings = makeSettings({
+      position: { x:0, y:0 },
+      radius: 10,
+      color: Math.randomRGB(),
+    }, (typeof params !== "object" ? { id: params } : params));
+    super(settings);
     this.speed        = 300;
     this.curspeed     = 0;
     this.acc          = 2000;
@@ -26,7 +31,6 @@ class Player extends Entity {
     }); // placeholder
     this.reloadBar.shadow = new Neon("#E1E");
 
-    input.on("ratata", e => this.setWeapon(new MachineGun()));
     input.on("reload", e => this.weapon.reload());
   }
 
@@ -67,7 +71,7 @@ class Player extends Entity {
       if (this.serverState.force)
       {
         console.log("forced position to " + this.serverState.position + " from " + this.position.inspect());
-        this.setPos($V(this.serverState.position));
+        this.setPos(this.serverState.position);
         this.inputHistory = [];
       }
       this.serverState = null;

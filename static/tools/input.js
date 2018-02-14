@@ -143,7 +143,7 @@ class InputManager extends createjs.EventDispatcher {
             break;
         }
         break;
-      case "keydown": {
+      case "keydown":
         if (this.ignoredKeys.indexOf(e.key) !== -1) break;
         e.preventDefault();
         if (!this.enabledListeners[e.type]) {
@@ -153,6 +153,7 @@ class InputManager extends createjs.EventDispatcher {
           Object.keys(this.keyboard).forEach(k => this.keyboard[k] = false);
           break;
         }
+        e.preventDefault();
         // patterns
         this.lastkeys = (e.key + this.lastkeys).slice(0,500);
         for (var pattern in this.keypatterns) {
@@ -171,8 +172,8 @@ class InputManager extends createjs.EventDispatcher {
             return true;
           }
         }));
-        } break;
-      case "keyup": {
+        break;
+      case "keyup":
         if (this.ignoredKeys.indexOf(e.key) !== -1) break;
         this.keyboard[e.key] = false;
         custEvents = custEvents.concat(Object.keys(this.bindings).filter(key => {
@@ -181,7 +182,7 @@ class InputManager extends createjs.EventDispatcher {
             return true;
           }
         }).map(t => t+"U"));
-        } break;
+        break;
       case "focus" : break;
       case "blur" :
         if (!this.enabledListeners[e.type]) break;

@@ -8,16 +8,19 @@ class Pickup extends Entity {
    * @param {function} onpickup : the callback executed when an entity picks up
    * takes in the Entity that picked up as parameter
    */
-  constructor(id, position=$V([0,0]), radius=6, color="#816", onpickup) {
-    super(id, position, radius, color);
-    this.onpickup = onpickup;
-    this.isCollidable = false;
+  constructor(params={}) {
+    const settings = makeSettings({
+      position: { x:0, y:0 },
+      radius: 6,
+      color: "#816",
+    }, (typeof params !== "object" ? { id: params } : params));
+    super(params);
+    this.isPickup = true;
   }
 
   update (e) {
     super.update(e);
     if (game.player.position.distanceFrom(this.position) <= game.player.radius + this.radius) {
-      this.onpickup(game.player);
       this.die();
     }
   }

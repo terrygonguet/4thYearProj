@@ -3,11 +3,14 @@ class WeaponPickup extends Pickup {
   /**
    * @param {String_Number} id
    * @param {Vector} position
-   * @param {String} weaponclass : The name of the weapon class
    */
-  constructor(id, position=$V([0,0]), weaponclass) {
-    super(id, position, 6, "#EEE", e => e.setWeapon(new Hikari[weaponclass]()));
-    this.weaponclass = weaponclass;
+  constructor(params={}) {
+    const settings = makeSettings({
+      position: { x:0, y:0 },
+      radius: 9,
+      color: "#EEE",
+    }, (typeof params !== "object" ? { id: params } : params));
+    super(settings);
     this.graphics.c().f(this.color)
                  .mt(0,-this.radius)
                  .lt(this.radius, 0)

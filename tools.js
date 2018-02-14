@@ -1,5 +1,6 @@
 const SAT = require("sat");
 const sylvester = require("sylvester");
+const _ = require('lodash');
 
 /**
  * Random integer between the bounds
@@ -43,4 +44,14 @@ exports.clamp = function (number, min, max) {
  */
 exports.clampVect = function (vector, dimensions) {
   return $V(vector.elements.map((e, i) => exports.clamp(e, -dimensions[i]/2, dimensions[i]/2)));
+};
+
+exports.makeSettings = function (defaults, params) {
+  const ret = _.assign(defaults, params);
+  _.forOwn(ret, (v, k) => {
+    if (_.xor(_.keys(v), ["x", "y"]).length === 0) {
+      ret[k] = $V([v.x, v.y]);
+    }
+  });
+  return ret;
 };

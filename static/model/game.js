@@ -18,17 +18,15 @@ class Game extends createjs.Stage {
     this.txtrendertime= new QuickText({ x: 10, y: 50 });
     this.txtping      = new QuickText({ x: 10, y: 70 });
     this.txtqwerty    = new QuickText({ x: 10, y: 10, text: debug ? "Escape for the menu" : "" });
-    this.entities     = {};
-    this.collidables  = [];
     this.player       = null;
     this.dimensions   = null;
     this.background   = null;
     this.foreground   = null;
     this.netticktime  = 0;
     this.netrate      = 15;
+    this.maxDelta     = 150;
     this.renderVals   = [];
     this.pingvals     = [];
-    this.screencenter = $V([window.innerWidth/2, window.innerHeight/2]);
 
     this.setHandlers();
   }
@@ -49,9 +47,6 @@ class Game extends createjs.Stage {
     this.on("firebullet", e => {
       this.socket.emit("firebullet", e.data);
     });
-
-    window.addEventListener("resize", e => this.screencenter = $V([window.innerWidth/2, window.innerHeight/2]));
-
 
     // Socket stuff ----------------------------------------------------------------------
     this.socket = io(location.origin);
@@ -78,18 +73,17 @@ class Game extends createjs.Stage {
       // update payload
       for (var p of data.players) {
         if (p.id === this.player.id) {
-          this.player.serverState = p;
+          this.player.serverState = makeSettings({}, p);
           continue;
         }
-        !this.entities[p.id] && this.addChild(new OnlinePlayer(p.id));
-        this.entities[p.id].moveTo($V(p.position), p.speed);
-        this.entities[p.id].setScore(p.score);
-      }
-      for (var e in this.entities) {
-        if (!data.players.find(p => p.id===e)) {
-          this.entities[e].die();
-          console.log("killed " + e);
+        const settings = makeSettings({}, p);
+        var ent = this.entities.find(e => e.id === settings.id);
+        if (!ent) {
+          ent = new OnlinePlayer(settings.id);
+          this.addChild(ent);
         }
+        ent.moveTo(settings.position, settings.speed);
+        ent.setScore(settings.score);
       }
     });
 
@@ -105,7 +99,6 @@ class Game extends createjs.Stage {
           fireOne(b);
         }
       } else fireOne(data);
-
     });
 
     this.socket.on("gethit", () => {
@@ -113,13 +106,42 @@ class Game extends createjs.Stage {
     });
 
     this.socket.on("playerleave", data => {
-      this.entities[data.id] && this.entities[data.id].die();
+      this.entities.find(e => e.id === data.id).die();
       console.log("left " + data.id);
+    });
+
+    this.socket.on("equipweapon", name => {
+      this.player.setWeapon(new Hikari[name]());
+    });
+
+    this.socket.on("createobject", data => {
+      console.log("created " + data.type);
+      this.addChild(new Hikari[data.type](data.params));
     });
 
     // input stuff -------------------------------------------------------------------------------
     input.on("pause", () => createjs.Ticker.paused = !createjs.Ticker.paused);
     input.on("debug", () => debug = !debug);
+  }
+
+  get onlinePlayers() {
+    return this.children.filter(c => c.isOnlinePlayer);
+  }
+
+  get collidables() {
+    return this.children.filter(c => c.isCollidable).concat(this.foreground.children.filter(c => c.isCollidable));
+  }
+
+  get solids() {
+    return this.children.filter(c => c.isSolid);
+  }
+
+  get entities() {
+    return this.children.filter(c => c.isEntity);
+  }
+
+  get screencenter() {
+    return $V([innerWidth/2, innerHeight/2]);
   }
 
   /**
@@ -128,8 +150,6 @@ class Game extends createjs.Stage {
    */
   init (data) {
     this.removeAllChildren();
-    this.entities     = {};
-    this.collidables  = [];
     this.dimensions   = $V(data.dimensions)
     this.background   = new Background(this.dimensions);
     this.foreground   = new Foreground(this.dimensions);
@@ -146,23 +166,17 @@ class Game extends createjs.Stage {
     // this.addChildAt(new FOV(), this.children.length);
 
     for (var b of data.blocks) {
-      switch (b.type) {
-        case "Block":
-          game.addChild(new Block(b.id, $V(b.position), $V(b.dimension), b.angle));
-          break;
-        case "Plant":
-          game.addChild(new Plant(b.id, $V(b.position), b.radiusmin, b.radiusmax));
-          break;
-      }
+      game.addChild(new Hikari[b.type](b.params));
     }
 
     for (var p of data.players) {
+      const settings = makeSettings({}, p);
       if (p.id === this.player.id) {
-        this.player.position = $V(p.position);
-        this.player.setScore(p.score);
+        this.player.setPos(settings.position);
+        this.player.setScore(settings.score);
       } else {
-        const ent = new OnlinePlayer(p.id, $V(p.position));
-        ent.setScore(p.score);
+        const ent = new OnlinePlayer(settings);
+        ent.setScore(settings.score);
         this.addChild(ent);
       }
     }
@@ -172,6 +186,7 @@ class Game extends createjs.Stage {
    * @param {eventdata} e
    */
   update (e) {
+    if (e.delta >= this.maxDelta) return ;
     let time = performance.now(); // perf monitoring
     e.sdelta = e.delta / 1000; // shorthand
     this.txtFps.text = (debug ? createjs.Ticker.getMeasuredFPS().toFixed(0) + " FPS" : "");
@@ -213,15 +228,7 @@ class Game extends createjs.Stage {
   }
 
   addChild (child) {
-    if (child.isEntity) {
-      if (this.entities[child.id]) return;
-      this.entities[child.id] = child;
-    }
-
-    if (child.isCollidable && this.collidables.indexOf(child) === -1)
-      this.collidables.push(child);
-
-    if (child.isForeground) this.foreground.addChild(child);
+    if (child.isInForeground) this.foreground.addChild(child);
     else {
       var i = this.getChildIndex(this.foreground);
       i !== -1 ? super.addChildAt(child, i) : super.addChild(child);
@@ -230,9 +237,7 @@ class Game extends createjs.Stage {
 
   removeChild (child) {
     super.removeChild(child);
-    if (child.isEntity) delete this.entities[child.id];
     if (child.isForeground) this.foreground.removeChild(child);
-    if (child.isCollidable) this.collidables.splice(this.collidables.indexOf(child), 1);
   }
 
 }
