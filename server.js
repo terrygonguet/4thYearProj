@@ -3,7 +3,7 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-const lobby = new (require("./model/lobby"))(io);
+const lobby = new (require("./model/lobby"))({io});
 
 server.listen(process.env.PORT || 80, function () {
   console.log("Server started");

@@ -10,11 +10,16 @@ class Plant {
    * @param {Number} radiusmin : closest to the center the leaves can be
    * @param {Number} radiusmax : furthest to the center the leaves can be
    */
-  constructor(id, position, radiusmin, radiusmax) {
-    this.id            = id;
-    this.position      = position;
-    this.radiusmin     = radiusmin;
-    this.radiusmax     = radiusmax;
+  constructor(params={}) {
+    const settings = tools.makeSettings({
+      position: { x:0, y:0 },
+      radiusmin: 5,
+      radiusmax: 25,
+    }, params);
+    this.id            = settings.id;
+    this.position      = settings.position;
+    this.radiusmin     = settings.radiusmin;
+    this.radiusmax     = settings.radiusmax;
   }
 
   /**

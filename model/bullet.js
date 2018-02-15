@@ -11,11 +11,18 @@ class Bullet {
    * @param {String} playerid : ID of the player that fired the bullet
    * @param {String} sound : ID of the sound to play
    */
-  constructor(position, direction, speed, playerid, sound) {
-    this.playerid  = playerid;
-    this.position  = $V(position);
-    this.direction = $V(direction).toUnitVector(); // to be sure
-    this.speed     = speed;
+  constructor(params={}) {
+    const settings = tools.makeSettings({
+      position: { x:0, y:0 },
+      direction: { x:1, y:0 },
+      speed: 0,
+      sound: "Pew",
+    }, params);
+    this.playerid  = settings.playerid;
+    this.position  = settings.position;
+    this.direction = settings.direction.toUnitVector(); // to be sure
+    this.speed     = settings.speed;
+    this.sound     = settings.sound;
     this.isBullet  = true;
     this.thickness = 3;
     this.toDie     = false;

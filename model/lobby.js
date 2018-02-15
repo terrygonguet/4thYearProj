@@ -3,18 +3,23 @@ const SAT = require("sat");
 const now = require('present');
 const io = require('socket.io');
 const Player = require('./player');
+const tools = require('../tools');
 
 class Lobby {
 
   /**
    * @param {IO} io : the IO object to handle sockets
    */
-  constructor(io, updateRate=60, netUpdateRate=15) {
+  constructor(params={}) {
+    const settings = tools.makeSettings({
+      updateRate:60,
+      netUpdateRate: 15,
+    }, params);
     const self = this;
     this.rooms         = [];
-    this.io            = io;
-    this.updateRate    = updateRate;
-    this.netUpdateRate = netUpdateRate;
+    this.io            = settings.io;
+    this.updateRate    = settings.updateRate;
+    this.netUpdateRate = settings.netUpdateRate;
     this.gamelist      = {
       "Game": require("./game")
     };

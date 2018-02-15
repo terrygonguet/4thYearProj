@@ -149,6 +149,7 @@ class Game extends createjs.Stage {
    * @param {Object} data : the Object from the server
    */
   init (data) {
+    var radar = this.children.find(c => c instanceof Radar);
     this.removeAllChildren();
     this.dimensions   = $V(data.dimensions)
     this.background   = new Background(this.dimensions);
@@ -162,7 +163,7 @@ class Game extends createjs.Stage {
     this.addChildAt(this.txtping, this.children.length);
     this.addChildAt(this.txtqwerty, this.children.length);
     this.addChild(this.player);
-    this.addChild(new Radar());
+    this.addChild(radar || new Radar());
     // this.addChildAt(new FOV(), this.children.length);
 
     for (var b of data.blocks) {

@@ -61,25 +61,28 @@ class Game {
   generateBlocks(nbBlocks=150, bushChance=0.2) {
     for (var i = 0; i < nbBlocks; i++) {
       if (Math.random() < bushChance)
-        this.addBlock(new Plant(
-          "p"+i,
-          $V([
-            tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
-            tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
-          ]),
-          Math.random() * 5 + 10,
-          Math.random() * 20 + 60
-        ));
+        this.addBlock(new Plant({
+          id:"p"+i,
+          position: {
+            x: tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
+            y: tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
+          },
+          radiusmin: Math.random() * 5 + 10,
+          radiusmax: Math.random() * 20 + 60
+        }));
       else
-        this.addBlock(new Block(
-          "b"+i,
-          $V([
-            tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
-            tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
-          ]),
-          $V([ tools.randInt(20, 200), tools.randInt(20, 200) ]),
-          Math.random() * Math.PI * 2
-        ));
+        this.addBlock(new Block({
+          id:"b"+i,
+          position: {
+            x: tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
+            y: tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
+          },
+          dimensions: {
+            x: tools.randInt(20, 200),
+            y: tools.randInt(20, 200)
+          },
+          angle: Math.random() * Math.PI * 2,
+        }));
     }
   }
 
@@ -134,19 +137,16 @@ class Game {
           bullet.updateAndCollide(delta/1000, this, collidables);
         }
         if (Math.random()<0.001) {
-          var p = new Pickup($V([
-            tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
-            tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
-          ]),"MachineGun");
-          this.pickups.push(p);
-          this.io.to(this.id).emit("createobject", {
-            type:"WeaponPickup",
-            params: {
-              id:p.id,
-              position: { x:p.position.e(1), y:p.position.e(2) }
-            }
+          var p = new Pickup({
+            id: "pickup" + this.pickups.length,
+            position: {
+              x: tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
+              y: tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
+            },
+            name: "MachineGun"
           });
-          console.log("created pickup");
+          this.pickups.push(p);
+          this.io.to(this.id).emit("createobject", p.serialize());
         }
         break;
       case "ending":
@@ -255,12 +255,7 @@ class Game {
       ]));
       p.score = 100;
       p.force = true;
-      p.inputs = [{
-        position: p.position.elements,
-        direction: [0,0],
-        speed: 0,
-        delta: 0
-      }];
+      p.inputs = [];
     });
     this.winner = null;
     this.blocks = [];
