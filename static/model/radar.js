@@ -24,13 +24,12 @@ class Radar extends createjs.Shape {
       this.graphics.c()
       .s("#171")
       .dc(window.innerWidth/2, window.innerHeight/2, 0.35 * window.innerHeight);
-      const bgrealpos = game.background.position; // shortcut
       for (var entid in game.entities) {
         const ent = game.entities[entid]; // shortcut
         if (!ent.isOnlinePlayer) continue; // only point at players
 
-        if (bgrealpos.distanceFrom(ent.position) >= window.innerHeight / 2) {
-          const direction = ent.position.subtract(bgrealpos).toUnitVector();
+        if (game.player.position.distanceFrom(ent.position) >= window.innerHeight / 2) {
+          const direction = ent.position.subtract(game.player.position).toUnitVector();
           const perp = direction.rotate(Math.PI/2, Vector.Zero(2));
           const arrowpos = game.screencenter.add(direction.x(0.4 * window.innerHeight));
           this.graphics

@@ -5,6 +5,7 @@ class Foreground extends createjs.Container {
    */
   constructor (dimensions) {
     super();
+    this.position   = $V([0,0]);
     this.dimensions = dimensions;
     this.isdirty    = false;
     this.turbofunk  = false;
@@ -23,7 +24,7 @@ class Foreground extends createjs.Container {
    * @param {eventdata} e
    */
   update (e) {
-    this.set({ x: game.background.x, y: game.background.y });
+    // this.set({ x: game.background.x, y: game.background.y });
     this.isdirty && (this.isdirty = !!this.updateCache());
 
     if (this.turbofunk && (this.time += e.delta) > 100) {

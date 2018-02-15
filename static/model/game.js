@@ -18,6 +18,7 @@ class Game extends createjs.Stage {
     this.txtrendertime= new QuickText({ x: 10, y: 50 });
     this.txtping      = new QuickText({ x: 10, y: 70 });
     this.txtqwerty    = new QuickText({ x: 10, y: 10, text: debug ? "Escape for the menu" : "" });
+    this.camera       = new Camera();
     this.player       = null;
     this.dimensions   = null;
     this.background   = null;
@@ -200,6 +201,7 @@ class Game extends createjs.Stage {
     // more perf monitoring
     this.rendertime = 0;
     !e.paused && this.children.forEach(c => c.update && c.update(e));
+    this.camera.update(e);
     super.update(e);
     game.rendertime += (performance.now() - time);
     this.renderVals.push(game.rendertime);

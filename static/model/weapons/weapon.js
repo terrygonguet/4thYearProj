@@ -38,8 +38,8 @@ class Weapon extends createjs.EventDispatcher {
 
       const e = new createjs.Event("firebullet");
       e.data = {
-        position: player.position.elements,
-        direction: direction.elements,
+        position: { x:player.position.e(1), y:player.position.e(2) },
+        direction: { x:direction.e(1), y:direction.e(2) },
         speed: this.bulletSpeed,
         playerid: player.id,
         sound: this.fireSound

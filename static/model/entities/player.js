@@ -106,12 +106,8 @@ class Player extends Entity {
       position:this.position.elements.slice(),
     }));
 
-    const pos = this.position.subtract(game.background.position).add(game.screencenter);
-
-    this.set({ x: pos.e(1), y: pos.e(2) });
-    this.txtPoints.set({ x: pos.e(1), y: pos.e(2) });
-    this.reloadBar.set({ x: pos.e(1), y: pos.e(2) });
-
+    this.txtPoints.position = this.position;
+    this.reloadBar.position = this.position;
 
     this.weapon.update(e);
     input.keys.mouse1 && this.fire();
@@ -129,7 +125,7 @@ class Player extends Entity {
    * Fires a Bullet
    */
   fire () {
-    const realmousePos = input.mousePos.add(game.background.position).subtract(game.screencenter);
+    const realmousePos = game.camera.globalToLocal(input.mousePos);
     const direction = realmousePos.subtract(this.position).toUnitVector();
     this.weapon.fire(this, direction);
   }

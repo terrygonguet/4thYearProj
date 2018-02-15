@@ -316,7 +316,7 @@ class Game {
 
   fireBullet(data) {
     this.io.to(this.id).emit("firebullet", data);
-    const b = new Bullet(data.position, data.direction, data.speed, data.playerid, data.sound);
+    const b = new Bullet(data);
     this.bullets.push(b);
   }
 

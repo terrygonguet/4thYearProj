@@ -69,8 +69,8 @@ class Bullet extends createjs.Shape {
 
     // display
     this.graphics.c().s(this.color).ss(this.thickness).mt(0,0).lt(-movement.e(1), -movement.e(2));
-    const pos = this.position.subtract(game.background.position).add(game.screencenter);
-    this.set({ x: pos.e(1), y: pos.e(2) });
+    // const pos = this.position.subtract(game.background.position).add(game.screencenter);
+    // this.set({ x: pos.e(1), y: pos.e(2) });
     // destruction
     if (Math.abs(this.position.e(1)) > game.dimensions.e(1)/2 || Math.abs(this.position.e(2)) > game.dimensions.e(2)/2)
       this.toDie = true;

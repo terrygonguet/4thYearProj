@@ -36,11 +36,11 @@ class Entity extends createjs.Shape {
     } else
       this.realpos = this.position;
 
-    const pos = this.position.subtract(game.background.position).add(game.screencenter);
-
-    this.set({
-      x: pos.e(1), y: pos.e(2)
-    });
+    // const pos = this.position.subtract(game.background.position).add(game.screencenter);
+    //
+    // this.set({
+    //   x: pos.e(1), y: pos.e(2)
+    // });
     this.hitbox.pos = this.realpos.toSAT();
   }
 

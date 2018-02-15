@@ -15,10 +15,7 @@ class OnlinePlayer extends Player {
     } else
       this.realpos = this.position.dup();
 
-    const pos = this.position.subtract(game.background.position).add(game.screencenter);
-
-    this.set({ x: pos.e(1), y: pos.e(2) });
-    this.txtPoints.set({ x: pos.e(1), y: pos.e(2) });
+    this.txtPoints.position = this.position ;
 
     this.hitbox.pos = this.position.toSAT();
   }
