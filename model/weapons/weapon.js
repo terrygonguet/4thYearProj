@@ -1,4 +1,5 @@
 const tools = require('../../tools');
+const seedrandom = require('seedrandom');
 
 class Weapon {
 
@@ -9,31 +10,50 @@ class Weapon {
    * @param {Number} fireRate in Hz
    * @param {Number} spread in radians
    */
-  constructor(maxAmmo, reloadTime, bulletSpeed, fireRate, spread) {
-    this.maxAmmo     = maxAmmo;
-    this.reloadTime  = reloadTime;
-    this.bulletSpeed = bulletSpeed;
-    this.fireRate    = fireRate;
+  constructor(params={}) {
+    const settings = tools.makeSettings({
+      maxAmmo: Infinity,
+      reloadTime: 0,
+      bulletSpeed: 1500,
+      fireRate: 3,
+      spread: 0.05,
+      fireSound: "Pew",
+    }, params);
+    this.maxAmmo     = settings.maxAmmo;
+    this.reloadTime  = settings.reloadTime;
+    this.bulletSpeed = settings.bulletSpeed;
+    this.fireRate    = settings.fireRate;
     this.time        = 0;
-    this.spread      = spread;
+    this.spread      = settings.spread;
     this.isReloading = false;
-    this.fireSound   = "Pew";
+    this.fireSound   = settings.fireSound;
+    this.rng         = null;
+    this.player      = null;
 
     this.ammo        = this.maxAmmo;
   }
 
   /**
-   * @param {Player} player : the player firing the weapon
    * @param {Vector} direction : where the weapon is pointed at
    */
-  fire(player, direction) {
+  fire(direction) {
     if (!this.isReloading && this.ammo > 0 && this.time >= 1000 / this.fireRate) {
       this.ammo--;
       this.time = 0;
-      const realdir = direction.rotate(tools.randFloat(-this.spread/2, this.spread/2), Vector.Zero(2));
-      // const b = new Bullet(player.position, realdir, this.bulletSpeed, player.id, this.fireSound);
-      // game.addChild(b);
+      const realdir = direction.rotate(tools.randFloat(-this.spread/2, this.spread/2, this.rng), Vector.Zero(2));
+      this.player.game.fireBullet({
+        position: this.player.position,
+        direction: realdir,
+        speed: this.speed,
+        playerid: this.player.id,
+        sound: this.fireSound
+      });
     }
+  }
+
+  equip(player) {
+    this.player = player;
+    this.rng = new seedrandom(player.id);
   }
 
   reload() {

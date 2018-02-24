@@ -7,8 +7,18 @@ const _ = require('lodash');
  * @param {Number} min
  * @param {Number} max
  */
-exports.randInt = function (min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
+exports.randInt = function (min, max, rng) {
+  return Math.round(exports.randFloat(min, max, rng));
+}
+
+/**
+ * Random float between the bounds
+ * @param {Number} min
+ * @param {Number} max
+ */
+exports.randInt = function (min, max, rng) {
+  rng = rng || Math.random;
+  return rng() * (max - min) + min;
 }
 
 /**
