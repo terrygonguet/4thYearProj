@@ -3,6 +3,11 @@ class OnlinePlayer extends Player {
   constructor(params={}) {
     super(params);
     this.isOnlinePlayer = true;
+    this.name           = params.name;
+    this.reloadBar = new QuickText({
+      text: this.name,
+      textAlign: "center"
+    });
   }
 
   /**
@@ -15,7 +20,7 @@ class OnlinePlayer extends Player {
     } else
       this.realpos = this.position.dup();
 
-    this.txtPoints.position = this.position ;
+    this.reloadBar.position = this.position.add($V([0,-30]));
 
     this.hitbox.pos = this.position.toSAT();
   }

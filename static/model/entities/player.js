@@ -5,11 +5,10 @@ class Player extends Entity {
    * @param {Vector} position : starting position
    */
   constructor(params) {
-    Math.seedrandom(typeof params !== "object" ? params : params.id);
     const settings = makeSettings({
       position: { x:0, y:0 },
       radius: 10,
-      color: Math.randomRGB(),
+      color: "rgb(0,255,0)",
     }, (typeof params !== "object" ? { id: params } : params));
     super(settings);
     this.speed        = 300;
@@ -19,14 +18,12 @@ class Player extends Entity {
     this.lastdir      = this.position.dup();
     this.serverState  = null;
     this.hasMoved     = true;
-    this.txtPoints    = new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#EEE" });
     this.weapon       = null;
     this.reloadBar    = new createjs.Shape();
     this.isPlayer     = true;
     this.inputHistory = [];
 
     this.on("added", e => {
-      game.addChild(this.txtPoints);
       game.addChild(this.reloadBar);
     }); // placeholder
     this.reloadBar.shadow = new Neon("#E1E");
@@ -109,7 +106,6 @@ class Player extends Entity {
       mousepos:game.camera.globalToLocal(input.mousePos)
     }));
 
-    this.txtPoints.position = this.position;
     this.reloadBar.position = this.position;
 
     this.weapon.update(e);
@@ -121,7 +117,7 @@ class Player extends Entity {
    * @param {Number} score : the score to set to
    */
   setScore(score) {
-    this.txtPoints.text = score;
+    this.graphics.c().f(`rgb(${255-score*2.55},${score*2.55},0)`).s("#EEE").dc(0,0,this.radius);
   }
 
   /**
@@ -134,7 +130,6 @@ class Player extends Entity {
   }
 
   die () {
-    game.removeChild(this.txtPoints);
     game.removeChild(this.reloadBar);
     super.die();
   }

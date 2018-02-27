@@ -259,9 +259,10 @@ class Game {
     });
     this.winner = null;
     this.blocks = [];
+    this.pickups = [];
     this.generateBlocks();
     this.io.to(this.id).emit("createarena", {
-      blocks: this.blocks.map(b => b.serialize()),
+      objects: this.blocks.map(b => b.serialize()),
       dimensions: this.dimensions,
       players: this.players.map(p => p.serialize())
     });
@@ -282,9 +283,9 @@ class Game {
     ]));
 
     player.emit("createarena", {
-      blocks: this.blocks.map(b => b.serialize()),
+      objects: this.blocks.map(b => b.serialize()).concat(this.pickups.map(p => p.serialize())),
       dimensions: this.dimensions,
-      players: this.players.map(p => p.serialize())
+      players: this.players.map(p => p.serialize()),
     });
 
     switch (this.state) {

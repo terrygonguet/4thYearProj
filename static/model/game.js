@@ -23,6 +23,7 @@ class Game extends createjs.Stage {
     this.dimensions   = null;
     this.background   = null;
     this.foreground   = null;
+    this._name        = null;
     this.netticktime  = 0;
     this.netrate      = 15;
     this.maxDelta     = 150;
@@ -76,7 +77,7 @@ class Game extends createjs.Stage {
         const settings = makeSettings({}, p);
         var ent = this.entities.find(e => e.id === settings.id);
         if (!ent) {
-          ent = new OnlinePlayer(settings.id);
+          ent = new OnlinePlayer(settings);
           this.addChild(ent);
         }
         ent.moveTo(settings.position, settings.speed);
@@ -121,6 +122,16 @@ class Game extends createjs.Stage {
     input.on("debug", () => debug = !debug);
   }
 
+  set name(val) {
+    if (!val) return ;
+    this.socket.emit("setname", val);
+    this._name = val;
+  }
+
+  get name() {
+    return this._name;
+  }
+
   get onlinePlayers() {
     return this.children.filter(c => c.isOnlinePlayer);
   }
@@ -163,7 +174,7 @@ class Game extends createjs.Stage {
     this.addChild(radar || new Radar());
     // this.addChildAt(new FOV(), this.children.length);
 
-    for (var b of data.blocks) {
+    for (var b of data.objects) {
       game.addChild(new Hikari[b.type](b.params));
     }
 

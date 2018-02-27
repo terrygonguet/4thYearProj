@@ -26,6 +26,7 @@ class Player {
     this.weapon   = null;
     this.lobby    = null;
     this.game     = null;
+    this.name     = "";
     this.isPlayer = true;
     this.force    = false;
 
@@ -41,6 +42,8 @@ class Player {
       this.inputs = this.inputs.concat(data.player.inputs);
       ack();
     });
+
+    socket.on("setname", name => this.name = name.slice(0,100));
 
   }
 
@@ -117,6 +120,7 @@ class Player {
       speed: this.speed,
       score: this.score,
       force: this.force,
+      name: this.name,
       id: this.id
     };
     return data;

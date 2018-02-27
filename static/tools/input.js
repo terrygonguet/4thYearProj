@@ -145,7 +145,6 @@ class InputManager extends createjs.EventDispatcher {
         break;
       case "keydown":
         if (this.ignoredKeys.indexOf(e.key) !== -1) break;
-        e.preventDefault();
         if (!this.enabledListeners[e.type]) {
           Object.keys(this.keys).forEach(k => {
             k !== "mouse1" && k !== "mouse2" && (this.keys[k] = false);

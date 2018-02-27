@@ -63,6 +63,9 @@ const Hikari = {}; // Namespace
     {id: "QuickText", src:"model/displaystuff/quickText.js"},
 
     // Sprites ----------------------------------------
+    {id: "BlasterIcon", src:"resources/sprites/rifle.png"},
+    {id: "ShotgunIcon", src:"resources/sprites/shotgun.png"},
+    {id: "MachineGunIcon", src:"resources/sprites/bullets.png"},
 
     // Sounds ----------------------------------------
     {id: "Pew", src:"resources/sounds/pew.wav"},
@@ -80,8 +83,24 @@ const Hikari = {}; // Namespace
     stage.removeChild(bar);
     stage.removeChild(txt);
     stage.update();
-    game = new Game("game");
     resizeCanvas();
+    input.enabledListeners.keydown = false;
+    $("#game").hide();
+    $("#title").text("Enter your name :");
+    $("#message")
+      .append("<input id='name' required autofocus placeholder='theLegend27' value='"+(localStorage.getItem("name") || "")+"'/>")
+      .append(
+        $("<button>START</button>").click(e => {
+          var name = $("#name").val();
+          if (name) {
+            input.enabledListeners.keydown = true;
+            localStorage.setItem("name", name);
+            game = new Game("game");
+            game.name = name;
+          }
+        })
+      );
+    $("#messagebox").show();
   }
 
   function handleFileLoad	(e) {
