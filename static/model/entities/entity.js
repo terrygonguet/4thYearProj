@@ -51,16 +51,12 @@ class Entity extends createjs.Shape {
    * Note : to keep up with network, if the entity is starting to lag behind the speed will be increased
    */
   moveTo (pos, speed) {
-    const dist = pos.distanceFrom(this.position);
+    const dist = pos.distanceFrom(this.realpos);
     if (dist > 0) {
-      const realdist = pos.distanceFrom(this.realpos);
-      // this.speed = speed * (realdist / dist);
-      this.speed = speed;
-      this.realpos = this.position.dup();
-      this.setPos(pos);
+      const realdist = this.position.distanceFrom(this.realpos);
+      this.speed = speed * (realdist / dist);
+      this.realpos = pos;
     }
-    // this.realpos = pos.dup();
-    // this.position = pos.dup();
   }
 
   /**

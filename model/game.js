@@ -238,7 +238,7 @@ class Game {
       case "ending":
         this.io.to(this.id).emit("gotomessage", {
           title: this.states["ending"].title,
-          message: this.states["ending"].message.replace("<name>", this.winner[0].id)
+          message: this.states["ending"].message.replace("<name>", this.winner[0].name)
         });
         break;
     }
