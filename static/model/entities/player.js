@@ -20,7 +20,7 @@ class Player extends Entity {
     this.serverState  = null;
     this.hasMoved     = true;
     this.txtPoints    = new QuickText({ text: 0, textAlign: "center", textBaseline: "middle", color: "#EEE" });
-    this.weapon       = new Blaster();
+    this.weapon       = null;
     this.reloadBar    = new createjs.Shape();
     this.isPlayer     = true;
     this.inputHistory = [];
@@ -30,12 +30,14 @@ class Player extends Entity {
       game.addChild(this.reloadBar);
     }); // placeholder
     this.reloadBar.shadow = new Neon("#E1E");
+    this.setWeapon(new Blaster());
 
     input.on("reload", e => this.weapon.reload());
   }
 
   setWeapon (weapon) {
     this.weapon = weapon;
+    this.weapon.rng = new Math.seedrandom(this.id);
     this.weapon.on("reloadstart", e => this.reloadBar.visible = true);
     this.weapon.on("reloadend", e => this.reloadBar.visible = false);
     this.weapon.on("reloadtick", e => this.reloadBar.graphics.c().s("#1EE").ss(3).a(
@@ -104,6 +106,7 @@ class Player extends Entity {
     this.inputHistory.push(_.assign(_.clone(input.keys), {
       delta:e.delta,
       position:this.position.elements.slice(),
+      mousepos:game.camera.globalToLocal(input.mousePos)
     }));
 
     this.txtPoints.position = this.position;

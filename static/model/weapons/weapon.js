@@ -18,6 +18,7 @@ class Weapon extends createjs.EventDispatcher {
     this.spread      = spread;
     this.isReloading = false;
     this.fireSound   = "Pew";
+    this.rng         = null;
 
     this.ammo        = this.maxAmmo;
     this.reloadBar   = 0;
@@ -31,20 +32,10 @@ class Weapon extends createjs.EventDispatcher {
     if (!this.isReloading && this.ammo > 0 && this.time >= 1000 / this.fireRate) {
       this.ammo--;
       this.time = 0;
-      const realdir = direction.rotate(Math.randFloat(-this.spread/2, this.spread/2), Vector.Zero(2));
+      const realdir = direction.rotate(Math.randFloat(-this.spread/2, this.spread/2, this.rng), Vector.Zero(2));
       const b = new Bullet(player.position, realdir, this.bulletSpeed, player.id, this.fireSound);
       game.addChild(b);
       this.dispatchEvent(new createjs.Event("fire"));
-
-      const e = new createjs.Event("firebullet");
-      e.data = {
-        position: { x:player.position.e(1), y:player.position.e(2) },
-        direction: { x:direction.e(1), y:direction.e(2) },
-        speed: this.bulletSpeed,
-        playerid: player.id,
-        sound: this.fireSound
-      };
-      game.dispatchEvent(e);
     }
   }
 

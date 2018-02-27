@@ -16,7 +16,7 @@ exports.randInt = function (min, max, rng) {
  * @param {Number} min
  * @param {Number} max
  */
-exports.randInt = function (min, max, rng) {
+exports.randFloat = function (min, max, rng) {
   rng = rng || Math.random;
   return rng() * (max - min) + min;
 }

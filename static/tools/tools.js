@@ -32,8 +32,8 @@ Number.prototype.roundPres = function(precision) {
  * @param {Number} max The upper boundary of the output range
  * @returns A number in the range [min, max]
  */
-Math.randInt = function (min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
+Math.randInt = function (min, max, rng) {
+  return Math.round(Math.randFloat(min, max, rng));
 }
 
 /**
@@ -43,8 +43,9 @@ Math.randInt = function (min, max) {
  * @param {Number} max The upper boundary of the output range
  * @returns A number in the range [min, max]
  */
-Math.randFloat = function (min, max) {
-  return Math.random() * (max - min) + min;
+Math.randFloat = function (min, max, rng) {
+  rng = rng || Math.random;
+  return rng() * (max - min) + min;
 }
 
 /**

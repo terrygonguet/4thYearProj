@@ -45,10 +45,6 @@ class Game extends createjs.Stage {
     // Events stuff ----------------------------------------------------------------------
     this.on("nettick", this.netupdate, this);
 
-    this.on("firebullet", e => {
-      this.socket.emit("firebullet", e.data);
-    });
-
     // Socket stuff ----------------------------------------------------------------------
     this.socket = io(location.origin);
 

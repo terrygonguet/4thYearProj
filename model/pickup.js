@@ -23,5 +23,11 @@ class Pickup {
     };
   }
 
+  pickup(player) {
+    const weapon = require('./weapons/' + this.name.toLowerCase());
+    (new weapon()).equip(player);
+    player.emit("equipweapon", this.name);
+  }
+
 }
 module.exports = Pickup;

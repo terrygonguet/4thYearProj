@@ -1,5 +1,6 @@
 const tools = require('../../tools');
 const seedrandom = require('seedrandom');
+const sylvester = require('sylvester');
 
 class Weapon {
 
@@ -40,11 +41,11 @@ class Weapon {
     if (!this.isReloading && this.ammo > 0 && this.time >= 1000 / this.fireRate) {
       this.ammo--;
       this.time = 0;
-      const realdir = direction.rotate(tools.randFloat(-this.spread/2, this.spread/2, this.rng), Vector.Zero(2));
+      const realdir = direction.rotate(tools.randFloat(-this.spread/2, this.spread/2, this.rng), $V([0,0]));
       this.player.game.fireBullet({
         position: this.player.position,
         direction: realdir,
-        speed: this.speed,
+        speed: this.bulletSpeed,
         playerid: this.player.id,
         sound: this.fireSound
       });
@@ -54,6 +55,7 @@ class Weapon {
   equip(player) {
     this.player = player;
     this.rng = new seedrandom(player.id);
+    player.weapon = this;
   }
 
   reload() {

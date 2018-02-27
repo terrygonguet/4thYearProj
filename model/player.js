@@ -1,7 +1,8 @@
 const sylvester = require('sylvester');
 const SAT = require("sat");
-const merge = require('merge');
+const _ = require('lodash');
 const tools = require('../tools');
+const Blaster = require('./weapons/blaster');
 
 class Player {
 
@@ -22,20 +23,18 @@ class Player {
     this.inputs   = [];
     this.radius   = 10;
     this.hitbox   = new SAT.Circle(new SAT.V(), this.radius);
+    this.weapon   = null;
     this.lobby    = null;
     this.game     = null;
     this.isPlayer = true;
     this.force    = false;
 
-    merge(this, socket);
+    _.merge(this, socket);
+    (new Blaster()).equip(this);
 
     socket.on("disconnect", () => {
       this.game && this.game.removePlayer(socket);
       this.lobby.leave(this);
-    });
-
-    socket.on("firebullet", data => {
-      this.game && this.game.fireBullet(data);
     });
 
     socket.on("update", (data, ack) => {
@@ -61,6 +60,7 @@ class Player {
   update(inputobj) {
     if (inputobj.speed !== undefined || inputobj.direction !== undefined) return ;
     inputobj.sdelta = inputobj.delta / 1000;
+    inputobj.mousepos = $V(inputobj.mousepos);
     var direction = $V([
       Number(inputobj.right - inputobj.left),
       Number(inputobj.down - inputobj.up)
@@ -73,6 +73,9 @@ class Player {
     // this.curspeed = tools.clamp(this.curspeed + deltaAcc * inputobj.sdelta, 0, this.speed);
     this.setPos(this.position.add(direction.x(this.speed * inputobj.sdelta)));
     // console.log(this.position.subtract($V(inputobj.position)).modulus());
+    this.weapon.update(inputobj);
+    inputobj.mouse1 && this.weapon.fire(inputobj.mousepos.subtract(this.position));
+    inputobj.reload && this.weapon.reload();
   }
 
   /**

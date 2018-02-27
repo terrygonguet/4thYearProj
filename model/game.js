@@ -123,7 +123,7 @@ class Game {
           player.clearInput();
           for (var pickup of this.pickups) {
             if (player.position.distanceFrom(pickup.position) <= player.radius + pickup.radius) {
-              player.emit("equipweapon", pickup.name);
+              pickup.pickup(player);
               this.pickups.splice(this.pickups.indexOf(pickup), 1);
             }
           }
