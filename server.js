@@ -14,3 +14,7 @@ app.use(express.static("static"));
 io.on('connection', function (socket) {
   lobby.join(socket);
 });
+
+app.get("/rooms", function (req, res) {
+  res.json(lobby.rooms.map(r => r.serialize()));
+});

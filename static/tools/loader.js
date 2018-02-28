@@ -59,6 +59,7 @@ const Hikari = {}; // Namespace
     {id: "Noen", src:"model/displaystuff/neon.js"},
     {id: "Camera", src:"model/displaystuff/camera.js"},
     {id: "Radar", src:"model/radar.js"},
+    {id: "Menu", src:"model/menu.js"},
 
     {id: "QuickText", src:"model/displaystuff/quickText.js"},
 
@@ -84,23 +85,7 @@ const Hikari = {}; // Namespace
     stage.removeChild(txt);
     stage.update();
     resizeCanvas();
-    input.enabledListeners.keydown = false;
-    $("#game").hide();
-    $("#title").text("Enter your name :");
-    $("#message")
-      .append("<input id='name' required autofocus placeholder='theLegend27' value='"+(localStorage.getItem("name") || "")+"'/>")
-      .append(
-        $("<button>START</button>").click(e => {
-          var name = $("#name").val();
-          if (name) {
-            input.enabledListeners.keydown = true;
-            localStorage.setItem("name", name);
-            game = new Game("game");
-            game.name = name;
-          }
-        })
-      );
-    $("#messagebox").show();
+    var menu = new Menu();
   }
 
   function handleFileLoad	(e) {

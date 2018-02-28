@@ -19,7 +19,8 @@ class Game {
    */
   constructor(io) {
     this.id         = Game.nextID();
-    this.type       = "deathmatch";
+    this.type       = "Deathmatch";
+    this.maxplayers = 8;
     this.players    = [];
     this.blocks     = [];
     this.pickups    = [];
@@ -162,19 +163,14 @@ class Game {
     }
   }
 
-  // TODO
-  switchToState(state) {
-    this.state = state;
-    switch (this.states[state].type) {
-      case "message":
-
-        break;
-    }
-  }
-
-  // TODO
-  updateState() {
-
+  serialize() {
+    return {
+      id: this.id,
+      type: this.type,
+      state: this.state,
+      players: this.players.length,
+      maxplayers: this.maxplayers,
+    };
   }
 
   /**

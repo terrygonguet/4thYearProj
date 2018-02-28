@@ -61,7 +61,12 @@ class Lobby {
     var player = socket;
     if (!socket.isPlayer) player = Lobby.makePlayer(socket);
     player.lobby = this;
-    this.rooms[0].addPlayer(player);
+    // this.rooms[0].addPlayer(player);
+  }
+
+  joinRoom(id, player) {
+    var room = this.rooms.find(r => r.id === id);
+    room && room.addPlayer(player);
   }
 
   /**
@@ -71,7 +76,7 @@ class Lobby {
   leave(socket) {
     socket.lobby = null;
     Lobby.players.splice(Lobby.players.indexOf(socket), 1);
-    console.log("A fucker left : " + socket.id + " (" + Lobby.players.length + " players left)");
+    console.log("A player left : " + socket.id + " (" + Lobby.players.length + " players connected)");
   }
 
   /**
@@ -97,7 +102,7 @@ class Lobby {
   static makePlayer(socket) {
     var player = new Player(socket);
     Lobby.players.push(player);
-    console.log("A fucker joined : " + socket.id + " (" + Lobby.players.length + " players left)");
+    console.log("A player joined : " + socket.id + " (" + Lobby.players.length + " players connected)");
     return player;
   }
 

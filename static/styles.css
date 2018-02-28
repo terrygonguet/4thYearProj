@@ -15,12 +15,16 @@ html, body {
 	display: block;
 }
 
-#messagebox {
+#messagebox, #menu {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-evenly;
 	align-items: center;
 	height: 100%;
+}
+
+#menu {
+  justify-content: flex-start;
 }
 
 #gameWrapper {
@@ -58,7 +62,32 @@ html, body {
 	height: 45px;
 }
 
-.keylist button {
+/* --------------- Menu --------------- */
+
+#lblName {
+  margin-top: 10%;
+}
+
+#tblRooms {
+	border-collapse: collapse;
+	border: 2px solid #1EE;
+	width: 70%;
+	background-color: #111;
+	box-shadow: 0 0 20px 3px #E1E;
+  margin-top: 10%;
+}
+
+#tblRooms td, #tblRooms th {
+	border: 1px solid #1EE;
+	text-align: center;
+	height: 45px;
+}
+
+#tblRooms button {
+  min-width: 0;
+}
+
+/* .keylist button {
 	width: 50%;
 	background-color: #A1A;
   border: none;
@@ -68,10 +97,9 @@ html, body {
   text-decoration: none;
   display: inline-block;
   font-size: 13px;
-}
+} */
 
-.keylist button:hover {
-	/*border: 1px solid #EE1;*/
+/* .keylist button:hover {
 	box-shadow: 0 0 10px 3px #1E1;
 }
 
@@ -79,8 +107,39 @@ html, body {
 	background-color: #EEE;
 	color: #111;
 	border-color: #1EE;
-}
+} */
 
 .lockedBinding:hover {
 	box-shadow: 0 0 10px 3px #E11 !important;
+}
+
+
+/* --------------- Buttons --------------- */
+
+.NeonButton{
+	background-color: #00000000;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-family: Joystix;
+  min-width: 100px;
+  margin: 10px;
+  color: #ff83aa;
+  text-shadow: 0 0 1px #ff0051, 0 0 2px #ff0051, 0 0 4px #ff0051, 0 0 8px #ff0051, 0 0 16px #ff0051, 0 0 32px #ff0051, 0 0 64px #ff0051, 0 0 128px #ff0051;
+}
+
+.NeonButton:hover{
+	text-shadow: 0 0 1px #ff0051, 0 0 2px #ff0051, 0 0 4px #ff0051, 0 0 8px #ff0051, 0 0 16px #ff0051, 0 0 32px #ff0051, 0 0 64px #ff0051, 0 0 128px #ff0051, 0 0 256px #ff0051;
+	color: #ffd3e1;
+}
+
+.NeonButton:active{
+	text-shadow:0 0 1px #ff0051, 0 0 2px #ff0051, 0 0 4px #ff6495, 0 0 8px #ff709d, 0 0 16px #ffa8c4, 0 0 32px #ffadc7, 0 0 64px #ffadc7, 0 0 128px #ffadc7;
+	color:#ffa8c4;
+}
+
+.NeonButton:focus{
+	outline: none;
 }

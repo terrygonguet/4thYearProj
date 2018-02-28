@@ -45,6 +45,7 @@ class Player {
 
     socket.on("setname", name => this.name = name.slice(0,100));
 
+    socket.on("joinroom", id => this.lobby && this.lobby.joinRoom(id, this));
   }
 
   /**

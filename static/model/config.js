@@ -64,7 +64,7 @@ class Config extends createjs.EventDispatcher {
     $("<tr><th>Setting</th><th>Value</th></tr>").appendTo(".keylist");
     for (var binding in input.bindings) {
       if (input.bindings.hasOwnProperty(binding) && input.hiddenBindings.indexOf(binding) === -1) {
-        var btn = $("<button binding='" + binding + "'>" + input.bindings[binding][0] + "</button>");
+        var btn = $("<button class='NeonButton' binding='" + binding + "'>" + input.bindings[binding][0] + "</button>");
         if (input.lockedBindings.indexOf(binding) === -1) {
           btn.click(e => {
             if (this.keylistener) input.off("keydown", this.keylistener);
