@@ -1,6 +1,7 @@
 const tools = require('../../tools');
 const seedrandom = require('seedrandom');
 const sylvester = require('sylvester');
+const Bullet = require('../bullet');
 
 class Weapon {
 
@@ -42,13 +43,13 @@ class Weapon {
       this.ammo--;
       this.time = 0;
       const realdir = direction.rotate(tools.randFloat(-this.spread/2, this.spread/2, this.rng), $V([0,0]));
-      this.player.game.fireBullet({
+      this.player.game.addChild(new Bullet({
         position: this.player.position,
         direction: realdir,
         speed: this.bulletSpeed,
         playerid: this.player.id,
         sound: this.fireSound
-      });
+      }));
     }
   }
 

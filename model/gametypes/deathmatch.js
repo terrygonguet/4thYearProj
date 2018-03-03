@@ -4,45 +4,41 @@ const Block = require("../block");
 const Plant = require("../plant");
 const Bullet = require('../bullet');
 const Pickup = require('../pickup');
+const Game = require('./game');
 
-class Deathmatch {
+class Deathmatch extends Game {
   /**
    * @param {IO} io+
    */
   constructor(io) {
-    this.id                = tools.nextID();
-    this.type              = "Deathmatch";
-    this.maxplayers        = 8;
-    this.timeWithNoPlayers = 0;
-    this.players           = [];
-    this.blocks            = [];
-    this.pickups           = [];
-    this.bullets           = [];
-    this.dimensions        = [5000,5000];
-    this.io                = io;
+    super({
+      io,
+      type: 'Deathmatch',
+      maxplayers: 8,
+      dimensions: [5000,5000],
+      states: {
+        waiting: {
+          type: "message",
+          title: "Waiting for players",
+          message: "<players> in game"
+        },
+        starting: {
+          type: "message",
+          title: "Starting in",
+          message: "<countdown>"
+        },
+        running: {
+          type: "game"
+        },
+        ending: {
+          type: "message",
+          title: "Game Over",
+          message: "<name> won !"
+        }
+      },
+    });
     this.countdown         = 0;
-    this.ingame            = false;
-    this.state             = "waiting"; // enum : { "waiting", "starting", "running", "ending" }
-    this.states            = {
-      waiting: {
-        type: "message",
-        title: "Waiting for players",
-        message: "<players> in game"
-      },
-      starting: {
-        type: "message",
-        title: "Starting in",
-        message: "<countdown>"
-      },
-      running: {
-        type: "game"
-      },
-      ending: {
-        type: "message",
-        title: "Game Over",
-        message: "<name> won !"
-      }
-    };
+    this.winner            = null;
 
     this.generateBlocks();
   }
@@ -55,8 +51,8 @@ class Deathmatch {
   generateBlocks(nbBlocks=150, bushChance=0.2) {
     for (var i = 0; i < nbBlocks; i++) {
       if (Math.random() < bushChance)
-        this.addBlock(new Plant({
-          id:"p"+i,
+        this.addChild(new Plant({
+          id:tools.nextID(),
           position: {
             x: tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
             y: tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
@@ -65,8 +61,8 @@ class Deathmatch {
           radiusmax: Math.random() * 20 + 60
         }));
       else
-        this.addBlock(new Block({
-          id:"b"+i,
+        this.addChild(new Block({
+          id:tools.nextID(),
           position: {
             x: tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
             y: tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
@@ -85,9 +81,7 @@ class Deathmatch {
    * @param {Number} delta : the number of ms since last update
    */
   update(delta) {
-    if (this.players.length) this.timeWithNoPlayers = 0;
-    else this.timeWithNoPlayers += delta;
-
+    super.update(delta);
     switch (this.state) {
       case "waiting":
         if (this.players.length >= 2) {
@@ -107,10 +101,17 @@ class Deathmatch {
           this.countdown = 3;
           this.ingame = false;
         }
-        const blocks = this.blocks.filter(b => !!b.hitbox); // TODO cache result
+        this.objects = this.objects.filter(o => !o.toDie);
+        const collidables = this.objects.filter(b => !!b.hitbox).concat(this.players);
+        this.objects.forEach(o => {
+          if (o.updateAndCollide)
+            o.updateAndCollide(delta, this, collidables);
+          else if (o.update)
+            o.update(delta);
+        });
         for (var player of this.players) {
           for (var input of player.inputs) {
-            var near =  blocks.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius);
+            var near =  collidables.filter(c => player.position.distanceFrom(c.position) <= player.radius + c.radius);
             player.updateAndCollide(input, this, near);
             if (!player.force && player.position.distanceFrom($V(input.position)) > 2) {
               player.force = true;
@@ -118,32 +119,18 @@ class Deathmatch {
             }
           }
           player.clearInput();
-          for (var pickup of this.pickups) {
-            if (player.position.distanceFrom(pickup.position) <= player.radius + pickup.radius) {
-              pickup.pickup(player);
-              this.pickups.splice(this.pickups.indexOf(pickup), 1);
-            }
-          }
         }
-        const collidables = this.blocks.filter(b => !!b.hitbox).concat(this.players); // TODO cache
-        for (var bullet of this.bullets) {
-          if (bullet.toDie) {
-            this.bullets.splice(this.bullets.indexOf(bullet), 1);
-            continue;
-          }
-          bullet.updateAndCollide(delta/1000, this, collidables);
-        }
-        if (Math.random()<0.001) {
+        if (this.objects.filter(o => o instanceof Pickup).length <= 10 &&  Math.random()<0.001) {
           var p = new Pickup({
-            id: "pickup" + this.pickups.length,
+            id: "pickup" + tools.nextID(),
             position: {
               x: tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
               y: tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
             },
             name: "MachineGun"
           });
-          this.pickups.push(p);
-          this.io.to(this.id).emit("createobject", p.serialize());
+          this.addChild(p);
+          // this.io.to(this.id).emit("createobject", p.serialize());
         }
         break;
       case "ending":
@@ -153,20 +140,10 @@ class Deathmatch {
             title: this.states["waiting"].title,
             message: this.states["waiting"].message.replace("<players>", this.players.length)
           });
-          this.reset();
+          this.reset(null, this.generateBlocks.bind(this));
         }
         break;
     }
-  }
-
-  serialize() {
-    return {
-      id: this.id,
-      type: this.type,
-      state: this.state,
-      players: this.players.length,
-      maxplayers: this.maxplayers,
-    };
   }
 
   /**
@@ -175,26 +152,7 @@ class Deathmatch {
    * @param {Array} collidables an array of objects with a hitbox property
    */
   collide (object, collidables) {
-    for (var collidable of collidables) {
-      const res = new SAT.Response();
-      const test = "test" +
-        (object.hitbox instanceof SAT.Circle ? "Circle" : "Polygon") +
-        (collidable.hitbox instanceof SAT.Circle ? "Circle" : "Polygon");
-      if (object.isPlayer) {
-        if (SAT[test](object.hitbox, collidable.hitbox, res)) {
-          object.position = object.position.subtract($V([res.overlapV.x, res.overlapV.y]));
-          object.hitbox.pos = tools.toSAT(object.position);
-        }
-      } else if (object.isBullet && !object.toDie) {
-        if (SAT[test](object.hitbox, collidable.hitbox) && collidable.id !== object.playerid) {
-          if (collidable.isPlayer)
-            collidable.score = tools.clamp(collidable.score - 5, 0, 100);
-          object.toDie = true;
-          break;
-        }
-      }
-
-    }
+    super.collide(object, collidables);
   }
 
   /**
@@ -237,49 +195,11 @@ class Deathmatch {
   }
 
   /**
-   * Resets map and players
-   */
-  reset() {
-    this.players.forEach(p => {
-      p.setPos($V([
-        tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
-        tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
-      ]));
-      p.score = 100;
-      p.force = true;
-      p.inputs = [];
-    });
-    this.winner = null;
-    this.blocks = [];
-    this.pickups = [];
-    this.generateBlocks();
-    this.io.to(this.id).emit("createarena", {
-      objects: this.blocks.map(b => b.serialize()),
-      dimensions: this.dimensions,
-      players: this.players.map(p => p.serialize())
-    });
-  }
-
-  /**
    * Make the player join this room and sends him the arena
    * @param {Player} player
    */
   addPlayer(player) {
-    this.players.push(player);
-    player.game && player.game.removePlayer(player);
-    player.join(this.id);
-    player.game = this;
-    player.setPos($V([
-      tools.randInt(-this.dimensions[0]/2, this.dimensions[0]/2),
-      tools.randInt(-this.dimensions[1]/2, this.dimensions[1]/2)
-    ]));
-
-    player.emit("createarena", {
-      objects: this.blocks.map(b => b.serialize()).concat(this.pickups.map(p => p.serialize())),
-      dimensions: this.dimensions,
-      players: this.players.map(p => p.serialize()),
-    });
-
+    super.addPlayer(player);
     switch (this.state) {
       case "waiting":
         this.io.to(this.id).emit("gotomessage", {
@@ -295,36 +215,6 @@ class Deathmatch {
       case "ending":
         break;
     }
-  }
-
-  /**
-   * Make player leave and cleans up
-   * @param {Player} player
-   */
-  removePlayer(player) {
-    player.leave(this.id);
-    this.players = this.players.filter(p => p.id !== player.id);
-    this.io.to(this.id).emit("playerleave", { id: player.id });
-  }
-
-  destroy() {
-    for (var player of this.players) {
-      this.removePlayer(player);
-    }
-  }
-
-  fireBullet(data) {
-    this.io.to(this.id).emit("firebullet", data);
-    const b = new Bullet(data);
-    this.bullets.push(b);
-  }
-
-  /**
-   * Adds a block to the Arena
-   * @param {Block|Plant} block
-   */
-  addBlock(block) {
-    this.blocks.push(block);
   }
 
 }

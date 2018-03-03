@@ -23,6 +23,7 @@ class Block {
     this.hitbox       = null;
     this.radius       = settings.dimensions.x(0.5).modulus();
     this.isBlock      = true;
+    this.isSolid      = true;
 
     // setup hitbox
     const points = [

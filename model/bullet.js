@@ -18,6 +18,7 @@ class Bullet {
       speed: 0,
       sound: "Pew",
     }, params);
+    this.id        = tools.nextID();
     this.playerid  = settings.playerid;
     this.position  = settings.position;
     this.direction = settings.direction.toUnitVector(); // to be sure
@@ -49,13 +50,33 @@ class Bullet {
    * @param {Array} collidables an array of collidables
    */
   updateAndCollide(inputobj, gameobj, collidables) {
-    this.update(inputobj);
+    this.update(inputobj/1000);
     gameobj.collide(this, collidables);
     if (
       Math.abs(this.position.e(1)) > gameobj.dimensions[0]/2 ||
       Math.abs(this.position.e(2)) > gameobj.dimensions[1]/2
     )
       this.toDie = true;
+  }
+
+  onCollide(other) {
+    if (this.playerid === other.id) return ;
+    else if (other.isPlayer) {
+      other.score = tools.clamp(other.score - 5, 0, 100);
+      this.toDie = true;
+    } else if (other.isSolid || other.isBullet) {
+      this.toDie = true;
+    }
+  }
+
+  onAdded(room) {
+    room.io.to(room.id).emit("firebullet", {
+      position : this.position.elements,
+      direction : this.direction.elements,
+      speed: this.speed,
+      sound: this.sound,
+      playerid: this.playerid
+    });
   }
 
 }

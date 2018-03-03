@@ -152,7 +152,7 @@ class InputManager extends createjs.EventDispatcher {
           Object.keys(this.keyboard).forEach(k => this.keyboard[k] = false);
           break;
         }
-        // e.preventDefault();
+        e.preventDefault();
         // patterns
         this.lastkeys = (e.key + this.lastkeys).slice(0,500);
         for (var pattern in this.keypatterns) {

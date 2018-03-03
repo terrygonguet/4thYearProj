@@ -51,6 +51,11 @@ class Game extends createjs.Stage {
 
     this.socket.on("connect", () => {});
 
+    this.socket.on("disconnect", () => {
+      this.removeAllChildren();
+      menu.gotoList();
+    });
+
     this.socket.on("createarena", data => this.init(data));
 
     this.socket.on("gotomessage", data => {

@@ -28,6 +28,7 @@ class Player {
     this.game     = null;
     this.name     = "";
     this.isPlayer = true;
+    this.isSolid  = true;
     this.force    = false;
 
     _.merge(this, socket);
