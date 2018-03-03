@@ -104,8 +104,13 @@ class Game extends createjs.Stage {
     });
 
     this.socket.on("playerleave", data => {
-      this.entities.find(e => e.id === data.id).die();
-      console.log("left " + data.id);
+      if (data.id === this.socket.id) {
+        this.removeAllChildren();
+        menu.showmenu();
+      } else {
+        this.entities.find(e => e.id === data.id).die();
+        console.log("left " + data.id);
+      }
     });
 
     this.socket.on("equipweapon", name => {

@@ -21,7 +21,7 @@ class Lobby {
     this.updateRate    = settings.updateRate;
     this.netUpdateRate = settings.netUpdateRate;
     this.gamelist      = {
-      "Game": require("./game")
+      "Deathmatch": require("./gametypes/deathmatch")
     };
 
     // Update
@@ -37,20 +37,24 @@ class Lobby {
       self.netupdate(delta);
       setTimeout(tick, 1000 / self.netUpdateRate, now());
     })(now());
-
-    this.createRoom("Game");
   }
 
   /**
    * Creates a room in the lobby
    * @param {String} type : the type of room to create
-   * @param {Object} params : the conf object to give to the Game constructor, defaults if null
+   * @param {Object} params : the conf object to give to the Game constructor, defaults is null
    * @return {Game} the game created
    */
   createRoom(type, params) {
     const game = new this.gamelist[type](this.io, params);
     this.rooms.push(game);
     return game;
+  }
+
+  destroyRoom(room) {
+    var index = this.rooms.indexOf(room);
+    room.destroy();
+    this.rooms.splice(index, 1);
   }
 
   /**
@@ -84,7 +88,10 @@ class Lobby {
    * @param {Number} delta : number of ms since last update
    */
   update(delta) {
-    this.rooms.forEach(g => g.update(delta));
+    this.rooms.forEach(g => {
+      g.update(delta);
+      if (g.timeWithNoPlayers > 60000) this.destroyRoom(g);
+    });
   }
 
   /**

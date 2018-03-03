@@ -1,25 +1,17 @@
-const tools = require("../tools");
+const tools = require("../../tools");
 const SAT = require("sat");
-const Block = require("./block");
-const Plant = require("./plant");
-const Bullet = require('./bullet');
-const Pickup = require('./pickup');
+const Block = require("../block");
+const Plant = require("../plant");
+const Bullet = require('../bullet');
+const Pickup = require('../pickup');
 
-class Game {
-
-  /**
-   * @return {Number} the next unique ID
-   */
-  static nextID () {
-    return Game.currentID++;
-  }
-
+class TeamDeathmatch {
   /**
    * @param {IO} io
    */
   constructor(io) {
-    this.id         = Game.nextID();
-    this.type       = "Deathmatch";
+    this.id         = tools.nextID();
+    this.type       = "Team Deathmatch";
     this.maxplayers = 8;
     this.players    = [];
     this.blocks     = [];
@@ -326,6 +318,5 @@ class Game {
   }
 
 }
-Game.currentID = 0;
 
-module.exports = Game;
+module.exports = TeamDeathmatch;

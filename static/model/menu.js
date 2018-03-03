@@ -25,6 +25,10 @@ class Menu {
       game.socket.emit("joinroom", room);
     });
     this.container.on("click", "#btnRefresh", e => this.gotoList());
+    this.container.on("click", "#btnCreate", e => {
+      game.socket.emit("createroom", { type:"Deathmatch" });
+      this.gotoList();
+    });
 
     this.tblRooms.empty()
       .append(`<tr id="tblHeader">
@@ -35,14 +39,18 @@ class Menu {
         <th><button class="NeonButton" id="btnRefresh">Refresh</button></th>
       </tr>`);
     localStorage.getItem("name") === null && this.gotoName() || this.gotoList();
-    $("#game").hide();
     game = game || new Game("game");
+  }
+
+  showMenu() {
+    $("#game").hide();
     input.enabledListeners.keydown = false;
+    return this.container.show();
   }
 
   gotoName() {
-    this.container.empty()
-      .append("Enter your name :")
+    this.showMenu().empty()
+      .append("<p>Enter your name :</p>")
       .append(
         $("<p>")
           .append(this.txbName)
@@ -51,14 +59,14 @@ class Menu {
   }
 
   gotoList() {
-    this.container.empty()
+    this.showMenu().empty()
       .append(this.lblName)
       .append(this.tblRooms);
     this.tblRooms.children(":not(#tblHeader)").detach();
-    this.tblRooms.append("<tr><th>Loading</th></tr>");
+    this.tblRooms.append("<tr><th colspan=5 >Loading</th></tr>");
     $.getJSON("/rooms", res => {
       this.tblRooms.children(":not(#tblHeader)").detach();
-      for (let room of res) {
+      for (var room of res) {
         this.tblRooms.append(`<tr>
           <td>${room.id}</td>
           <td>${room.type}</td>
@@ -67,12 +75,16 @@ class Menu {
           <td><button class="NeonButton btnJoin" room="${room.id}">Join</button></td>
         </tr>`);
       }
+      this.tblRooms.append("<tr><th colspan=5 ><button class='NeonButton' id='btnCreate'>Create</button></th></tr>");
+      if (!res.length) {
+        $("#btnCreate").parent().prepend("No rooms - ");
+      }
     });
   }
 
   gotoGame() {
     this.container.empty().hide();
-    // $("#game").show();
+    $("#game").show();
     input.enabledListeners.keydown = true;
   }
 

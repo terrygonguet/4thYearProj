@@ -1,9 +1,6 @@
 /* Loads all the necessary game files and handles loading screen */
 
-/** Only globals allowed :
- *  game, input, queue, debug, config
- */
-var game;
+var game, menu;
 const queue = new createjs.LoadQueue();
 var debug = true;
 const Hikari = {}; // Namespace
@@ -85,7 +82,7 @@ const Hikari = {}; // Namespace
     stage.removeChild(txt);
     stage.update();
     resizeCanvas();
-    var menu = new Menu();
+    menu = new Menu();
   }
 
   function handleFileLoad	(e) {

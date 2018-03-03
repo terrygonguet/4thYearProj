@@ -56,6 +56,11 @@ exports.clampVect = function (vector, dimensions) {
   return $V(vector.elements.map((e, i) => exports.clamp(e, -dimensions[i]/2, dimensions[i]/2)));
 };
 
+var id = 0;
+exports.nextID = function () {
+  return id++;
+};
+
 exports.makeSettings = function (defaults, params) {
   const ret = _.assign(defaults, params);
   _.forOwn(ret, (v, k) => {
