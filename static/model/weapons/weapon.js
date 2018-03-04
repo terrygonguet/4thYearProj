@@ -39,6 +39,9 @@ class Weapon extends createjs.EventDispatcher {
     }
   }
 
+  /**
+   * start reloading
+   */
   reload() {
     if (!this.isReloading && this.reloadTime > 0) {
       this.isReloading = true;

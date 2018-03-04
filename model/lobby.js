@@ -8,7 +8,10 @@ const tools = require('../tools');
 class Lobby {
 
   /**
-   * @param {IO} io : the IO object to handle sockets
+   * @param {Object} params
+   * @param {IO}     params.io the IO object to handle sockets
+   * @param {Number} params.updateRate world updates per second
+   * @param {Number} params.netUpdateRate net updates per second
    */
   constructor(params={}) {
     const settings = tools.makeSettings({
@@ -51,6 +54,10 @@ class Lobby {
     return game;
   }
 
+  /**
+   * Cleans up room and removes it
+   * @param {Game} room the game to remove
+   */
   destroyRoom(room) {
     var index = this.rooms.indexOf(room);
     room.destroy();
@@ -68,6 +75,11 @@ class Lobby {
     // this.rooms[0].addPlayer(player);
   }
 
+  /**
+   * Make the player join a room by ID
+   * @param {ID} id the ID of the game
+   * @param {Player} player the player
+   */
   joinRoom(id, player) {
     var room = this.rooms.find(r => r.id === id);
     room && room.addPlayer(player);
@@ -113,6 +125,11 @@ class Lobby {
     return player;
   }
 
+  /**
+   * Get a player object by ID
+   * @param {ID} id
+   * @return {Player}
+   */
   static getPlayer(id) {
     return Lobby.players.find(p => p.id === id);
   }

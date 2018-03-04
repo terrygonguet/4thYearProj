@@ -19,6 +19,9 @@ class WeaponPickup extends Pickup {
                  .cp();
   }
 
+  /**
+   * @param {Event} e
+   */
   update(e) {
     super.update(e);
     this.rotation += e.sdelta * 60;

@@ -53,12 +53,18 @@ class Weapon {
     }
   }
 
+  /**
+   * @param {Player} player the player to equip the weapon to
+   */
   equip(player) {
     this.player = player;
     this.rng = new seedrandom(player.id);
     player.weapon = this;
   }
 
+  /**
+   * start reloading if not already reloading
+   */
   reload() {
     if (!this.isReloading && this.reloadTime > 0) {
       this.isReloading = true;

@@ -32,6 +32,10 @@ class Player extends Entity {
     input.on("reload", e => this.weapon.reload());
   }
 
+  /**
+   * Sets up event listeners and rng for new weapon
+   * @param {Weapon} weapon
+   */
   setWeapon (weapon) {
     this.weapon = weapon;
     this.weapon.rng = new Math.seedrandom(this.id);
@@ -42,6 +46,9 @@ class Player extends Entity {
     ));
   }
 
+  /**
+   * Tries to reduce the number of input objects to be sent to the server
+   */
   consolidateInput() {
     const ih = this.inputHistory; // shorthand
     const toOmit = ['position', 'delta', 'debug', 'pause']; // shorthand

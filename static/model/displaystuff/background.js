@@ -43,6 +43,9 @@ class Background extends createjs.Shape {
     });
   }
 
+  /**
+   * Draws the grid in the background
+   */
   drawLines () {
     const halfW = Math.ceil(this.width/2);
     const halfH = Math.ceil(this.height/2);
@@ -60,19 +63,6 @@ class Background extends createjs.Shape {
    */
   update (e) {
     if (!game.player) return;
-
-    // const distFromCenter = game.player.position.distanceFrom(this.position);
-    // if (distFromCenter > this.centerRadius.cur * window.innerHeight) {
-    //   this.centerRadius.cur = (this.centerRadius.cur - e.sdelta / 10)
-    //                           .clamp(this.centerRadius.min, this.centerRadius.max);
-    //   const movement = game.player.position
-    //                   .subtract(this.position)
-    //                   .toUnitVector().x(distFromCenter - this.centerRadius.cur * window.innerHeight);
-    //   this.move(movement);
-    // } else {
-    //   this.centerRadius.cur = (this.centerRadius.cur + e.sdelta / 5)
-    //                           .clamp(this.centerRadius.min, this.centerRadius.max);
-    // }
 
     // Cheat codes
     if (this.turbofunk && (this.time1 += e.delta) > 100) {
@@ -103,6 +93,9 @@ class Background extends createjs.Shape {
     this.set({ x: pos.e(1), y: pos.e(2) });
   }
 
+  /**
+   * Move the background
+   */
   move (movement) {
     this.position = this.position.add(movement);
   }

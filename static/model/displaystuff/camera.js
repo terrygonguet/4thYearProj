@@ -6,14 +6,23 @@ class Camera extends createjs.EventDispatcher {
     this.centerDiams  = { max: 0.3, min: 0.05, cur: 0.3 }; // in % of smaller side
   }
 
+  /**
+   * @return {Number} return the smallest dimension of the screen
+   */
   get smallSide() {
     return innerWidth < innerHeight ? innerWidth : innerHeight;
   }
 
+  /**
+   * @return {Number} return the biggest dimension of the screen
+   */
   get bigSide() {
     return innerWidth > innerHeight ? innerWidth : innerHeight;
   }
 
+  /**
+   * @param {Event} e
+   */
   update(e) {
     if (!game.player) return;
     const playerPos = game.player.position.dup();
@@ -41,10 +50,18 @@ class Camera extends createjs.EventDispatcher {
     }
   }
 
+  /**
+   * Transforms a point from screen coords to world coords
+   * @param {Vector} pos
+   */
   globalToLocal(pos) {
     return pos.add(this.center).subtract($V([ innerWidth/2, innerHeight/2 ]));
   }
 
+  /**
+   * Transforms a point from world coords to screen coords
+   * @param {Vector} pos
+   */
   localToGlobal(pos) {
     return $V([ innerWidth/2, innerHeight/2 ]).subtract(this.center).add(pos);
   }

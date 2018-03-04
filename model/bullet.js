@@ -59,6 +59,9 @@ class Bullet {
       this.toDie = true;
   }
 
+  /**
+   * @param {Object} other the object this collided with
+   */
   onCollide(other) {
     if (this.playerid === other.id) return ;
     else if (other.isPlayer) {
@@ -69,6 +72,9 @@ class Bullet {
     }
   }
 
+  /**
+   * @param {Game} room the room this has been added to
+   */
   onAdded(room) {
     room.io.to(room.id).emit("firebullet", {
       position : this.position.elements,

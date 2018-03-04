@@ -130,7 +130,6 @@ class Deathmatch extends Game {
             name: "MachineGun"
           });
           this.addChild(p);
-          // this.io.to(this.id).emit("createobject", p.serialize());
         }
         break;
       case "ending":
