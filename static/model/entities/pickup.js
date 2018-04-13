@@ -23,9 +23,9 @@ class Pickup extends Entity {
    */
   update (e) {
     super.update(e);
-    if (game.player.position.distanceFrom(this.position) <= game.player.radius + this.radius) {
-      this.die();
-    }
+    // if (game.player.position.distanceFrom(this.position) <= game.player.radius + this.radius) {
+    //   this.die();
+    // }
   }
 
 }

@@ -123,8 +123,11 @@ class Game extends createjs.Stage {
     });
 
     this.socket.on("createobject", data => {
-      console.log("created " + data.type);
       this.addChild(new Hikari[data.type](data.params));
+    });
+
+    this.socket.on("destroyobject", data => {
+      this.children.find(c => c.id === data.id).die();
     });
 
     // input stuff -------------------------------------------------------------------------------

@@ -125,6 +125,7 @@ class Player extends Entity {
    */
   setScore(score) {
     this.graphics.c().f(`rgb(${255-score*2.55},${score*2.55},0)`).s("#EEE").dc(0,0,this.radius);
+    if (score <= 0) this.die();
   }
 
   /**

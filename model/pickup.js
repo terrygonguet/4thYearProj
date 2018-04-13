@@ -20,6 +20,7 @@ class Pickup {
     this.hitbox   = new SAT.Circle(tools.toSAT(settings.position), this.radius);
     this.isPickup = true;
     this.toDie    = false;
+    this.gameobj  = null;
   }
 
   /**
@@ -42,6 +43,7 @@ class Pickup {
    * @param {Array} collidables an array of collidables
    */
   updateAndCollide(inputobj, gameobj, collidables) {
+    this.gameobj = gameobj;
     gameobj.collide(this, collidables);
   }
 
@@ -55,6 +57,7 @@ class Pickup {
     (new weapon()).equip(other);
     other.emit("equipweapon", this.name);
     this.toDie = true;
+    this.gameobj.io.to(this.gameobj.id).emit("destroyobject", { id: this.id });
   }
 
   /**
