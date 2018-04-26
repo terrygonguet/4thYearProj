@@ -4,7 +4,7 @@
 }
 @font-face {
     font-family: 'Joystix';
-    src: url(resources/joystix monospace.ttf) format('truetype');
+    src: url('resources/joystix monospace.ttf') format('truetype');
 }
 
 html, body {
